@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ReversiAmovTP</string>
+    <string name="reversi">Reversi</string>
+    <string name="play">Jogar</string>
 </resources>
