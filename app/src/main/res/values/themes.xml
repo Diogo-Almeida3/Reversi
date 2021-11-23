@@ -24,11 +24,24 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/branco</item>
-        <item name="android:paddingRight">60dp</item>-->
+        <item name="android:paddingRight">60dp</item>
         <item name="android:textSize">24dp</item>
         <item name="android:layout_marginLeft">50dp</item>
         <item name="android:layout_marginRight">50dp</item>
         <item name="android:layout_marginBottom">40dp</item>
+        <item name="android:background">@drawable/rounded_corners</item>
+    </style>
+
+    <style name="ButtonMenuLand" parent="android:Widget.Material.Button">
+
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/branco</item>
+        <item name="android:paddingRight">60dp</item>
+        <item name="android:textSize">24dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
+        <item name="android:layout_marginRight">50dp</item>
+        <item name="android:layout_marginTop">38dp</item>
         <item name="android:background">@drawable/rounded_corners</item>
     </style>
 </resources>
