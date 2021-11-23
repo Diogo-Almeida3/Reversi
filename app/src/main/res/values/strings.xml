@@ -2,4 +2,6 @@
     <string name="app_name">ReversiAmovTP</string>
     <string name="reversi">Reversi</string>
     <string name="play">Play</string>
+    <string name="rules">How To Play</string>
+    <string name="exit">Exit</string>
 </resources>
