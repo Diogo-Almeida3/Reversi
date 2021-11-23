@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="cor_fundo_menu">@color/cor_fundo_menu</color>-->
-    <!--    <color name="dark_slate_gray">#17252A</color>-->
-    <!--    <color name="dark_cyan">#2B7A78</color>-->
-    <!--    <color name="cyan">#3AAFA9</color>-->
-    <!--    <color name="light_gray">#DEF2F1</color>-->
-    <!--    <color name="white">#FEFFFF</color>-->
         <color name="ar_puro">#d7dde1</color>
         <color name="mantra">#8faaa8</color>
         <color name="contemplacao">#BBD0D1</color>
         <color name="creme_canela">#e6cec4</color>
         <color name="chao_batido">#cfb3a9</color>
         <color name="azul_marinho">#33465c</color>
+        <color name="branco">#ffffff</color>
 
 </resources>

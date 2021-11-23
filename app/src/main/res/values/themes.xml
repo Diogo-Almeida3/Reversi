@@ -23,6 +23,7 @@
 
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/branco</item>
         <item name="android:paddingRight">60dp</item>-->
         <item name="android:textSize">24dp</item>
         <item name="android:layout_marginLeft">50dp</item>
