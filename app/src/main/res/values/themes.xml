@@ -25,7 +25,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/branco</item>
         <item name="android:paddingRight">60dp</item>
-        <item name="android:textSize">24dp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:layout_marginLeft">50dp</item>
         <item name="android:layout_marginRight">50dp</item>
         <item name="android:layout_marginBottom">40dp</item>
@@ -38,10 +38,28 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/branco</item>
         <item name="android:paddingRight">60dp</item>
-        <item name="android:textSize">24dp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:layout_marginLeft">50dp</item>
         <item name="android:layout_marginRight">50dp</item>
         <item name="android:layout_marginTop">38dp</item>
         <item name="android:background">@drawable/rounded_corners</item>
+    </style>
+
+    <style name="EditTextLogin">
+        <item name="backgroundColor">@color/branco</item>
+        <item name="android:background">@drawable/rounded_corners</item>
+        <item name="android:layout_marginBottom">40dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
+        <item name="android:layout_marginRight">50dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColorHint">@color/azul_marinho</item>
+        <item name="android:backgroundTint">@color/branco</item>
+        <item name="drawableTint">@color/azul_marinho</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="textFillColor">@color/azul_marinho</item>
+        <item name="android:drawablePadding">15dp</item>
     </style>
 </resources>

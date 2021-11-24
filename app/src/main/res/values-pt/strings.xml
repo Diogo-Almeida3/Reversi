@@ -8,5 +8,10 @@
     <string name="twoPlayersOff">2 jogadores (offline)</string>
     <string name="twoPlayersOn">2 jogadores (online)</string>
     <string name="threePlayersOn">3 jogadores (online)</string>
+    <string name="btnLogin">Entrar</string>
+    <string name="etLoginHintPassword">Palavra-passe</string>
+    <string name="tvRegisterLogin">Registe-se</string>
+    <string name="tv_forgot_password_login">Esqueceu a palavra-passe?</string>
+    <string name="tv_don_t_have_an_account_login">Não tem uma conta?</string>
 
 </resources>

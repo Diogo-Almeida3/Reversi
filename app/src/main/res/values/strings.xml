@@ -7,4 +7,10 @@
     <string name="twoPlayersOff">2 players (offline)</string>
     <string name="twoPlayersOn">2 players (online)</string>
     <string name="threePlayersOn">3 players (online)</string>
+    <string name="btnLogin">Login</string>
+    <string name="etLoginHintPassword">Password</string>
+    <string name="etLoginHintEmail" translatable="false">Email</string>
+    <string name="tvRegisterLogin">Sign Up</string>
+    <string name="tv_forgot_password_login">Forgot Password?</string>
+    <string name="tv_don_t_have_an_account_login">Don\'t have an account?</string>
 </resources>
