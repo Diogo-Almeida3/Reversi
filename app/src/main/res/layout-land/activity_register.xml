@@ -50,7 +50,7 @@
                 android:text="@string/tvRegisterLogin" />
 
             <LinearLayout
-                android:id="@+id/tvLoginRegister"s
+                android:id="@+id/tvLoginRegister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
