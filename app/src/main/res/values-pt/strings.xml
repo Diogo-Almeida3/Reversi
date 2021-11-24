@@ -16,5 +16,6 @@
     <string name="tv_already_have_an_account_signup">Já tem uma conta?</string>
     <string name="et_username_register">Nome de Utilizador</string>
     <string name="et_confirm_password_reg">Confirmar Palavra-passe</string>
+    <string name="logo">logo</string>
 
 </resources>

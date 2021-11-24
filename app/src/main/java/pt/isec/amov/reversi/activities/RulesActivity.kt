@@ -1,7 +1,8 @@
-package pt.isec.amov.reversi
+package pt.isec.amov.reversi.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import pt.isec.amov.reversi.R
 
 class RulesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
