@@ -10,25 +10,25 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="0dp"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="16dp"
-            android:padding="5dp"
-            android:textStyle="bold"
-            android:textSize="65sp"
-            android:textColor="@color/branco"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="14dp"
+            android:padding="3dp"
             android:text="@string/reversi"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:textColor="@color/branco"
+            android:textSize="65sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_height="90dp"
             android:src="@drawable/logo_reversi" />
 
     </LinearLayout>
@@ -42,40 +42,44 @@
         android:layout_marginTop="90dp">
 
         <EditText
-            android:id="@+id/etLoginEmail"
+            android:id="@+id/etRegisterUsername"
+            android:hint="@string/et_username_register"
+            style="@style/EditTextLogin"
+            android:drawableStart="@drawable/ic_person_reg"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etRegisterEmail"
             android:hint="@string/etLoginHintEmail"
             style="@style/EditTextLogin"
             android:drawableStart="@android:drawable/ic_dialog_email"
             android:inputType="textEmailAddress" />
 
         <EditText
-            android:id="@+id/etLoginPassword"
+            android:id="@+id/etRegisterPassword"
             style="@style/EditTextLogin"
             android:drawableStart="@android:drawable/ic_lock_idle_lock"
             android:hint="@string/etLoginHintPassword"
             android:inputType="textPassword"
             />
 
+        <EditText
+            android:id="@+id/etRegisterConfirmPassword"
+            style="@style/EditTextLogin"
+            android:drawableStart="@android:drawable/ic_lock_idle_lock"
+            android:hint="@string/et_confirm_password_reg"
+            android:inputType="textPassword"
+            />
+
         <Button
-            android:id="@+id/btnLogin"
+            android:id="@+id/btnSignUp"
             style="@style/ButtonMenu"
             android:layout_height="50dp"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:layout_marginBottom="10dp"
             android:layout_marginHorizontal="85dp"
-            android:text="@string/btnLogin" />
-
-        <TextView
-            android:id="@+id/tvLoginForgotPass"
-            android:layout_gravity="center_horizontal"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/azul_marinho"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tv_forgot_password_login"
-            android:textAlignment="center"/>
+            android:text="@string/tvRegisterLogin" />
 
     </LinearLayout>
 
@@ -95,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:text="@string/tv_don_t_have_an_account_login"
+            android:text="@string/tv_already_have_an_account_signup"
             android:textAlignment="center"/>
 
         <TextView
@@ -105,7 +109,7 @@
             android:textColor="@color/azul_marinho"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/tvRegisterLogin"
+            android:text="@string/btnLogin"
             android:textAlignment="center"/>
     </LinearLayout>
 
