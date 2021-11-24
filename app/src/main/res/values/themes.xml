@@ -61,4 +61,20 @@
         <item name="textFillColor">@color/azul_marinho</item>
         <item name="android:drawablePadding">15dp</item>
     </style>
+
+    <style name="rulesText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/branco</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="rulesTitle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/creme_canela</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginStart">10dp</item>
+    </style>
 </resources>

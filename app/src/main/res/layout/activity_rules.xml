@@ -4,15 +4,15 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.MenuActivity"
-    android:background="@drawable/custom_background">
+    android:background="@drawable/custom_background"
+    >
 
         <LinearLayout
             android:id="@+id/firstLinear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginVertical="20dp">
+            android:layout_gravity="center_horizontal">
 
             <TextView
                 android:layout_gravity="center_horizontal"
@@ -38,147 +38,87 @@
                 android:contentDescription="@string/logo" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesTitle"
                 android:text="Rules"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="25sp"
-                android:layout_marginStart="10dp">
-            </TextView>
+                android:textSize="25sp"/>
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesText"
                 android:text="Reversi é um jogo de tabuleiro entre dois jogadores em que o objetivo consiste em ter o maior de peças no tabuleiro\nDesse modo para tal, cada jogador deve colocar uma peça numa célula para que,pelo menos, um dos sentidos( horizontal, vertical ou diagonal), exista uma sequência que inclua uma ou mais peças do adversario e, do lado oposto uma peça do prórpio jogador."
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="10dp">
-            </TextView>
+                />
+
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesTitle"
                 android:text="Modos de Jogo"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="25sp"
-                android:layout_marginStart="10dp">
-            </TextView>
+                android:textSize="25sp"/>
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesText"
                 android:text="No início do jogo, o jogador pode escolher o modo de jogo que pretende jogar. Assim terá como possiveis escolhas os seguintes modos de jogo:"
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="10dp">
-            </TextView>
+             />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesTitle"
                 android:text="Modo 2 jogadores offline"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:layout_marginStart="15dp">
-            </TextView>
+                android:textSize="17sp"/>
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesText"
                 android:text="Este modo de jogo é jogado por dois jogadores num único dispositivo num tabuleiro 8 x 8."
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="15dp">
-            </TextView>
+                />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesTitle"
                 android:text="Modo 2 jogadores online"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:layout_marginStart="15dp">
-            </TextView>
+                android:textSize="17sp"/>
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesText"
                 android:text="Este modo de jogo é jogado por dois jogadores em dois dispositivos num tabuleiro 8 x 8."
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="15dp">
-            </TextView>
+                />
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesTitle"
                 android:text="Modo 3 jogadores online"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:layout_marginStart="15dp">
-            </TextView>
+
+                android:textSize="17sp" />
+
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesText"
                 android:text="Este modo de jogo é jogado por três jogadores em três dispositivos, num tabuleiro 10 x 10 e com as regras das peças especiais."
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="15dp">
-            </TextView>
+                />
+
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/rulesTitle"
                 android:text="Jogadas Especiais"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="25sp"
-                android:layout_marginStart="10dp">
-            </TextView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Este jogo para além das regras já descritas, conta também com algumas jogadas especiais de modo a tornar o jogo mais competitivo."
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="10dp">
-            </TextView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Peça Bomba"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:layout_marginStart="15dp">
-            </TextView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="A inserção de um peça bomba apenas pode ser realizada uma vez por cada jogador e é obrigatório que seja colocada numa peça já jogada.Ao aplicar esta peça todas as peças num raio de 1 quadrado é limpo."
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="15dp">
-            </TextView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Troca de Peças"
-                android:textColor="@color/creme_canela"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:layout_marginStart="15dp">
-            </TextView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Através desta jogada especial, o jogador pode trocar duas peças por uma do adversário.Esta troca é feita uma vez por cada jogador e na realização da troca assinala-se inicialmente as duas pelas que o utilizador deseja trocar seguida da peça do adversário."
-                android:textColor="@color/branco"
-                android:textSize="16sp"
-                android:layout_margin="15dp">
-            </TextView>
+                android:textSize="25sp" />
 
+            <TextView
+                style="@style/rulesText"
+                android:text="Este jogo para além das regras já descritas, conta também com algumas jogadas especiais de modo a tornar o jogo mais competitivo."
+                />
+
+            <TextView
+                style="@style/rulesTitle"
+                android:text="Peça Bomba"
+                android:textSize="17sp" />
+
+            <TextView
+                style="@style/rulesText"
+                android:text="A inserção de um peça bomba apenas pode ser realizada uma vez por cada jogador e é obrigatório que seja colocada numa peça já jogada.Ao aplicar esta peça todas as peças num raio de 1 quadrado é limpo."
+                />
+
+            <TextView
+                style="@style/rulesTitle"
+                android:text="Troca de Peças"
+                android:textSize="17sp"/>
+
+            <TextView
+                style="@style/rulesText"
+                android:text="Através desta jogada especial, o jogador pode trocar duas peças por uma do adversário.Esta troca é feita uma vez por cada jogador e na realização da troca assinala-se inicialmente as duas pelas que o utilizador deseja trocar seguida da peça do adversário."
+                />
         </LinearLayout>
 
 </ScrollView>
