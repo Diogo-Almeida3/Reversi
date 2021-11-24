@@ -28,6 +28,9 @@
 <!--            </intent-filter>-->
         </activity>
         <activity
+            android:name=".RulesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.MenuActivity"
             android:exported="true">
 

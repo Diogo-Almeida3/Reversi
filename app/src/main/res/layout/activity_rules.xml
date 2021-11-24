@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.MenuActivity"
+    android:background="@drawable/custom_background">
+
+        <LinearLayout
+            android:id="@+id/firstLinear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="20dp">
+
+            <TextView
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="16dp"
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:textSize="65sp"
+                android:textColor="@color/branco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reversi"
+                android:textAlignment="center"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxHeight="100dp"
+                android:maxWidth="100dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:src="@drawable/logo_reversi"
+                android:contentDescription="@string/logo" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Rules"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Modos de Jogo"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No início do jogo, o jogador pode escolher o modo de jogo que pretende jogar. Assim terá como possiveis escolhas os seguintes modos de jogo:"
+                android:textColor="@color/branco"
+                android:textSize="15sp"
+                android:layout_margin="10dp">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Modo 2 jogadores offline"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginStart="15dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Este modo de jogo é jogado por dois jogadores num único dispositivo num tabuleiro 8 x 8."
+                android:textColor="@color/branco"
+                android:textSize="15sp"
+                android:layout_margin="15dp">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Modo 2 jogadores online"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginStart="15dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Este modo de jogo é jogado por dois jogadores em dois dispositivos num tabuleiro 8 x 8."
+                android:textColor="@color/branco"
+                android:textSize="15sp"
+                android:layout_margin="15dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Modo 3 jogadores online"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginStart="15dp">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Este modo de jogo é jogado por três jogadores em três dispositivos, num tabuleiro 10 x 10 e com as regras das peças especiais."
+                android:textColor="@color/branco"
+                android:textSize="15sp"
+                android:layout_margin="15dp">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Jogadas Especiais"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Este jogo para além das regras já descritas, conta também com algumas jogadas especiais de modo a tornar o jogo mais competitivo."
+                android:textColor="@color/branco"
+                android:textSize="15sp"
+                android:layout_margin="10dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Peça Bomba"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginStart="15dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="A inserção de um peça bomba apenas pode ser realizada uma vez por cada jogador e é obrigatório que seja colocada numa peça já jogada.Ao aplicar esta peça todas as peças num raio de 1 quadrado é limpo."
+                android:textColor="@color/branco"
+                android:textSize="15sp"
+                android:layout_margin="15dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Troca de Peças"
+                android:textColor="@color/creme_canela"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginStart="15dp">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Através desta jogada especial, o jogador pode trocar duas peças por uma do adversário.Esta troca é feita uma vez por cada jogador e na realização da troca assinala-se inicialmente as duas pelas que o utilizador deseja trocar seguida da peça do adversário."
+                android:textColor="@color/branco"
+                android:textSize="15sp"
+                android:layout_margin="15dp">
+            </TextView>
+
+        </LinearLayout>
+
+</ScrollView>
