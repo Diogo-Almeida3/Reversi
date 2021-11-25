@@ -32,4 +32,6 @@
     <string name="special_pieces_text">This game, in addition to the rules already described, also has some special moves, to make the game more competitive.</string>
     <string name="bomb_piece_text">The insertion of a bomb tile can only be performed once by each player during the game and it must be placed on a player\'s tile. When applying this tile, all others within a radius of 1 square are eliminated.</string>
     <string name="piece_exchange_text">Through this special move, the player can exchange two pieces for one of the opponents. This exchange is made once by each player and, when making the exchange, the two pieces that the user wants to exchange are initially marked, followed by the opponent\'s piece.</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

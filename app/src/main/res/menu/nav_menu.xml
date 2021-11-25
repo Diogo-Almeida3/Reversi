@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/game_modes">
+        <menu>
+            <item
+                android:id="@+id/gameOff2"
+                android:title="@string/twoPlayersOff"
+                android:icon="@drawable/ic_group"
+                />
+            <item
+                android:id="@+id/gameOn2"
+                android:title="@string/twoPlayersOn"
+                android:icon="@drawable/ic_group"/>
+            <item
+                android:id="@+id/gameOn3"
+                android:title="@string/threePlayersOn"
+                android:icon="@drawable/ic_group3"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/rules">
+        <menu>
+            <item android:id="@+id/rules"
+                android:title="@string/rules"
+                android:icon="@android:drawable/ic_dialog_info"/>
+        </menu>
+    </item>
+
+    <item android:title="My Account">
+        <menu>
+            <item android:id="@+id/editProfile"
+                android:title="Profile"
+                android:icon="@android:drawable/ic_dialog_info"
+                
+                />
+            <item android:id="@+id/topScore"
+                android:title="TopScore"
+                android:icon="@android:drawable/ic_dialog_info"/>
+            <item android:id="@+id/logout"
+                android:title="Logout"
+                android:icon="@drawable/ic_exit"/>
+        </menu>
+    </item>
+
+</menu>

@@ -13,14 +13,13 @@
         <!--<item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item> -->
         <!-- Customize your theme here. -->
         <item name="textAllCaps">false</item>
-        <item name="android:fontFamily">@font/zilla</item>
+        <item name="android:fontFamily">@font/dmsans</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
     </style>
 
     <style name="ButtonMenu" parent="android:Widget.Material.Button">
-
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/branco</item>
@@ -88,5 +87,13 @@
         <item name="android:textSize">65sp</item>
         <item name="android:textColor">@color/branco</item>
         <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="NavigationViewStyleTitle">
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="NavigationViewStyleTextIcon">
+        <item name="android:textSize">18sp</item>
+        <item name="android:listPreferredItemHeightSmall">40dp</item>
     </style>
 </resources>
