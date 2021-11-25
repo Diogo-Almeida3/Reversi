@@ -21,15 +21,8 @@
             >
 
             <TextView
-                android:layout_gravity="center"
-                android:layout_marginVertical="12dp"
-                android:textStyle="bold"
-                android:textSize="85sp"
-                android:textColor="@color/branco"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/reversi"
-                android:textAlignment="center"/>
+                style="@style/titleReversi"
+                android:text="@string/reversi"/>
 
             <ImageView
                 android:layout_width="wrap_content"
