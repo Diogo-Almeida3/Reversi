@@ -110,5 +110,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:itemTextAppearance="@style/NavigationViewStyleTextIcon"
-        app:theme="@style/NavigationViewStyleTitle"/>
+        app:theme="@style/NavigationViewStyleTitle"
+        android:background="@color/ar_puro"/>
 </androidx.drawerlayout.widget.DrawerLayout>

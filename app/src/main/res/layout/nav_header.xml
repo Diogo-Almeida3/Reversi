@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:background="@android:color/black">
+    android:layout_height="176dp"
+    android:background="@drawable/custom_background"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    >
 
-</FrameLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher_round"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Diogo Almeida"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="16dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="diogo3679@gmail.com"
+        android:textSize="16dp"/>
+
+
+</LinearLayout>
