@@ -14,9 +14,19 @@
         <!-- Customize your theme here. -->
         <item name="textAllCaps">false</item>
         <item name="android:fontFamily">@font/dmsans</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="actionBarSize">40dp</item>
+        <item name="actionBarStyle">@style/MyActionBarStyle</item>
 
+    </style>
+
+    <style name="MyActionBarStyle" parent="Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
+        <item name="displayOptions">homeAsUp</item>
+    </style>
+
+    <style name="MyActionButtonStyle" parent="Widget.AppCompat.Light.ActionButton">
+        <item name="android:minWidth">20dp</item>
+        <item name="android:minHeight">20dp</item>
     </style>
 
     <style name="ButtonMenu" parent="android:Widget.Material.Button">
@@ -80,7 +90,7 @@
     <style name="titleReversi">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_gravity">center</item>
         <item name="android:layout_margin">8dp</item>
         <item name="android:padding">5dp</item>
         <item name="android:textStyle">bold</item>

@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import pt.isec.amov.reversi.R
@@ -27,8 +28,8 @@ class MenuActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationView.setNavigationItemSelectedListener {
             when(it.itemId){
 
@@ -39,7 +40,7 @@ class MenuActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(toggle.onOptionsItemSelected(item)){
-            true
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
