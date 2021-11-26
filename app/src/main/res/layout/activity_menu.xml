@@ -49,7 +49,8 @@
                 style="@style/ButtonMenu"
                 android:drawableLeft="@drawable/ic_group"
                 android:paddingLeft="20dp"
-                android:text="@string/twoPlayersOff" />
+                android:text="@string/twoPlayersOff"
+                />
 
             <Button
                 android:id="@+id/btnModo2"
@@ -86,7 +87,7 @@
                     android:paddingLeft="20dp"
                     android:text="@string/rules"
                     android:textColor="@color/branco"
-                    android:textSize="24sp" />
+                    android:autoSizeTextType="uniform" />
 
                 <Button
                     android:id="@+id/btnExit"
@@ -100,7 +101,7 @@
                     android:paddingRight="35dp"
                     android:text="@string/exit"
                     android:textColor="@color/branco"
-                    android:textSize="24sp" />
+                    android:autoSizeTextType="uniform" />
 
             </LinearLayout>
         </LinearLayout>
@@ -112,9 +113,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/ar_puro"
-        android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
         app:itemTextAppearance="@style/NavigationViewStyleTextIcon"
         app:menu="@menu/nav_menu"
-        app:theme="@style/NavigationViewStyleTitle" />
+        app:theme="@style/NavigationViewStyleTitle"/>
+
 </androidx.drawerlayout.widget.DrawerLayout>

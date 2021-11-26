@@ -14,23 +14,25 @@ import pt.isec.amov.reversi.R
 
 class MenuActivity : AppCompatActivity() {
 
-    lateinit var toggle: ActionBarDrawerToggle
-    lateinit var drawerLayout: DrawerLayout
-    lateinit var navigationView: NavigationView
-    lateinit var Toolbar: Toolbar
-    lateinit var btnRules : Button
+    private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var Toolbar: Toolbar
+    private lateinit var btnRules : Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
-        getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+
+        window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
 
         Toolbar = findViewById(R.id.navToolbar)
         setSupportActionBar(Toolbar)
+
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.nav_view)
 
@@ -64,4 +66,5 @@ class MenuActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="General">
+    <item android:title="@string/general">
         <menu>
             <item
                 android:id="@+id/menu"
-                android:title="Menu"
+                android:title="@string/menu"
                 android:icon="@drawable/ic_group"
                 />
             <item android:id="@+id/rules"
@@ -33,18 +33,18 @@
     </item>
 
 
-    <item android:title="My Account">
+    <item android:title="@string/my_account">
         <menu>
             <item android:id="@+id/editProfile"
-                android:title="Profile"
+                android:title="@string/profile"
                 android:icon="@android:drawable/ic_dialog_info"
                 
                 />
             <item android:id="@+id/topScore"
-                android:title="TopScore"
+                android:title="@string/topscore"
                 android:icon="@android:drawable/ic_dialog_info"/>
             <item android:id="@+id/logout"
-                android:title="Logout"
+                android:title="@string/logout"
                 android:icon="@drawable/ic_exit"/>
         </menu>
     </item>

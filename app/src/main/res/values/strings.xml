@@ -34,4 +34,10 @@
     <string name="piece_exchange_text">Through this special move, the player can exchange two pieces for one of the opponents. This exchange is made once by each player and, when making the exchange, the two pieces that the user wants to exchange are initially marked, followed by the opponent\'s piece.</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="menu">Menu</string>
+    <string name="general">General</string>
+    <string name="my_account">My Account</string>
+    <string name="profile">Profile</string>
+    <string name="topscore">TopScore</string>
+    <string name="logout">Logout</string>
 </resources>

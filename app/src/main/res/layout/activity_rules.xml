@@ -124,7 +124,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/ar_puro"
-        android:fitsSystemWindows="true"
         android:theme="@style/NavigationViewStyleTitle"
         app:headerLayout="@layout/nav_header"
         app:itemTextAppearance="@style/NavigationViewStyleTextIcon"

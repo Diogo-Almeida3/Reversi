@@ -33,5 +33,13 @@
     <string name="special_pieces_text">Este jogo, para além das regras já descritas, conta também com algumas jogadas especiais, de modo a tornar o jogo mais competitivo.</string>
     <string name="bomb_piece_text">A inserção de um peça bomba apenas pode ser realizada uma vez por cada jogador durante a partida e é obrigatório que seja colocada numa peça do jogador. Ao aplicar esta peça, todas as outras num raio de 1 quadrado são eliminadas.</string>
     <string name="piece_exchange_text">Através desta jogada especial, o jogador pode trocar duas peças por uma do adversário. Esta troca é feita uma vez por cada jogador e, na realização da troca, assinala-se inicialmente as duas peças que o utilizador deseja trocar, seguida da peça do adversário.</string>
+    <string name="menu">Menu</string>
+    <string name="topscore">TopScore</string>
+    <string name="logout">Sair</string>
+    <string name="profile">Perfil</string>
+    <string name="my_account">Conta</string>
+    <string name="general">Geral</string>
+    <string name="close">Fechar</string>
+    <string name="open">Abrir</string>
 
 </resources>

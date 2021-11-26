@@ -123,7 +123,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/ar_puro"
-        android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
         app:itemTextAppearance="@style/NavigationViewStyleTextIcon"
         app:menu="@menu/nav_menu"
