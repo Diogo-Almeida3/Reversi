@@ -6,11 +6,11 @@
             <item
                 android:id="@+id/menu"
                 android:title="@string/menu"
-                android:icon="@drawable/ic_group"
+                android:icon="@drawable/ic_home"
                 />
             <item android:id="@+id/rules"
                 android:title="@string/rules"
-                android:icon="@android:drawable/ic_dialog_info"/>
+                android:icon="@drawable/ic_rules"/>
         </menu>
     </item>
 
@@ -37,12 +37,12 @@
         <menu>
             <item android:id="@+id/editProfile"
                 android:title="@string/profile"
-                android:icon="@android:drawable/ic_dialog_info"
+                android:icon="@drawable/ic_person_reg"
                 
                 />
             <item android:id="@+id/topScore"
                 android:title="@string/topscore"
-                android:icon="@android:drawable/ic_dialog_info"/>
+                android:icon="@drawable/ic_score"/>
             <item android:id="@+id/logout"
                 android:title="@string/logout"
                 android:icon="@drawable/ic_exit"/>
