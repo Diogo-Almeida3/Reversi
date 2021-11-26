@@ -17,7 +17,7 @@
         <include
             layout="@layout/nav_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            android:layout_height="56dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
