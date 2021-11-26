@@ -45,7 +45,7 @@
             android:paddingVertical="20dp">
 
             <Button
-                android:id="@+id/btnModo1"
+                android:id="@+id/btnMode1"
                 style="@style/ButtonMenu"
                 android:drawableLeft="@drawable/ic_group"
                 android:paddingLeft="20dp"
@@ -53,14 +53,14 @@
                 />
 
             <Button
-                android:id="@+id/btnModo2"
+                android:id="@+id/btnMode2"
                 style="@style/ButtonMenu"
                 android:drawableLeft="@drawable/ic_group"
                 android:paddingLeft="20dp"
                 android:text="@string/twoPlayersOn" />
 
             <Button
-                android:id="@+id/btnModo3"
+                android:id="@+id/btnMode3"
                 style="@style/ButtonMenu"
                 android:drawableLeft="@drawable/ic_group3"
                 android:paddingLeft="20dp"

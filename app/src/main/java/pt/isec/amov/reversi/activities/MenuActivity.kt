@@ -3,6 +3,7 @@ package pt.isec.amov.reversi.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AlphaAnimation
@@ -13,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import pt.isec.amov.reversi.R
+import pt.isec.amov.reversi.databinding.ActivityMenuBinding
 import java.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -22,17 +24,14 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var Toolbar: Toolbar
-    private lateinit var btnRules: Button
-    private lateinit var btnExit : Button
-    private lateinit var btn2Off: Button
-    private lateinit var btn2On : Button
-    private lateinit var btn3On: Button
     private lateinit var btnAnimation : AlphaAnimation
 
+    private lateinit var binding : ActivityMenuBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_menu)
+        binding = ActivityMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -66,31 +65,25 @@ class MenuActivity : AppCompatActivity() {
             interpolator = AccelerateInterpolator(0.1F)
         }
 
-        btnRules = findViewById(R.id.btnRules)
-        btnExit = findViewById(R.id.btnExit)
-        btn2Off = findViewById(R.id.btnModo1)
-        btn2On = findViewById(R.id.btnModo2)
-        btn3On = findViewById(R.id.btnModo3)
-
-        btnRules.setOnClickListener{
-            btnRules.startAnimation(btnAnimation)
+        binding.btnRules.setOnClickListener {
+            binding.btnRules.startAnimation(btnAnimation)
             startActivity(Intent(this,RulesActivity::class.java))
         }
 
-        btnExit.setOnClickListener{
-            btnExit.startAnimation(btnAnimation)
+        binding.btnExit.setOnClickListener{
+            binding.btnExit.startAnimation(btnAnimation)
             finish()
         }
-        btn2Off.setOnClickListener{
-            btn2Off.startAnimation(btnAnimation)
+        binding.btnMode1.setOnClickListener{
+            binding.btnMode1.startAnimation(btnAnimation)
+        }
+
+        binding.btnMode2.setOnClickListener{
+            binding.btnMode2.startAnimation(btnAnimation)
 
         }
-        btn2On.setOnClickListener{
-            btn2On.startAnimation(btnAnimation)
-
-        }
-        btn3On.setOnClickListener{
-            btn3On.startAnimation(btnAnimation)
+        binding.btnMode3.setOnClickListener{
+            binding.btnMode3.startAnimation(btnAnimation)
 
         }
 
