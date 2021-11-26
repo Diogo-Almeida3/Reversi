@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.ReversiAmovTP" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="Theme.ReversiAmovTP" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/azul_marinho</item>
         <item name="colorPrimaryVariant">@color/mantra</item>
@@ -14,19 +14,6 @@
         <!-- Customize your theme here. -->
         <item name="textAllCaps">false</item>
         <item name="android:fontFamily">@font/dmsans</item>
-        <item name="actionBarSize">40dp</item>
-        <item name="actionBarStyle">@style/MyActionBarStyle</item>
-
-    </style>
-
-    <style name="MyActionBarStyle" parent="Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="actionButtonStyle">@style/MyActionButtonStyle</item>
-        <item name="displayOptions">homeAsUp</item>
-    </style>
-
-    <style name="MyActionButtonStyle" parent="Widget.AppCompat.Light.ActionButton">
-        <item name="android:minWidth">20dp</item>
-        <item name="android:minHeight">20dp</item>
     </style>
 
     <style name="ButtonMenu" parent="android:Widget.Material.Button">
