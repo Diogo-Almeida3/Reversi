@@ -1,5 +1,6 @@
 package pt.isec.amov.reversi.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -42,7 +43,7 @@ class RulesActivity : AppCompatActivity() {
 
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
-
+                R.id.menu -> startActivity(Intent(this,MenuActivity::class.java))
             }
             true
         }

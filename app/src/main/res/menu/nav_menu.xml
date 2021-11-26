@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:title="General">
+        <menu>
+            <item
+                android:id="@+id/menu"
+                android:title="Menu"
+                android:icon="@drawable/ic_group"
+                />
+            <item android:id="@+id/rules"
+                android:title="@string/rules"
+                android:icon="@android:drawable/ic_dialog_info"/>
+        </menu>
+    </item>
+
     <item android:title="@string/game_modes">
         <menu>
             <item
@@ -19,13 +32,6 @@
         </menu>
     </item>
 
-    <item android:title="@string/rules">
-        <menu>
-            <item android:id="@+id/rules"
-                android:title="@string/rules"
-                android:icon="@android:drawable/ic_dialog_info"/>
-        </menu>
-    </item>
 
     <item android:title="My Account">
         <menu>
