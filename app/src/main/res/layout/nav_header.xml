@@ -21,12 +21,12 @@
         android:text="Diogo Almeida"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="16dp"/>
+        android:textSize="16sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="diogo3679@gmail.com"
-        android:textSize="16dp"/>
+        android:textSize="16sp"/>
 
 
 </LinearLayout>

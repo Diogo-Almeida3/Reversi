@@ -120,12 +120,6 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/ar_puro"
-        android:theme="@style/NavigationViewStyleTitle"
-        app:headerLayout="@layout/nav_header"
-        app:itemTextAppearance="@style/NavigationViewStyleTextIcon"
-        app:menu="@menu/nav_menu" />
+        style="@style/navView"
+        app:headerLayout="@layout/nav_header"/>
 </androidx.drawerlayout.widget.DrawerLayout>
