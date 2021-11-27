@@ -47,6 +47,7 @@ class RulesActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.menu -> startActivity(Intent(this,MenuActivity::class.java))
+                R.id.editProfile -> startActivity(Intent(this,ProfileActivity::class.java))
             }
             true
         }
