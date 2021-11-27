@@ -41,5 +41,10 @@
     <string name="general">Geral</string>
     <string name="close">Fechar</string>
     <string name="open">Abrir</string>
+    <string name="edit_password">Editar Password</string>
+    <string name="change_password">Mudar Password</string>
+    <string name="change_email">Mudar Email</string>
+    <string name="edit_email">Editar Email</string>
+    <string name="edit_picture">Editar Foto</string>
 
 </resources>

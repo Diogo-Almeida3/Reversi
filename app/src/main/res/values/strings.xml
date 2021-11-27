@@ -40,4 +40,9 @@
     <string name="profile">Profile</string>
     <string name="topscore">TopScore</string>
     <string name="logout">Logout</string>
+    <string name="edit_password">Edit Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="change_email">Change Email</string>
+    <string name="edit_email">Edit Email</string>
+    <string name="edit_picture">Edit Picture</string>
 </resources>
