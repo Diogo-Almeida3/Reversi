@@ -149,7 +149,7 @@
                 <Button
                     android:id="@+id/btnEditPassword"
                     style="@style/profileButton"
-                    android:text="Edit Password"
+                    android:text="@string/edit_password"
                     />
 
             </LinearLayout>
