@@ -33,6 +33,7 @@ class MenuActivity : AppCompatActivity() {
         binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -54,6 +55,9 @@ class MenuActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.rules -> startActivity(Intent(this,RulesActivity::class.java))
                 R.id.editProfile -> startActivity(Intent(this,ProfileActivity::class.java))
+                R.id.gameOff2 -> {startActivity(Intent(this,GameActivity::class.java).putExtra("gameMode",0))}
+                R.id.gameOn2 -> {}
+                R.id.gameOn3 -> {}
             }
             true
         }
@@ -75,15 +79,27 @@ class MenuActivity : AppCompatActivity() {
         }
         binding.btnMode1.setOnClickListener{
             binding.btnMode1.startAnimation(btnAnimation)
+
+            val intent = Intent(this,GameActivity::class.java)
+            intent.putExtra(GameActivity.MODO_JOGO,GameActivity.GAMEOFF2)
+            startActivity(intent)
         }
 
         binding.btnMode2.setOnClickListener{
             binding.btnMode2.startAnimation(btnAnimation)
 
+
+            val intent = Intent(this,GameActivity::class.java)
+            intent.putExtra(GameActivity.MODO_JOGO,GameActivity.GAMEON2)
+            startActivity(intent)
         }
         binding.btnMode3.setOnClickListener{
             binding.btnMode3.startAnimation(btnAnimation)
 
+
+            val intent = Intent(this,GameActivity::class.java)
+            intent.putExtra(GameActivity.MODO_JOGO,GameActivity.GAMEON3)
+            startActivity(intent)
         }
 
     }
