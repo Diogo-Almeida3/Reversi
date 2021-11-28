@@ -8,4 +8,12 @@
         <color name="azul_marinho">#33465c</color>
         <color name="branco">#ffffff</color>
 
+        <color name="blue">#00AEFF</color>
+        <color name="green">#0DCA68</color>
+        <color name="red">#A63445</color>
+        <array name="array_of_colors">
+                <item>@color/green</item>
+                <item>@color/red</item>
+                <item>@color/blue</item>
+        </array>
 </resources>

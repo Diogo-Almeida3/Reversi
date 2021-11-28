@@ -93,6 +93,7 @@
     <style name="NavigationViewStyleTitle">
         <item name="android:textSize">30sp</item>
     </style>
+
     <style name="NavigationViewStyleTextIcon">
         <item name="android:textSize">18sp</item>
         <item name="android:listPreferredItemHeightSmall">40dp</item>
@@ -141,4 +142,6 @@
         <item name="menu">@menu/nav_menu</item>
         <item name="theme">@style/NavigationViewStyleTitle</item>
     </style>
+
+
 </resources>
