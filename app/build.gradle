@@ -44,4 +44,7 @@ dependencies {
 
     //Dependency for Circular image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //Dependency for justified text
+    implementation 'com.codesgood:justifiedtextview:1.1.0'
 }
