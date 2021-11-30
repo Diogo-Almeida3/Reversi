@@ -17,7 +17,7 @@ class GameActivity : AppCompatActivity() {
         const val MODO_JOGO = "modo"
 
     }
-
+    private val colors = ArrayList<Int>(3)
     private lateinit var boardGame: BoardGame
     private lateinit var boardView: BoardView
     private lateinit var binding: ActivityGameBinding
@@ -28,9 +28,11 @@ class GameActivity : AppCompatActivity() {
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        for(i in 0..2)
+            colors.add(resources.getIntArray(R.array.array_of_colors)[i])
 
         gamemode = intent.getIntExtra(MODO_JOGO, -1)
-        boardGame = BoardGame(gamemode)
+        boardGame = BoardGame(gamemode,colors)
         boardView = findViewById(R.id.boardView)
         boardView.setData(this, gamemode,boardGame)
 

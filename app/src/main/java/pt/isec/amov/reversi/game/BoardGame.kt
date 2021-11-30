@@ -1,18 +1,9 @@
 package pt.isec.amov.reversi.game
 
-import android.content.res.Resources
-import android.graphics.Color
-import android.graphics.Paint
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
-import pt.isec.amov.reversi.R
-import pt.isec.amov.reversi.activities.GameActivity
-import java.lang.String
+
 import kotlin.random.Random
 
-class BoardGame(private var gamemode: Int) {
+class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
 
     companion object {
         const val EMPTY_CELL = 0
@@ -35,12 +26,6 @@ class BoardGame(private var gamemode: Int) {
 
         player.clear()
         val middle = BOARD_SIZE / 2
-
-
-        val colors = ArrayList<Int>(3)
-        colors.add(Color.RED)
-        colors.add(Color.GREEN)
-        colors.add(Color.BLUE)
 
         if (gamemode != 2) {
 
