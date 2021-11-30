@@ -13,12 +13,11 @@ private const val MARGIN = 6
 class BoardView : View {
 
 
-
     private var gamemode = 0
     private var windowHeight = 0;
     private var windowWidth = 0
-    private var stoneHeight = 0;
-    private var stoneWidth = 0
+    private var pieceHeight = 0;
+    private var pieceWidth = 0
 
     private lateinit var gameActivity: GameActivity
     private lateinit var boardGame: BoardGame
@@ -52,8 +51,8 @@ class BoardView : View {
         windowWidth = MeasureSpec.getSize(widthMeasureSpec)
 
         /* Tamanho das peças */
-        stoneHeight = (windowHeight - LINE_SIZE) / BOARD_SIZE
-        stoneWidth = (windowWidth - LINE_SIZE) / BOARD_SIZE
+        pieceHeight = (windowHeight - LINE_SIZE) / BOARD_SIZE
+        pieceWidth = (windowWidth - LINE_SIZE) / BOARD_SIZE
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
@@ -71,14 +70,14 @@ class BoardView : View {
     private fun drawGrid(canvas: Canvas?) {
         for (i in -1..BOARD_SIZE) {
             /* Horizontal */
-            var low = stoneHeight * (i + 1)
+            var low = pieceHeight * (i + 1)
             canvas?.drawRect(
                 0f,
                 low.toFloat(), width.toFloat(), (low + LINE_SIZE).toFloat(), gridPaint
             )
 
             /* Vertical */
-            low = stoneWidth * (i + 1)
+            low = pieceWidth * (i + 1)
             canvas?.drawRect(
                 low.toFloat(), 0f, ((low + LINE_SIZE).toFloat()),
                 height.toFloat(), gridPaint
@@ -94,10 +93,10 @@ class BoardView : View {
 
     private fun drawPiece(canvas: Canvas?, x: Int, y: Int, pieceType: Int) {
 
-        val centerX = (stoneWidth * x) + stoneWidth / 2
-        val centerY = (stoneHeight * y) + stoneHeight / 2
+        val centerX = (pieceWidth * x) + pieceWidth / 2
+        val centerY = (pieceHeight * y) + pieceHeight / 2
 
-        val radius = Math.min(stoneWidth, stoneHeight) / 2 - MARGIN * 2
+        val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN * 2
         val paint = Paint().apply { color = Color.WHITE }
 
         if (gamemode != 2) {

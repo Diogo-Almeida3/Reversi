@@ -20,8 +20,8 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
     }
 
     private fun newGame() {
-        for (i in 0..BOARD_SIZE - 1)
-            for (j in 0..BOARD_SIZE - 1)
+        for (i in 0 until BOARD_SIZE)
+            for (j in 0 until BOARD_SIZE)
                 pieces[i][j] = EMPTY_CELL
 
         player.clear()
