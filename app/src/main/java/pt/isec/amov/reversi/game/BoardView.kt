@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import pt.isec.amov.reversi.activities.GameActivity
 
@@ -90,8 +91,24 @@ class BoardView : View {
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
         drawHighlightValidPlays(canvas,boardGame.highlightValidPlays()) // constroi possiveis jogadas
-                                                                        // construi jogadas
+
     }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        val x = (event?.getX()?.div(pieceWidth))?.toInt()
+        val y= (event?.getY()?.div(pieceHeight))?.toInt()
+
+        /*verificar se x e y validos*/
+
+        if(boardGame.confirmMove(x!!,y!!)){
+            boardGame.move(x,y)
+            boardGame.switchPlayer()
+        }
+        invalidate()
+        return super.onTouchEvent(event)
+    }
+
 
     private fun drawHighlightValidPlays(
         canvas: Canvas?,
