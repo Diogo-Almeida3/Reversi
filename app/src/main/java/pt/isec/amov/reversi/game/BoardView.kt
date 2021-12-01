@@ -89,6 +89,22 @@ class BoardView : View {
     override fun onDraw(canvas: Canvas?) {
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
+        drawHighlightValidPlays(canvas,boardGame.highlightValidPlays())
+    }
+
+    private fun drawHighlightValidPlays(
+        canvas: Canvas?,
+        highlightValidPlays: ArrayList<PieceMoves>
+    ) {
+        for (i in 0 until highlightValidPlays.size){
+            val Left = (pieceWidth * highlightValidPlays[i].getX())
+            val Top = (pieceHeight * highlightValidPlays[i].getY())
+            val Right = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth
+            val Bottom = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight
+            canvas?.drawRect(Left.toFloat(), Top.toFloat(),
+                Right.toFloat(), Bottom.toFloat(),Paint().apply { color = Color.WHITE })
+        }
+
     }
 
     private fun drawPiece(canvas: Canvas?, x: Int, y: Int, pieceType: Int) {
