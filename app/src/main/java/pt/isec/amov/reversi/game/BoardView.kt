@@ -11,6 +11,7 @@ import pt.isec.amov.reversi.activities.GameActivity
 
 private const val LINE_SIZE = 4
 private const val MARGIN = 6
+
 class BoardView : View {
 
 
@@ -22,6 +23,7 @@ class BoardView : View {
 
     private lateinit var gameActivity: GameActivity
     private lateinit var boardGame: BoardGame
+    private var validPlays = ArrayList<PieceMoves>()
 
     private var BOARD_SIZE = 0
     private val gridPaint = Paint(Paint.DITHER_FLAG or Paint.ANTI_ALIAS_FLAG).apply {
@@ -60,10 +62,10 @@ class BoardView : View {
 
     private fun drawBoard(canvas: Canvas?) {
         for (i in 0..BOARD_SIZE - 1)
-            for (j in 0..BOARD_SIZE - 1){
+            for (j in 0..BOARD_SIZE - 1) {
                 val pieceType = boardGame.getPiece(i, j)
                 if (pieceType != 0)
-                    drawPiece(canvas, i, j,pieceType)
+                    drawPiece(canvas, i, j, pieceType)
             }
 
     }
@@ -90,37 +92,49 @@ class BoardView : View {
     override fun onDraw(canvas: Canvas?) {
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
-        drawHighlightValidPlays(canvas,boardGame.highlightValidPlays()) // constroi possiveis jogadas
+        drawHighlightValidPlays (canvas, boardGame.highlightValidPlays()) // constroi possiveis jogadas
 
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
         val x = (event?.getX()?.div(pieceWidth))?.toInt()
-        val y= (event?.getY()?.div(pieceHeight))?.toInt()
+        val y = (event?.getY()?.div(pieceHeight))?.toInt()
 
-        /*verificar se x e y validos*/
+        if (gamemode == 0) {
 
-        if(boardGame.confirmMove(x!!,y!!)){
-            boardGame.move(x,y)
-            boardGame.switchPlayer()
+            if (boardGame.confirmMove(x!!, y!!)) {
+                boardGame.move(x, y)
+                boardGame.switchPlayer()
+            }
+
+            boardGame.checkEndGame()
+            invalidate()
+
         }
-        invalidate()
         return super.onTouchEvent(event)
     }
+
+
+
+    private fun errorNotification(number:Int){
+
+    }
+
+
 
 
     private fun drawHighlightValidPlays(
         canvas: Canvas?,
         highlightValidPlays: ArrayList<PieceMoves>
     ) {
-        for (i in 0 until highlightValidPlays.size){
+        for (i in 0 until highlightValidPlays.size) {
             val Left = (pieceWidth * highlightValidPlays[i].getX())
             val Top = (pieceHeight * highlightValidPlays[i].getY())
             val Right = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth
             val Bottom = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight
             canvas?.drawRect(Left.toFloat(), Top.toFloat(),
-                Right.toFloat(), Bottom.toFloat(),Paint().apply { color = Color.WHITE })
+                Right.toFloat(), Bottom.toFloat(), Paint().apply { color = Color.WHITE })
         }
 
     }

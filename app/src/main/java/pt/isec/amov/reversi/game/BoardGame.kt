@@ -1,6 +1,7 @@
 package pt.isec.amov.reversi.game
 
 
+import android.text.BoringLayout
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -65,7 +66,7 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
         }
     }
 
-    fun highlightValidPlays():ArrayList<PieceMoves>{
+    fun highlightValidPlays(): ArrayList<PieceMoves> {
         /*
         * Não é necessário preocupar onde o utilizador clica pois só estamos a fazer o highlight
         *
@@ -129,8 +130,8 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
         return possiblePlays
     }
 
-    fun confirmMove(x : Int , y: Int):Boolean{
-        for (i in 0 until validPlays.size){
+    fun confirmMove(x: Int, y: Int): Boolean {
+        for (i in 0 until validPlays.size) {
             if (x == validPlays[i].getX() && y == validPlays[i].getY())
                 return true
         }
@@ -140,12 +141,13 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
     fun move(posX: Int, posY: Int): Int {
 
         // verificar margens da posicao da peça
-        if (posX < 0 || posY < 0 || posX >= BOARD_SIZE || posY >= BOARD_SIZE)
-            return -1;
+        if (posX < 0 || posY < 0 || posX >= BOARD_SIZE || posY >= BOARD_SIZE) {
+            return -1
+        }
 
         // celula ja se encontra ocupada
         if (pieces[posX][posY] != EMPTY_CELL)
-            return -2;
+            return -1
 
         var nPiecesCaptured = 0
         for (dx in -1..1) {
@@ -166,7 +168,8 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
                             nPiecesCaptured += nextStep - 1;    // adicionar essa peça
                             var aux = nextStep;
                             while (aux-- > 0) {
-                                pieces[posX + (dx * aux)][posY + (dy * aux)] = getPieceType();      // atribuir a outra peça ao teu tipo de peça
+                                pieces[posX + (dx * aux)][posY + (dy * aux)] =
+                                    getPieceType();      // atribuir a outra peça ao teu tipo de peça
                             }
                         }
 
@@ -177,6 +180,60 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
             }
         }
         return nPiecesCaptured;
+    }
+
+
+    fun checkEndGame(): Boolean {
+        return checkEndGameBoard() || checkEndGamePlays()
+    }
+
+    fun getCurrentPlayer(): Int {
+        return currentPlayer
+    }
+
+    fun getPlayers(): Int {
+        return player.size
+    }
+
+
+    fun checkEndGamePlays(): Boolean {
+        var i: Int = 0
+        while (highlightValidPlays().size == 0) {
+            if (getPlayers() - 1 == i)
+                return true
+            switchPlayer()
+            i++
+        }
+        return false
+    }
+
+    fun checkEndGameBoard(): Boolean {
+        var count = 0
+        for (i in 0 until player.size)
+            count += player[i].getPieces()
+
+        if (count >= BOARD_SIZE * BOARD_SIZE)
+            return true
+        return false
+    }
+
+
+    fun checkWinner(): Player? {
+        var winner: Player? = player[0]
+        var count: Boolean = false
+
+        for (i in 0 until player.size - 1) // 0, 1 em modo de 3     5 - 10 - 10
+            for (j in (i + 1) until player.size) {   // 1, 2 em modo de 3
+                if (player[i].getPieces() < player[j].getPieces() && winner?.getPieces()!! < player[j].getPieces()) {
+                    winner = player[j]
+                    count = false
+                    break
+                } else if (winner?.getPieces() == player[j].getPieces())
+                    count = true
+            }
+        if (count)
+            return null
+        return winner
     }
 
 
