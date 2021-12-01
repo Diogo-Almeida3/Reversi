@@ -94,21 +94,24 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
                             if(dx == 0 && dy == 0)
                                 continue
                             else{
-                                for(t in 1 until BOARD_SIZE){
-                                    if(t > 1){
-                                        befX = check_x
-                                        befY = check_y
+                                for(nextStep in 1 until BOARD_SIZE){   // para conseguir ir ate à ponta do tabuleiro
+                                    if(nextStep > 1){ //apartir da segunda vez
+                                        befX = check_x      // guardar o x da peca anterior
+                                        befY = check_y      // guardar o y da peca anterior
                                     }
-                                    check_x = i + (dx * t)
-                                    check_y = j + (dy * t)
+                                    //
+                                    check_x = i + (dx * nextStep)
+                                    check_y = j + (dy * nextStep)
 
+                                    // verificar tamanho do tabuleiro & verificar celula é do jogador
                                     if(check_x < 0 || check_y < 0 || check_x >= BOARD_SIZE || check_y >= BOARD_SIZE || pieces[check_x][check_y] == getPieceType() )
                                         break
-                                    if(t == 1)
-                                        if(pieces[check_x][check_y] == EMPTY_CELL)
-                                            break;
 
-                                    if(t > 1)
+                                    // se celula vazia no raio de 1 => avançar
+                                    if(pieces[check_x][check_y] == EMPTY_CELL && nextStep ==1)
+                                        break;
+
+                                    if(nextStep > 1)
                                         if(pieces[check_x][check_y] == EMPTY_CELL && pieces[befX][befY]  != getPieceType()){
                                             possiblePlays.add(PieceMoves(check_x,check_y))
                                             break;

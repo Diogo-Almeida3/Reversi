@@ -89,7 +89,8 @@ class BoardView : View {
     override fun onDraw(canvas: Canvas?) {
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
-        drawHighlightValidPlays(canvas,boardGame.highlightValidPlays())
+        drawHighlightValidPlays(canvas,boardGame.highlightValidPlays()) // constroi possiveis jogadas
+                                                                        // construi jogadas
     }
 
     private fun drawHighlightValidPlays(
