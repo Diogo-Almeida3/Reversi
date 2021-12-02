@@ -25,6 +25,7 @@
             android:layout_height="0dp"
             android:layout_weight="0.24"
             android:orientation="horizontal">
+
             <pt.isec.amov.reversi.game.GamePerfilView
                 android:id="@+id/gamePerfilView"
                 android:layout_width="match_parent"
