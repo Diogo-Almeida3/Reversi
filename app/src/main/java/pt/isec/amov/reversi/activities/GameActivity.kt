@@ -31,7 +31,8 @@ class GameActivity : AppCompatActivity() {
         const val MODO_JOGO = "modo"
 
     }
-    private val colors = ArrayList<Int>(3)
+    private val colorsPlayers = ArrayList<Int>(3)
+    private val colorsBoard = ArrayList<Int>(2)
     private lateinit var boardGame: BoardGame
     private lateinit var boardView: BoardView
     private lateinit var binding: ActivityGameBinding
@@ -70,11 +71,15 @@ class GameActivity : AppCompatActivity() {
             true
         }
 
+        //todo tornar este get colors dinamico
         for(i in 0..2)
-            colors.add(resources.getIntArray(R.array.array_of_colors)[i])
+            colorsPlayers.add(resources.getIntArray(R.array.array_of_colors)[i])
+
+        for (i in 0..2)
+            colorsBoard.add(resources.getIntArray(R.array.array_of_board_colors)[i])
 
         gamemode = intent.getIntExtra(MODO_JOGO, -1)
-        boardGame = BoardGame(gamemode,colors)
+        boardGame = BoardGame(gamemode,colorsPlayers,colorsBoard)
         boardView = findViewById(R.id.boardView)
         boardView.setData(boardGame)
     }

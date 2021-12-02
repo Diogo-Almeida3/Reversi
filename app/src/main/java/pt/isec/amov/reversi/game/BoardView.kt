@@ -8,29 +8,23 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 
-private const val LINE_SIZE = 4
-private const val MARGIN = 6
+private const val LINE_SIZE = 5
+private const val MARGIN_PIECE = 8
+private const val MARGIN_HIGHLIGHT = 22
 
-class BoardView : View {
+class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
-    private var windowHeight = 0;
+    private var windowHeight = 0
     private var windowWidth = 0
-    private var pieceHeight = 0;
+    private var pieceHeight = 0
     private var pieceWidth = 0
 
     private lateinit var boardGame: BoardGame
 
     private var BOARD_SIZE = 0
-    private val gridPaint = Paint(Paint.DITHER_FLAG or Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-        strokeWidth = 4.0f
-        style = Paint.Style.FILL_AND_STROKE
-    }
+    private val gridPaint = Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG)
 
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-    fun setData( boardGame: BoardGame) {
+    fun setData(boardGame: BoardGame) {
         this.boardGame = boardGame
         BOARD_SIZE = boardGame.getBoardSize()
     }
@@ -48,8 +42,8 @@ class BoardView : View {
     }
 
     private fun drawBoard(canvas: Canvas?) {
-        for (i in 0..BOARD_SIZE - 1)
-            for (j in 0..BOARD_SIZE - 1) {
+        for (i in 0 until BOARD_SIZE)
+            for (j in 0 until BOARD_SIZE) {
                 val pieceType = boardGame.getPiece(i, j)
                 if (pieceType != 0)
                     drawPiece(canvas, i, j, pieceType)
@@ -58,28 +52,51 @@ class BoardView : View {
     }
 
     private fun drawGrid(canvas: Canvas?) {
+        gridPaint.apply {
+            color = boardGame.getBoardColor(1)
+        }
+
+        drawCellColor(canvas)
         for (i in -1..BOARD_SIZE) {
             /* Horizontal */
             var low = pieceHeight * (i + 1)
             canvas?.drawRect(
                 0f,
-                low.toFloat(), width.toFloat(), (low + LINE_SIZE).toFloat(), gridPaint
+                low.toFloat(), width.toFloat() - MARGIN_PIECE, (low + LINE_SIZE).toFloat(), gridPaint
             )
 
             /* Vertical */
             low = pieceWidth * (i + 1)
             canvas?.drawRect(
                 low.toFloat(), 0f, ((low + LINE_SIZE).toFloat()),
-                height.toFloat(), gridPaint
+                height.toFloat() - MARGIN_PIECE, gridPaint
             )
         }
+    }
 
+    private fun drawCellColor(canvas: Canvas?) {
+        for (i in 0 until BOARD_SIZE) {
+            for (j in 0 until BOARD_SIZE) {
+                val Left = (pieceWidth * i)
+                val Top = (pieceHeight * j)
+                val Right = (pieceWidth * i) + pieceWidth
+                val Bottom = (pieceHeight * j) + pieceHeight
+                canvas?.drawRect(Left.toFloat(),
+                    Top.toFloat(),
+                    Right.toFloat(),
+                    Bottom.toFloat(),
+                    Paint().apply { color = boardGame.getBoardColor(0) })
+            }
+        }
     }
 
     override fun onDraw(canvas: Canvas?) {
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
-        drawHighlightValidPlays (canvas, boardGame.highlightValidPlays()) // constroi possiveis jogadas
+        drawHighlightValidPlays(
+            canvas,
+            boardGame.highlightValidPlays()
+        ) // constroi possiveis jogadas
 
     }
 
@@ -107,12 +124,21 @@ class BoardView : View {
         highlightValidPlays: ArrayList<PieceMoves>
     ) {
         for (i in 0 until highlightValidPlays.size) {
-            val Left = (pieceWidth * highlightValidPlays[i].getX())
-            val Top = (pieceHeight * highlightValidPlays[i].getY())
-            val Right = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth
-            val Bottom = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight
-            canvas?.drawRect(Left.toFloat(), Top.toFloat(),
-                Right.toFloat(), Bottom.toFloat(), Paint().apply { color = Color.WHITE })
+            val centerX = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth/2
+            val centerY = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight/2
+            val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN_HIGHLIGHT * 2
+            canvas?.drawCircle(
+                centerX.toFloat(), centerY.toFloat(),
+                radius.toFloat(),Paint(Paint.ANTI_ALIAS_FLAG ).apply {
+                    color = boardGame.getBoardColor(2)
+                })
+            canvas?.drawCircle(
+                centerX.toFloat(), centerY.toFloat(),
+                radius.toFloat(),Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
+                    color = Color.WHITE
+                    style = Paint.Style.STROKE
+                    strokeWidth = 6.0f
+                })
         }
     }
 
@@ -121,7 +147,7 @@ class BoardView : View {
         val centerX = (pieceWidth * x) + pieceWidth / 2
         val centerY = (pieceHeight * y) + pieceHeight / 2
 
-        val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN * 2
+        val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN_PIECE * 2
         val paint = Paint().apply { color = Color.WHITE }
 
         if (boardGame.getGameMode() != 2) {

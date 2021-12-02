@@ -1,11 +1,10 @@
 package pt.isec.amov.reversi.game
 
 
-import android.text.BoringLayout
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
+class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<Int>, private var colorsBoard: ArrayList<Int>) {
 
     companion object {
         const val EMPTY_CELL = 0
@@ -33,7 +32,7 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
         if (gamemode != 2) {
 
             for (i in 1..2)
-                player.add(Player(i, 2, colors[i - 1]))
+                player.add(Player(i, 2, colorsPlayers[i - 1]))
 
 
             pieces[middle - 1][middle - 1] = player[0].getPieceType()
@@ -45,7 +44,7 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
 
         } else {
             for (i in 1..3)
-                player.add(Player(i, 4, colors[i - 1]))
+                player.add(Player(i, 4, colorsPlayers[i - 1]))
 
             pieces[middle - 1][middle - 3] = player[0].getPieceType()
             pieces[middle][middle - 2] = player[0].getPieceType()
@@ -195,6 +194,9 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
         return player.size
     }
 
+    fun getBoardColor(number : Int): Int{
+        return colorsBoard[number]
+    }
 
 
     fun checkEndGamePlays(): Boolean {

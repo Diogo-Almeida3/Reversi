@@ -8,12 +8,20 @@
         <color name="azul_marinho">#33465c</color>
         <color name="branco">#ffffff</color>
 
-        <color name="blue">#00AEFF</color>
-        <color name="green">#0DCA68</color>
-        <color name="red">#A63445</color>
+        <color name="dark_canela">#B5E6CEC4</color>
+        <color name="light_blue">#B54AADE3</color>
+        <integer-array name="array_of_board_colors">
+                <item>@color/dark_canela</item>
+                <item>@color/azul_marinho</item>
+                <item>@color/light_blue</item>
+        </integer-array>
+
+        <color name="gray">#F0F3F1</color>
+        <color name="black">#D50B0A0A</color>
+        <color name="yellow">#C1A51A</color>
         <integer-array name="array_of_colors">
-                <item>@color/green</item>
-                <item>@color/red</item>
-                <item>@color/blue</item>
+                <item>@color/gray</item>
+                <item>@color/black</item>
+                <item>@color/yellow</item>
         </integer-array>
 </resources>
