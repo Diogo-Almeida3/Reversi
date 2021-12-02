@@ -1,10 +1,13 @@
 package pt.isec.amov.reversi.activities
 
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.AlphaAnimation
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -15,6 +18,7 @@ import pt.isec.amov.reversi.databinding.ActivityGameBinding
 import pt.isec.amov.reversi.game.BoardGame
 import pt.isec.amov.reversi.game.BoardView
 import pt.isec.amov.reversi.game.GamePerfilView
+import pt.isec.amov.reversi.game.Players
 
 class GameActivity : AppCompatActivity() {
 
@@ -37,7 +41,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var boardGame: BoardGame
     private lateinit var boardView: BoardView
     private lateinit var gamePerfilView: GamePerfilView
-    private lateinit var binding: ActivityGameBinding
+    private lateinit var binding : ActivityGameBinding
     private var gamemode = GAMEOFF2
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,4 +98,6 @@ class GameActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+
 }

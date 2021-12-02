@@ -2,8 +2,16 @@ package pt.isec.amov.reversi.game
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.view.View
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.ImageView
+
+import android.widget.TextView
+import pt.isec.amov.reversi.R
 
 
 private const val MARGIN = 24
@@ -14,11 +22,12 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var windowWidth = 0
 
     private lateinit var boardGame: BoardGame
-    private var nPlayers = 0
+
+
 
     fun setData(boardGame: BoardGame) {
         this.boardGame = boardGame
-        nPlayers = boardGame.getPlayers()
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -30,15 +39,14 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas?) {
         drawBackground(canvas)
-        //drawProfileData(canvas) //todo Iluminar ou colocar uma bola no jogador que é a jogar de modo a identificar
-        //drawPonctuation(canvas)
+        //drawData(canvas) //todo Iluminar ou colocar uma bola no jogador que é a jogar de modo a identificar
     }
 
     private fun drawBackground(canvas: Canvas?) {
-        for (i in 0 until nPlayers) {
-            val left = (windowWidth / nPlayers) * i + MARGIN
+        for (i in 0 until Players.players.size) {
+            val left = (windowWidth / Players.players.size) * i + MARGIN
             val top = 0
-            val right = (windowWidth / nPlayers) * i + (windowWidth / nPlayers) - MARGIN
+            val right = (windowWidth / Players.players.size) * i + (windowWidth / Players.players.size) - MARGIN
             val bottom = windowHeight
             val rect = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 
@@ -58,16 +66,13 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                 })
         }
 
-
     }
 
-    private fun drawProfileData(canvas: Canvas?) {
-
+    private fun drawData(canvas: Canvas?) {
+        for(i in 0 until Players.players.size){
+            //Definir a imagem do utilizador guardada na class Player
+            //Definir o nome do utilizador guardado na class Player
+            //Definir a pontuação do utilizador armazenada na class Player
+        }
     }
-
-    private fun drawPonctuation(canvas: Canvas?) {
-
-    }
-
-
 }
