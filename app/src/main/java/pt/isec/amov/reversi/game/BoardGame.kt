@@ -196,6 +196,7 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
     }
 
 
+
     fun checkEndGamePlays(): Boolean {
         var i: Int = 0
         while (highlightValidPlays().size == 0) {
@@ -249,6 +250,16 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
         return player[playerNumber].getColor()
     }
 
+    fun getBoardSize(): Int {
+        if (gamemode != 2)
+            return 8
+        return 10
+    }
+
+    fun getGameMode() :Int{
+        return gamemode
+    }
+
     fun switchPlayer() {
         if (gamemode != 2) {
             when (currentPlayer) {
@@ -268,9 +279,5 @@ class BoardGame(private var gamemode: Int, private var colors: ArrayList<Int>) {
         return Random.nextInt(1..nPlayers)
     }
 
-    private fun getBoardSize(): Int {
-        if (gamemode != 2)
-            return 8
-        return 10
-    }
+
 }

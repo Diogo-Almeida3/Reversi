@@ -7,23 +7,18 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import pt.isec.amov.reversi.activities.GameActivity
 
 private const val LINE_SIZE = 4
 private const val MARGIN = 6
 
 class BoardView : View {
 
-
-    private var gamemode = 0
     private var windowHeight = 0;
     private var windowWidth = 0
     private var pieceHeight = 0;
     private var pieceWidth = 0
 
-    private lateinit var gameActivity: GameActivity
     private lateinit var boardGame: BoardGame
-    private var validPlays = ArrayList<PieceMoves>()
 
     private var BOARD_SIZE = 0
     private val gridPaint = Paint(Paint.DITHER_FLAG or Paint.ANTI_ALIAS_FLAG).apply {
@@ -35,17 +30,9 @@ class BoardView : View {
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
-    fun setData(gameActivity: GameActivity, gamemode: Int, boardGame: BoardGame) {
-        this.gameActivity = gameActivity
-        this.gamemode = gamemode
+    fun setData( boardGame: BoardGame) {
         this.boardGame = boardGame
-        BOARD_SIZE = getBoardSize()
-    }
-
-    private fun getBoardSize(): Int {
-        if (gamemode != 2)
-            return 8
-        return 10
+        BOARD_SIZE = boardGame.getBoardSize()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -101,7 +88,7 @@ class BoardView : View {
         val x = (event?.getX()?.div(pieceWidth))?.toInt()
         val y = (event?.getY()?.div(pieceHeight))?.toInt()
 
-        if (gamemode == 0) {
+        if (boardGame.getGameMode() == 0) {
 
             if (boardGame.confirmMove(x!!, y!!)) {
                 boardGame.move(x, y)
@@ -115,15 +102,6 @@ class BoardView : View {
         return super.onTouchEvent(event)
     }
 
-
-
-    private fun errorNotification(number:Int){
-
-    }
-
-
-
-
     private fun drawHighlightValidPlays(
         canvas: Canvas?,
         highlightValidPlays: ArrayList<PieceMoves>
@@ -136,7 +114,6 @@ class BoardView : View {
             canvas?.drawRect(Left.toFloat(), Top.toFloat(),
                 Right.toFloat(), Bottom.toFloat(), Paint().apply { color = Color.WHITE })
         }
-
     }
 
     private fun drawPiece(canvas: Canvas?, x: Int, y: Int, pieceType: Int) {
@@ -147,7 +124,7 @@ class BoardView : View {
         val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN * 2
         val paint = Paint().apply { color = Color.WHITE }
 
-        if (gamemode != 2) {
+        if (boardGame.getGameMode() != 2) {
             when (pieceType) {
                 1 -> paint.color = boardGame.getColor(0)
                 2 -> paint.color = boardGame.getColor(1)
@@ -159,7 +136,6 @@ class BoardView : View {
                 3 -> paint.color = boardGame.getColor(2)
             }
         }
-
 
         if (canvas != null) {
             canvas.drawCircle(

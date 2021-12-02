@@ -76,7 +76,7 @@ class GameActivity : AppCompatActivity() {
         gamemode = intent.getIntExtra(MODO_JOGO, -1)
         boardGame = BoardGame(gamemode,colors)
         boardView = findViewById(R.id.boardView)
-        boardView.setData(this, gamemode,boardGame)
+        boardView.setData(boardGame)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
