@@ -14,6 +14,7 @@ import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.databinding.ActivityGameBinding
 import pt.isec.amov.reversi.game.BoardGame
 import pt.isec.amov.reversi.game.BoardView
+import pt.isec.amov.reversi.game.GamePerfilView
 
 class GameActivity : AppCompatActivity() {
 
@@ -35,6 +36,7 @@ class GameActivity : AppCompatActivity() {
     private val colorsBoard = ArrayList<Int>(2)
     private lateinit var boardGame: BoardGame
     private lateinit var boardView: BoardView
+    private lateinit var gamePerfilView: GamePerfilView
     private lateinit var binding: ActivityGameBinding
     private var gamemode = GAMEOFF2
 
@@ -81,7 +83,9 @@ class GameActivity : AppCompatActivity() {
         gamemode = intent.getIntExtra(MODO_JOGO, -1)
         boardGame = BoardGame(gamemode,colorsPlayers,colorsBoard)
         boardView = findViewById(R.id.boardView)
+        gamePerfilView = findViewById(R.id.gamePerfilView)
         boardView.setData(boardGame)
+        gamePerfilView.setData(boardGame)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

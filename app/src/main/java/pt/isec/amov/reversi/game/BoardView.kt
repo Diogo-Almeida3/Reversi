@@ -62,7 +62,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             var low = pieceHeight * (i + 1)
             canvas?.drawRect(
                 0f,
-                low.toFloat(), width.toFloat() - MARGIN_PIECE, (low + LINE_SIZE).toFloat(), gridPaint
+                low.toFloat(),
+                width.toFloat() - MARGIN_PIECE,
+                (low + LINE_SIZE).toFloat(),
+                gridPaint
             )
 
             /* Vertical */
@@ -124,17 +127,17 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         highlightValidPlays: ArrayList<PieceMoves>
     ) {
         for (i in 0 until highlightValidPlays.size) {
-            val centerX = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth/2
-            val centerY = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight/2
+            val centerX = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth / 2
+            val centerY = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight / 2
             val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN_HIGHLIGHT * 2
             canvas?.drawCircle(
                 centerX.toFloat(), centerY.toFloat(),
-                radius.toFloat(),Paint(Paint.ANTI_ALIAS_FLAG ).apply {
+                radius.toFloat(), Paint(Paint.ANTI_ALIAS_FLAG).apply {
                     color = boardGame.getBoardColor(2)
                 })
             canvas?.drawCircle(
                 centerX.toFloat(), centerY.toFloat(),
-                radius.toFloat(),Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
+                radius.toFloat(), Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
                     color = Color.WHITE
                     style = Paint.Style.STROKE
                     strokeWidth = 6.0f

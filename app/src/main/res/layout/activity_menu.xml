@@ -89,7 +89,7 @@
                     android:paddingLeft="20dp"
                     android:text="@string/rules"
                     android:textColor="@color/branco"
-                    android:autoSizeTextType="uniform" />
+                    app:autoSizeTextType="uniform" />
 
                 <Button
                     android:id="@+id/btnExit"
@@ -103,7 +103,7 @@
                     android:paddingRight="35dp"
                     android:text="@string/exit"
                     android:textColor="@color/branco"
-                    android:autoSizeTextType="uniform" />
+                    app:autoSizeTextType="uniform" />
 
             </LinearLayout>
         </LinearLayout>

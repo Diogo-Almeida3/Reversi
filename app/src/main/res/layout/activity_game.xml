@@ -17,16 +17,50 @@
         <include
             layout="@layout/nav_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="56dp" />
+            android:layout_height="0dp"
+            android:layout_weight="0.06"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.24"
+            android:orientation="horizontal">
+            <pt.isec.amov.reversi.game.GamePerfilView
+                android:id="@+id/gamePerfilView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginRight="6dp"
+                android:layout_marginLeft="6dp"
+                />
+
+        </LinearLayout>
+
 
         <pt.isec.amov.reversi.game.BoardView
             android:id="@+id/boardView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_margin="12dp"
+            android:layout_weight="0.5"
             />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btnBombPiece"
+                style="@style/buttonSpecialPieces"
+                android:text="Peça Bomba"
+                app:autoSizeTextType="uniform" />
 
+            <Button
+                android:id="@+id/btnTradePiece"
+                style="@style/buttonSpecialPieces"
+                android:text="Trocar Peças"
+                app:autoSizeTextType="uniform" />
+        </LinearLayout>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
