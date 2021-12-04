@@ -255,5 +255,9 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
     fun getGameMode() :Int = gamemode
 
+    fun getUsername(number: Int) : String{
+        return players[number].getUsername()
+    }
+
     private fun rafflePlayer(nPlayers: Int): Int = Random.nextInt(1..nPlayers)
 }

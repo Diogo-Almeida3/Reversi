@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 
 private const val LINE_SIZE = 5
 private const val MARGIN_PIECE = 8
@@ -18,7 +19,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var windowWidth = 0
     private var pieceHeight = 0
     private var pieceWidth = 0
-
+    private var endGame = false
     private lateinit var boardGame: BoardGame
 
     private var boardSIZE = 0
@@ -108,17 +109,24 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         val x = (event?.x?.div(pieceWidth))?.toInt()
         val y = (event?.y?.div(pieceHeight))?.toInt()
 
-        if (boardGame.getGameMode() == 0) {
+        if(!endGame){
+            when(boardGame.getGameMode()){
+                0 -> {
+                    if (boardGame.confirmMove(x!!, y!!)) {
+                        boardGame.move(x, y)
+                        boardGame.switchPlayer()
+                    }
 
-            if (boardGame.confirmMove(x!!, y!!)) {
-                boardGame.move(x, y)
-                boardGame.switchPlayer()
+                    if(boardGame.checkEndGame()){
+                        Toast.makeText(context,"Acabou o jogo",Toast.LENGTH_LONG).show()
+                        endGame = true
+                    }
+
+                    invalidate()
+                }
             }
-
-            boardGame.checkEndGame()
-            invalidate()
-
         }
+
         return super.onTouchEvent(event)
     }
 
