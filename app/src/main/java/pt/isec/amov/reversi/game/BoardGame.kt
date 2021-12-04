@@ -15,7 +15,7 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
     private var currentPlayer = 0
     private var validPlays = ArrayList<PieceMoves>()
-
+    val players = arrayListOf<Player>()
     init {
         newGame()
     }
@@ -25,40 +25,40 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
             for (j in 0 until BOARD_SIZE)
                 pieces[i][j] = EMPTY_CELL
 
-        Players.players.clear()
+        players.clear()
         val middle = BOARD_SIZE / 2
 
         if (gamemode != 2) {
 
             for (i in 1..2)
-                Players.players.add(Player(i, 2, colorsPlayers[i - 1]))
+                players.add(Player(i, 2, colorsPlayers[i - 1]))
 
 
-            pieces[middle - 1][middle - 1] = Players.players[0].getPieceType()
-            pieces[middle][middle] = Players.players[0].getPieceType()
-            pieces[middle][middle - 1] = Players.players[1].getPieceType()
-            pieces[middle - 1][middle] = Players.players[1].getPieceType()
+            pieces[middle - 1][middle - 1] = players[0].getPieceType()
+            pieces[middle][middle] = players[0].getPieceType()
+            pieces[middle][middle - 1] = players[1].getPieceType()
+            pieces[middle - 1][middle] = players[1].getPieceType()
 
             currentPlayer = rafflePlayer(2)
 
         } else {
             for (i in 1..3)
-                Players.players.add(Player(i, 4, colorsPlayers[i - 1]))
+                players.add(Player(i, 4, colorsPlayers[i - 1]))
 
-            pieces[middle - 1][middle - 3] = Players.players[0].getPieceType()
-            pieces[middle][middle - 2] = Players.players[0].getPieceType()
-            pieces[middle - 3][middle + 2] = Players.players[0].getPieceType()
-            pieces[middle - 2][middle + 1] = Players.players[0].getPieceType()
+            pieces[middle - 1][middle - 3] = players[0].getPieceType()
+            pieces[middle][middle - 2] = players[0].getPieceType()
+            pieces[middle - 3][middle + 2] = players[0].getPieceType()
+            pieces[middle - 2][middle + 1] = players[0].getPieceType()
 
-            pieces[middle - 1][middle - 2] = Players.players[1].getPieceType()
-            pieces[middle][middle - 3] = Players.players[1].getPieceType()
-            pieces[middle + 1][middle + 1] = Players.players[1].getPieceType()
-            pieces[middle + 2][middle + 2] = Players.players[1].getPieceType()
+            pieces[middle - 1][middle - 2] = players[1].getPieceType()
+            pieces[middle][middle - 3] = players[1].getPieceType()
+            pieces[middle + 1][middle + 1] = players[1].getPieceType()
+            pieces[middle + 2][middle + 2] = players[1].getPieceType()
 
-            pieces[middle - 3][middle + 1] = Players.players[2].getPieceType()
-            pieces[middle - 2][middle + 2] = Players.players[2].getPieceType()
-            pieces[middle + 1][middle + 2] = Players.players[2].getPieceType()
-            pieces[middle + 2][middle + 1] = Players.players[2].getPieceType()
+            pieces[middle - 3][middle + 1] = players[2].getPieceType()
+            pieces[middle - 2][middle + 2] = players[2].getPieceType()
+            pieces[middle + 1][middle + 2] = players[2].getPieceType()
+            pieces[middle + 2][middle + 1] = players[2].getPieceType()
 
             currentPlayer = rafflePlayer(3)
         }
@@ -190,7 +190,7 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
     }
 
     fun getPlayers(): Int {
-        return Players.players.size
+        return players.size
     }
 
     fun getBoardColor(number : Int): Int{
@@ -211,8 +211,8 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
     fun checkEndGameBoard(): Boolean {
         var count = 0
-        for (i in 0 until Players.players.size)
-            count += Players.players[i].getPieces()
+        for (i in 0 until players.size)
+            count += players[i].getPieces()
 
         if (count >= BOARD_SIZE * BOARD_SIZE)
             return true
@@ -221,16 +221,16 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
 
     fun checkWinner(): Player? {
-        var winner: Player? = Players.players[0]
+        var winner: Player? = players[0]
         var count: Boolean = false
 
-        for (i in 0 until Players.players.size - 1) // 0, 1 em modo de 3     5 - 10 - 10
-            for (j in (i + 1) until Players.players.size) {   // 1, 2 em modo de 3
-                if (Players.players[i].getPieces() < Players.players[j].getPieces() && winner?.getPieces()!! < Players.players[j].getPieces()) {
-                    winner = Players.players[j]
+        for (i in 0 until players.size - 1) // 0, 1 em modo de 3     5 - 10 - 10
+            for (j in (i + 1) until players.size) {   // 1, 2 em modo de 3
+                if (players[i].getPieces() < players[j].getPieces() && winner?.getPieces()!! < players[j].getPieces()) {
+                    winner = players[j]
                     count = false
                     break
-                } else if (winner?.getPieces() == Players.players[j].getPieces())
+                } else if (winner?.getPieces() == players[j].getPieces())
                     count = true
             }
         if (count)
@@ -244,11 +244,11 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
     }
 
     fun getPieceType(): Int {
-        return Players.players[currentPlayer - 1].getPieceType()
+        return players[currentPlayer - 1].getPieceType()
     }
 
     fun getColor(playerNumber: Int): Int {
-        return Players.players[playerNumber].getColor()
+        return players[playerNumber].getColor()
     }
 
     fun getBoardSize(): Int {

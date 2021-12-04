@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rulesScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/custom_background"
+    tools:context=".fragments.RulesFragment">
+
+    <LinearLayout
+        android:id="@+id/firstLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+
+
+        <TextView
+            style="@style/titleReversi"
+            android:text="@string/reversi" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/logo"
+            android:maxWidth="100dp"
+            android:maxHeight="100dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_reversi" />
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/rules"
+            android:textSize="25sp" />
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/rulesText" />
+
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/game_modes"
+            android:textSize="25sp" />
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/modes_text" />
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/mode_2_players_offline"
+            android:textSize="17sp" />
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/mode_2_Offline_text" />
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/mode_2_players_online"
+            android:textSize="17sp" />
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/mode_2_Online_text" />
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/mode_3_players_online"
+            android:textSize="17sp" />
+
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/mode_3_Online_text" />
+
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/special_plays"
+            android:textSize="25sp" />
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/special_pieces_text" />
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/bomb_piece"
+            android:textSize="17sp" />
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/bomb_piece_text" />
+
+        <TextView
+            style="@style/rulesTitle"
+            android:text="@string/piece_exchange"
+            android:textSize="17sp" />
+
+        <com.codesgood.views.JustifiedTextView
+            style="@style/rulesText"
+            android:text="@string/piece_exchange_text" />
+    </LinearLayout>
+
+
+</ScrollView>

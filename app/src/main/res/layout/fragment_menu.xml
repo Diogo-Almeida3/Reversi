@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuFrameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/custom_background"
+    tools:context=".fragments.MenuFragment">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="32dp">
+
+        <TextView
+            style="@style/titleReversi"
+            android:text="@string/reversi" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/logo_reversi" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="100dp"
+        android:orientation="vertical"
+        android:paddingVertical="20dp">
+
+        <Button
+            android:id="@+id/btnMode1"
+            style="@style/ButtonMenu"
+            android:drawableLeft="@drawable/ic_group"
+            android:paddingLeft="20dp"
+            android:text="@string/twoPlayersOff"
+
+            />
+
+        <Button
+            android:id="@+id/btnMode2"
+            style="@style/ButtonMenu"
+            android:drawableLeft="@drawable/ic_group"
+            android:paddingLeft="20dp"
+            android:text="@string/twoPlayersOn" />
+
+        <Button
+            android:id="@+id/btnMode3"
+            style="@style/ButtonMenu"
+            android:drawableLeft="@drawable/ic_group3"
+            android:paddingLeft="20dp"
+            android:text="@string/threePlayersOn" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/btnRules"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corners"
+                android:drawableLeft="@drawable/ic_rules"
+                android:paddingLeft="20dp"
+                android:text="@string/rules"
+                android:textColor="@color/branco"
+                app:autoSizeTextType="uniform" />
+
+            <Button
+                android:id="@+id/btnExit"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corners"
+                android:drawableLeft="@drawable/ic_exit"
+                android:paddingLeft="20dp"
+                android:paddingRight="35dp"
+                android:text="@string/exit"
+                android:textColor="@color/branco"
+                app:autoSizeTextType="uniform" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

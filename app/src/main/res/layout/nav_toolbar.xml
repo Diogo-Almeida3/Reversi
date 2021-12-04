@@ -7,6 +7,7 @@
     android:id="@+id/navToolbar"
     android:background="@drawable/custom_background"
     app:title=" "
+    android:fitsSystemWindows="true"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     >
 

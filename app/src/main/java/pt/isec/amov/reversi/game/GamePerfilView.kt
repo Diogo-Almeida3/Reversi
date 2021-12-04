@@ -23,8 +23,6 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private lateinit var boardGame: BoardGame
 
-
-
     fun setData(boardGame: BoardGame) {
         this.boardGame = boardGame
 
@@ -43,10 +41,10 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawBackground(canvas: Canvas?) {
-        for (i in 0 until Players.players.size) {
-            val left = (windowWidth / Players.players.size) * i + MARGIN
+        for (i in 0 until boardGame.getPlayers()) {
+            val left = (windowWidth / boardGame.getPlayers()) * i + MARGIN
             val top = 0
-            val right = (windowWidth / Players.players.size) * i + (windowWidth / Players.players.size) - MARGIN
+            val right = (windowWidth /boardGame.getPlayers()) * i + (windowWidth / boardGame.getPlayers()) - MARGIN
             val bottom = windowHeight
             val rect = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 
@@ -69,7 +67,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawData(canvas: Canvas?) {
-        for(i in 0 until Players.players.size){
+        for(i in 0 until boardGame.getPlayers()){
             //Definir a imagem do utilizador guardada na class Player
             //Definir o nome do utilizador guardado na class Player
             //Definir a pontuação do utilizador armazenada na class Player
