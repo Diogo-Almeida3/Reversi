@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.animation.AlphaAnimation
 import android.view.*
 import android.view.animation.AccelerateInterpolator
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -18,7 +17,6 @@ class MenuFragment : Fragment() {
 
     private lateinit var btnAnimation: AlphaAnimation
     private lateinit var binding: FragmentMenuBinding
-    private lateinit var bundle : Bundle
     private lateinit var navDirections : NavDirections
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,7 +51,7 @@ class MenuFragment : Fragment() {
         }
         binding.btnExit.setOnClickListener{
             binding.btnExit.startAnimation(btnAnimation)
-            //finish()
+            activity?.finish()
         }
         return binding.root
     }

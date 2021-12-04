@@ -15,8 +15,6 @@
         android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
-
-
         <TextView
             style="@style/titleReversi"
             android:text="@string/reversi" />
@@ -107,6 +105,4 @@
             style="@style/rulesText"
             android:text="@string/piece_exchange_text" />
     </LinearLayout>
-
-
 </ScrollView>

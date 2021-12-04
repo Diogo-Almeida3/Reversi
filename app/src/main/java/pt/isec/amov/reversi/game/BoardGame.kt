@@ -10,23 +10,24 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
         const val EMPTY_CELL = 0
     }
 
-    private var BOARD_SIZE = getBoardSize()
-    private var pieces = Array(BOARD_SIZE) { IntArray(BOARD_SIZE) }
+    private var boardSIZE = getBoardSize()
+    private var pieces = Array(boardSIZE) { IntArray(boardSIZE) }
 
     private var currentPlayer = 0
     private var validPlays = ArrayList<PieceMoves>()
-    val players = arrayListOf<Player>()
+    private val players = arrayListOf<Player>()
+
     init {
         newGame()
     }
 
     private fun newGame() {
-        for (i in 0 until BOARD_SIZE)
-            for (j in 0 until BOARD_SIZE)
+        for (i in 0 until boardSIZE)
+            for (j in 0 until boardSIZE)
                 pieces[i][j] = EMPTY_CELL
 
         players.clear()
-        val middle = BOARD_SIZE / 2
+        val middle = boardSIZE / 2
 
         if (gamemode != 2) {
 
@@ -81,12 +82,12 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
         * No caso de encontrar cell doutra cor continua a seguir o caminho
         */
         val possiblePlays = ArrayList<PieceMoves>()
-        var check_x = 0
-        var check_y = 0
+        var checkX = 0
+        var checkY = 0
         var befY = 0
         var befX = 0
-        for (i in 0 until BOARD_SIZE) {
-            for (j in 0 until BOARD_SIZE) {
+        for (i in 0 until boardSIZE) {
+            for (j in 0 until boardSIZE) {
                 /* Verifica se a peça pertence a quem está a jogar */
                 if (pieces[i][j] == getPieceType()) {
                     for (dx in -1..1) {
@@ -94,27 +95,27 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
                             if (dx == 0 && dy == 0)
                                 continue
                             else {
-                                for (nextStep in 1 until BOARD_SIZE) {   // para conseguir ir ate à ponta do tabuleiro
+                                for (nextStep in 1 until boardSIZE) {   // para conseguir ir ate à ponta do tabuleiro
                                     if (nextStep > 1) { //apartir da segunda vez
-                                        befX = check_x      // guardar o x da peca anterior
-                                        befY = check_y      // guardar o y da peca anterior
+                                        befX = checkX      // guardar o x da peca anterior
+                                        befY = checkY      // guardar o y da peca anterior
                                     }
                                     //
-                                    check_x = i + (dx * nextStep)
-                                    check_y = j + (dy * nextStep)
+                                    checkX = i + (dx * nextStep)
+                                    checkY = j + (dy * nextStep)
 
                                     // verificar tamanho do tabuleiro & verificar celula é do jogador
-                                    if (check_x < 0 || check_y < 0 || check_x >= BOARD_SIZE || check_y >= BOARD_SIZE || pieces[check_x][check_y] == getPieceType())
+                                    if (checkX < 0 || checkY < 0 || checkX >= boardSIZE || checkY >= boardSIZE || pieces[checkX][checkY] == getPieceType())
                                         break
 
                                     // se celula vazia no raio de 1 => avançar
-                                    if (pieces[check_x][check_y] == EMPTY_CELL && nextStep == 1)
-                                        break;
+                                    if (pieces[checkX][checkY] == EMPTY_CELL && nextStep == 1)
+                                        break
 
                                     if (nextStep > 1)
-                                        if (pieces[check_x][check_y] == EMPTY_CELL && pieces[befX][befY] != getPieceType()) {
-                                            possiblePlays.add(PieceMoves(check_x, check_y))
-                                            break;
+                                        if (pieces[checkX][checkY] == EMPTY_CELL && pieces[befX][befY] != getPieceType()) {
+                                            possiblePlays.add(PieceMoves(checkX, checkY))
+                                            break
                                         }
 
                                 }
@@ -137,13 +138,12 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
     }
 
     fun move(posX: Int, posY: Int): Int {
-
-        // verificar margens da posicao da peça
-        if (posX < 0 || posY < 0 || posX >= BOARD_SIZE || posY >= BOARD_SIZE) {
+        // Verificar se está dentro das margens
+        if (posX < 0 || posY < 0 || posX >= boardSIZE || posY >= boardSIZE) {
             return -1
         }
 
-        // celula ja se encontra ocupada
+        // Verificar se a cell já está ocupada
         if (pieces[posX][posY] != EMPTY_CELL)
             return -1
 
@@ -152,54 +152,35 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
             for (dy in -1..1) {
                 if (dx == 0 && dy == 0)
                     continue
-                for (nextStep in 1 until BOARD_SIZE) {
+                for (nextStep in 1 until boardSIZE) {
                     val checkX = posX + (dx * nextStep)
                     val checkY = posY + (dy * nextStep)
 
-                    if (checkX < 0 || checkY < 0 || checkX >= BOARD_SIZE || checkY >= BOARD_SIZE || pieces[checkX][checkY] == EMPTY_CELL)
-                        break;
+                    if (checkX < 0 || checkY < 0 || checkX >= boardSIZE || checkY >= boardSIZE || pieces[checkX][checkY] == EMPTY_CELL)
+                        break
 
-                    // encontrar uma peça do teu tipo
+                    // Encontrar uma peça do currentPlayer
                     if (pieces[checkX][checkY] == getPieceType()) {
-                        // verificar que é a segunda vez
+                        // Verificar que está num raio maior que 1
                         if (nextStep > 1) {
-                            nPiecesCaptured += nextStep - 1;    // adicionar essa peça
-                            var aux = nextStep;
+                            nPiecesCaptured += nextStep - 1   // Adiciona peças capturadas
+                            var aux = nextStep
                             while (aux-- > 0) {
                                 pieces[posX + (dx * aux)][posY + (dy * aux)] =
-                                    getPieceType();      // atribuir a outra peça ao teu tipo de peça
+                                    getPieceType()      // Atribuir as peças capturadas o novo tipo
                             }
                         }
-
-                        break;
+                        break
                     }
 
                 }
             }
         }
-        return nPiecesCaptured;
+        return nPiecesCaptured
     }
 
-
-    fun checkEndGame(): Boolean {
-        return checkEndGameBoard() || checkEndGamePlays()
-    }
-
-    fun getCurrentPlayer(): Int {
-        return currentPlayer
-    }
-
-    fun getPlayers(): Int {
-        return players.size
-    }
-
-    fun getBoardColor(number : Int): Int{
-        return colorsBoard[number]
-    }
-
-
-    fun checkEndGamePlays(): Boolean {
-        var i: Int = 0
+    private fun checkEndGamePlays(): Boolean {
+        var i = 0
         while (highlightValidPlays().size == 0) {
             if (getPlayers() - 1 == i)
                 return true
@@ -209,20 +190,19 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
         return false
     }
 
-    fun checkEndGameBoard(): Boolean {
+    private fun checkEndGameBoard(): Boolean {
         var count = 0
         for (i in 0 until players.size)
             count += players[i].getPieces()
 
-        if (count >= BOARD_SIZE * BOARD_SIZE)
+        if (count >= boardSIZE * boardSIZE)
             return true
         return false
     }
 
-
     fun checkWinner(): Player? {
         var winner: Player? = players[0]
-        var count: Boolean = false
+        var count =  false
 
         for (i in 0 until players.size - 1) // 0, 1 em modo de 3     5 - 10 - 10
             for (j in (i + 1) until players.size) {   // 1, 2 em modo de 3
@@ -238,27 +218,10 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
         return winner
     }
 
-
-    fun getPiece(x: Int, y: Int): Int {
-        return pieces[x][y]
-    }
-
-    fun getPieceType(): Int {
-        return players[currentPlayer - 1].getPieceType()
-    }
-
-    fun getColor(playerNumber: Int): Int {
-        return players[playerNumber].getColor()
-    }
-
     fun getBoardSize(): Int {
         if (gamemode != 2)
             return 8
         return 10
-    }
-
-    fun getGameMode() :Int{
-        return gamemode
     }
 
     fun switchPlayer() {
@@ -276,7 +239,21 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
         }
     }
 
-    private fun rafflePlayer(nPlayers: Int): Int {
-        return Random.nextInt(1..nPlayers)
-    }
+    fun checkEndGame(): Boolean = checkEndGameBoard() || checkEndGamePlays()
+
+    fun getCurrentPlayer(): Int  = currentPlayer
+
+    fun getPlayers(): Int = players.size
+
+    fun getBoardColor(number : Int): Int = colorsBoard[number]
+
+    fun getPiece(x: Int, y: Int): Int = pieces[x][y]
+
+    private fun getPieceType(): Int = players[currentPlayer - 1].getPieceType()
+
+    fun getColor(playerNumber: Int): Int = players[playerNumber].getColor()
+
+    fun getGameMode() :Int = gamemode
+
+    private fun rafflePlayer(nPlayers: Int): Int = Random.nextInt(1..nPlayers)
 }

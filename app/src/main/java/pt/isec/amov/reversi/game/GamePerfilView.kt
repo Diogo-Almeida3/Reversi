@@ -2,16 +2,8 @@ package pt.isec.amov.reversi.game
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.view.View
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
-
-import android.widget.TextView
-import pt.isec.amov.reversi.R
 
 
 private const val MARGIN = 24

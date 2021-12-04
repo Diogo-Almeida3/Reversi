@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="@string/general">
         <menu>
             <item
                 android:id="@+id/menu"
-                android:title="@string/menu"
                 android:icon="@drawable/ic_home"
-                />
-            <item android:id="@+id/rules"
-                android:title="@string/rules"
-                android:icon="@drawable/ic_rules"/>
+                android:title="@string/menu" />
+            <item
+                android:id="@+id/rules"
+                android:icon="@drawable/ic_rules"
+                android:title="@string/rules" />
         </menu>
     </item>
 
@@ -19,31 +18,32 @@
         <menu>
             <item
                 android:id="@+id/gameOff2"
-                android:title="@string/twoPlayersOff"
                 android:icon="@drawable/ic_group"
-                />
+                android:title="@string/twoPlayersOff" />
             <item
                 android:id="@+id/gameOn2"
-                android:title="@string/twoPlayersOn"
-                android:icon="@drawable/ic_group"/>
+                android:icon="@drawable/ic_group"
+                android:title="@string/twoPlayersOn" />
             <item
                 android:id="@+id/gameOn3"
-                android:title="@string/threePlayersOn"
-                android:icon="@drawable/ic_group3"/>
+                android:icon="@drawable/ic_group3"
+                android:title="@string/threePlayersOn" />
         </menu>
     </item>
 
 
     <item android:title="@string/my_account">
         <menu>
-            <item android:id="@+id/editProfile"
-                android:title="@string/profile"
+            <item
+                android:id="@+id/editProfile"
                 android:icon="@drawable/ic_person_reg"
-                
+                android:title="@string/profile"
+
                 />
-            <item android:id="@+id/logout"
-                android:title="@string/logout"
-                android:icon="@drawable/ic_exit"/>
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/ic_exit"
+                android:title="@string/logout" />
         </menu>
     </item>
 

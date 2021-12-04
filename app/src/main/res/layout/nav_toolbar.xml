@@ -11,7 +11,4 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     >
 
-
-
-
 </androidx.appcompat.widget.Toolbar>

@@ -16,9 +16,6 @@ class GameFragment : Fragment() {
         const val GAMEOFF2 = 0
         const val GAMEON2 = 1
         const val GAMEON3 = 2
-
-        const val MODO_JOGO = "modo"
-
     }
     private val colorsPlayers = ArrayList<Int>(3)
     private val colorsBoard = ArrayList<Int>(2)
@@ -26,7 +23,6 @@ class GameFragment : Fragment() {
     private lateinit var boardView: BoardView
     private lateinit var gamePerfilView: GamePerfilView
     private var gamemode = -1
-    private lateinit var bundle : Bundle
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +30,7 @@ class GameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_game,container,false)
+
 
         for(i in 0..2)
             colorsPlayers.add(resources.getIntArray(R.array.array_of_colors)[i])

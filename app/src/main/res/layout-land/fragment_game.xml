@@ -35,15 +35,14 @@
         <Button
             android:id="@+id/btnBombPiece"
             style="@style/buttonSpecialPieces"
-            android:text="Peça Bomba"
+            android:text="@string/bomb_piece"
             app:autoSizeTextType="uniform" />
 
         <Button
             android:id="@+id/btnTradePiece"
             style="@style/buttonSpecialPieces"
-            android:text="Trocar Peças"
+            android:text="@string/piece_exchange"
             app:autoSizeTextType="uniform" />
 
     </LinearLayout>
-
 </LinearLayout>

@@ -39,7 +39,8 @@
             android:hint="@string/etLoginHintEmail"
             style="@style/EditTextLogin"
             android:drawableStart="@android:drawable/ic_dialog_email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:autofillHints="emailAddress" />
 
         <EditText
             android:id="@+id/etLoginPassword"
@@ -47,7 +48,7 @@
             android:drawableStart="@android:drawable/ic_lock_idle_lock"
             android:hint="@string/etLoginHintPassword"
             android:inputType="textPassword"
-            />
+            android:autofillHints="password" />
 
         <Button
             android:id="@+id/btnLogin"

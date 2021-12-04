@@ -21,12 +21,12 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     private lateinit var boardGame: BoardGame
 
-    private var BOARD_SIZE = 0
+    private var boardSIZE = 0
     private val gridPaint = Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG)
 
     fun setData(boardGame: BoardGame) {
         this.boardGame = boardGame
-        BOARD_SIZE = boardGame.getBoardSize()
+        boardSIZE = boardGame.getBoardSize()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -35,15 +35,15 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         windowWidth = MeasureSpec.getSize(widthMeasureSpec)
 
         /* Tamanho das peças */
-        pieceHeight = (windowHeight - LINE_SIZE) / BOARD_SIZE
-        pieceWidth = (windowWidth - LINE_SIZE) / BOARD_SIZE
+        pieceHeight = (windowHeight - LINE_SIZE) / boardSIZE
+        pieceWidth = (windowWidth - LINE_SIZE) / boardSIZE
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     private fun drawBoard(canvas: Canvas?) {
-        for (i in 0 until BOARD_SIZE)
-            for (j in 0 until BOARD_SIZE) {
+        for (i in 0 until boardSIZE)
+            for (j in 0 until boardSIZE) {
                 val pieceType = boardGame.getPiece(i, j)
                 if (pieceType != 0)
                     drawPiece(canvas, i, j, pieceType)
@@ -57,7 +57,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         }
 
         drawCellColor(canvas)
-        for (i in -1..BOARD_SIZE) {
+        for (i in -1..boardSIZE) {
             /* Horizontal */
             var low = pieceHeight * (i + 1)
             canvas?.drawRect(
@@ -78,16 +78,16 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     private fun drawCellColor(canvas: Canvas?) {
-        for (i in 0 until BOARD_SIZE) {
-            for (j in 0 until BOARD_SIZE) {
-                val Left = (pieceWidth * i)
-                val Top = (pieceHeight * j)
-                val Right = (pieceWidth * i) + pieceWidth
-                val Bottom = (pieceHeight * j) + pieceHeight
-                canvas?.drawRect(Left.toFloat(),
-                    Top.toFloat(),
-                    Right.toFloat(),
-                    Bottom.toFloat(),
+        for (i in 0 until boardSIZE) {
+            for (j in 0 until boardSIZE) {
+                val left = (pieceWidth * i)
+                val top = (pieceHeight * j)
+                val right = (pieceWidth * i) + pieceWidth
+                val bottom = (pieceHeight * j) + pieceHeight
+                canvas?.drawRect(left.toFloat(),
+                    top.toFloat(),
+                    right.toFloat(),
+                    bottom.toFloat(),
                     Paint().apply { color = boardGame.getBoardColor(0) })
             }
         }
@@ -105,8 +105,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-        val x = (event?.getX()?.div(pieceWidth))?.toInt()
-        val y = (event?.getY()?.div(pieceHeight))?.toInt()
+        val x = (event?.x?.div(pieceWidth))?.toInt()
+        val y = (event?.y?.div(pieceHeight))?.toInt()
 
         if (boardGame.getGameMode() == 0) {
 
@@ -166,12 +166,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             }
         }
 
-        if (canvas != null) {
-            canvas.drawCircle(
-                centerX.toFloat(), centerY.toFloat(),
-                radius.toFloat(), paint
-            )
-        }
+        canvas?.drawCircle(
+            centerX.toFloat(), centerY.toFloat(),
+            radius.toFloat(), paint
+        )
 
     }
 }

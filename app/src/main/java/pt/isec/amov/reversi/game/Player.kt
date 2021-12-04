@@ -1,7 +1,5 @@
 package pt.isec.amov.reversi.game
 
-import android.graphics.Color
-
 class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String = "Diogo Almeida") {
 
     private var pieces = initialPieces

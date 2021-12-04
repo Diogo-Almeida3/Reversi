@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navgraph_reversi"
@@ -10,7 +9,7 @@
         android:id="@+id/menuFragment"
         android:name="pt.isec.amov.reversi.fragments.MenuFragment"
         android:label="fragment_menu"
-        tools:layout="@layout/fragment_menu" >
+        tools:layout="@layout/fragment_menu">
         <action
             android:id="@+id/action_menuActivity_to_rulesActivity"
             app:destination="@id/rulesFragment" />
@@ -29,7 +28,7 @@
         android:id="@+id/rulesFragment"
         android:name="pt.isec.amov.reversi.fragments.RulesFragment"
         android:label="activity_rules"
-        tools:layout="@layout/fragment_rules" >
+        tools:layout="@layout/fragment_rules">
         <action
             android:id="@+id/action_rulesFragment_to_menuFragment"
             app:destination="@id/menuFragment" />
@@ -39,12 +38,15 @@
         <action
             android:id="@+id/action_rulesFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_rulesFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="pt.isec.amov.reversi.fragments.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
+        tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profileFragment_to_menuFragment2"
             app:destination="@id/menuFragment" />
@@ -54,16 +56,22 @@
         <action
             android:id="@+id/action_profileFragment_self"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/gameFragment"
         android:name="pt.isec.amov.reversi.fragments.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" >
+        tools:layout="@layout/fragment_game">
         <argument
             android:name="game"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_gameFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
 
 </navigation>

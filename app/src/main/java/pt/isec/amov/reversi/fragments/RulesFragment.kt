@@ -14,7 +14,7 @@ class RulesFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRulesBinding.inflate(inflater)
 
         return binding.root

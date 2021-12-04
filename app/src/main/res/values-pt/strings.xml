@@ -24,7 +24,7 @@
     <string name="mode_3_players_online">Modo Online de 3 Jogadores</string>
     <string name="special_plays">Jogadas Especiais</string>
     <string name="bomb_piece">Peça Bomba</string>
-    <string name="piece_exchange">Troca de Peças</string>
+    <string name="piece_exchange">Trocar Peças</string>
     <string name="rulesText">\tReversi é um jogo de tabuleiro entre dois jogadores, em que o objetivo consiste em ter o maior número de peças no tabuleiro. Desse modo, cada jogador deve colocar uma peça numa célula para que, pelo menos num dos sentidos( horizontal, vertical ou diagonal), exista uma sequência que inclua uma ou mais peças do adversário e, do lado oposto uma peça do próprio jogador.</string>
     <string name="mode_2_Offline_text">Este modo de jogo é jogado por dois jogadores num único dispositivo num tabuleiro 8 x 8 e incluindo as peças especiais.</string>
     <string name="mode_2_Online_text">Este modo de jogo é jogado por dois jogadores em dois dispositivos diferentes num tabuleiro 8 x 8 e incluindo as peças especiais.</string>

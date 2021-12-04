@@ -5,21 +5,24 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.google.android.material.navigation.NavigationView
 import pt.isec.amov.reversi.R
+import pt.isec.amov.reversi.fragments.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var Toolbar: Toolbar
+    private lateinit var toolbar: Toolbar
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
-
+    private lateinit var navDirections: NavDirections
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,8 +33,8 @@ class MainActivity : AppCompatActivity() {
         )
 
         /* ToolBar Related */
-        Toolbar = findViewById(R.id.navToolbar)
-        setSupportActionBar(Toolbar)
+        toolbar = findViewById(R.id.navToolbar)
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         drawerLayout = findViewById(R.id.drawerLayout)
@@ -50,8 +53,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupDrawerToggle(): ActionBarDrawerToggle = ActionBarDrawerToggle(
         this,
         drawerLayout,
-        pt.isec.amov.reversi.R.string.open,
-        pt.isec.amov.reversi.R.string.close
+        R.string.open,
+        R.string.close
     )
 
     private fun setupDrawerContent(navigationView: NavigationView) {
@@ -62,13 +65,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun selectDrawerItem(menuItem: MenuItem) {
-
         when (menuItem.itemId) {
             R.id.menu -> {
                 when (findNavController(R.id.fragment_base).currentDestination?.id) {
                     R.id.menuFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_menuFragment_self)
                     R.id.rulesFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_rulesFragment_to_menuFragment)
                     R.id.profileFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_profileFragment_to_menuFragment2)
+                    R.id.gameFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_gameFragment_to_menuFragment)
                 }
 
             }
@@ -81,13 +84,55 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.gameOff2 -> {
-
+                when (findNavController(R.id.fragment_base).currentDestination?.id) {
+                    R.id.menuFragment -> {
+                        navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEOFF2)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    R.id.rulesFragment -> {
+                        navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEOFF2)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    R.id.profileFragment -> {
+                        navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEOFF2)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
+                }
             }
             R.id.gameOn2 -> {
-
+                when (findNavController(R.id.fragment_base).currentDestination?.id) {
+                    R.id.menuFragment -> {
+                        navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON2)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    R.id.rulesFragment -> {
+                        navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON2)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    R.id.profileFragment -> {
+                        navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON2)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
+                }
             }
             R.id.gameOn3 -> {
-
+                when (findNavController(R.id.fragment_base).currentDestination?.id) {
+                    R.id.menuFragment -> {
+                        navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON3)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    R.id.rulesFragment -> {
+                        navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON3)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    R.id.profileFragment -> {
+                        navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON3)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
+                    else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
+                }
             }
 
             R.id.editProfile -> {

@@ -9,8 +9,6 @@
     android:orientation="vertical"
     tools:context=".fragments.ProfileFragment">
 
-
-
     <TextView
         android:id="@+id/profileTitle"
         style="@style/titleReversi"
@@ -80,10 +78,7 @@
                     android:textSize="24sp"
                     android:textStyle="bold" />
             </LinearLayout>
-
         </LinearLayout>
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -145,6 +140,4 @@
 
         </LinearLayout>
     </LinearLayout>
-
-
 </LinearLayout>

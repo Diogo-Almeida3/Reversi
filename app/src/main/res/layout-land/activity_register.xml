@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.RegisterActivity"
     android:background="@drawable/custom_background"
-    >
-
+    tools:context=".activities.RegisterActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,13 +15,13 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 style="@style/titleReversi"
-                android:text="@string/reversi"/>
+                android:text="@string/reversi" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -76,15 +74,16 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
+            android:layout_weight="1"
             android:orientation="vertical"
             android:paddingVertical="10dp">
 
             <EditText
                 android:id="@+id/etRegisterUsername"
                 style="@style/EditTextLogin"
+                android:autofillHints="username"
                 android:drawableStart="@drawable/ic_person_reg"
                 android:hint="@string/et_username_register"
                 android:inputType="text" />
@@ -92,6 +91,7 @@
             <EditText
                 android:id="@+id/etRegisterEmail"
                 style="@style/EditTextLogin"
+                android:autofillHints="emailAddress"
                 android:drawableStart="@android:drawable/ic_dialog_email"
                 android:hint="@string/etLoginHintEmail"
                 android:inputType="textEmailAddress" />
@@ -99,6 +99,7 @@
             <EditText
                 android:id="@+id/etRegisterPassword"
                 style="@style/EditTextLogin"
+                android:autofillHints="password"
                 android:drawableStart="@android:drawable/ic_lock_idle_lock"
                 android:hint="@string/etLoginHintPassword"
                 android:inputType="textPassword" />
@@ -106,14 +107,12 @@
             <EditText
                 android:id="@+id/etRegisterConfirmPassword"
                 style="@style/EditTextLogin"
+                android:autofillHints="password"
                 android:drawableStart="@android:drawable/ic_lock_idle_lock"
                 android:hint="@string/et_confirm_password_reg"
                 android:inputType="textPassword" />
 
 
         </LinearLayout>
-
-
     </LinearLayout>
-
 </FrameLayout>
