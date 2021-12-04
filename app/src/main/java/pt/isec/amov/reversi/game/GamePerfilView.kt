@@ -21,7 +21,6 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var windowWidth = 0
     private var pieceHeight = 0
     private var pieceWidth = 0
-
     private lateinit var boardGame: BoardGame
 
     fun setData(boardGame: BoardGame) {
@@ -138,4 +137,5 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             canvas?.drawText(actualScore.toString(), textPosX.toFloat(),textPosY.toFloat(),paintScore)
         }
     }
+
 }

@@ -203,7 +203,7 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
             var aux = 0
             for(x in 0 until boardSIZE)
                 for(y in 0 until boardSIZE)
-                    if(pieces[0][0] == players[i].getPieceType())
+                    if(pieces[x][y] == players[i].getPieceType())
                         aux += 1
             players[i].setPieces(aux)
         }
@@ -270,6 +270,7 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
     fun getTotalPieces(number : Int) : Int = players[number].getPieces()
 
     private fun rafflePlayer(nPlayers: Int): Int = Random.nextInt(1..nPlayers)
+
 
     fun setPieces(total: Int) {
         players[currentPlayer].setPieces(total)

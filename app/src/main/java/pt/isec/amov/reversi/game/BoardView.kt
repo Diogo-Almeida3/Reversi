@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import pt.isec.amov.reversi.R
 
 private const val LINE_SIZE = 5
 private const val MARGIN_PIECE = 8
@@ -21,12 +22,14 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var pieceWidth = 0
     private var endGame = false
     private lateinit var boardGame: BoardGame
+    private lateinit var gamePerfilView: GamePerfilView
 
     private var boardSIZE = 0
     private val gridPaint = Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG)
 
-    fun setData(boardGame: BoardGame) {
+    fun setData(boardGame: BoardGame, gamePerfilView: GamePerfilView) {
         this.boardGame = boardGame
+        this.gamePerfilView = gamePerfilView
         boardSIZE = boardGame.getBoardSize()
     }
 
@@ -95,6 +98,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     override fun onDraw(canvas: Canvas?) {
+
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
         drawHighlightValidPlays(
@@ -109,8 +113,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         val x = (event?.x?.div(pieceWidth))?.toInt()
         val y = (event?.y?.div(pieceHeight))?.toInt()
 
-        if(!endGame){
-            when(boardGame.getGameMode()){
+        if (!endGame) {
+            when (boardGame.getGameMode()) {
                 0 -> {
                     if (boardGame.confirmMove(x!!, y!!)) {
                         boardGame.move(x, y)
@@ -118,11 +122,11 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                         boardGame.checkBoardPieces()
                     }
 
-                    if(boardGame.checkEndGame()){
-                        Toast.makeText(context,"Acabou o jogo",Toast.LENGTH_LONG).show()
+                    if (boardGame.checkEndGame()) {
+                        Toast.makeText(context, "Acabou o jogo", Toast.LENGTH_LONG).show()
                         endGame = true
                     }
-
+                    gamePerfilView.invalidate()
                     invalidate()
                 }
             }

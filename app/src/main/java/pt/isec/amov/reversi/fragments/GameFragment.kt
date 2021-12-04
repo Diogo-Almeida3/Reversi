@@ -42,7 +42,7 @@ class GameFragment : Fragment() {
         boardGame = BoardGame(gamemode,colorsPlayers,colorsBoard)
         boardView = view.findViewById(R.id.boardView)
         gamePerfilView = view.findViewById(R.id.gamePerfilView)
-        boardView.setData(boardGame)
+        boardView.setData(boardGame,gamePerfilView)
         gamePerfilView.setData(boardGame)
 
         return view
