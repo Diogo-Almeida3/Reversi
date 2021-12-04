@@ -41,10 +41,8 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas?) {
         drawBackground(canvas)
-        //drawData(canvas) //todo Iluminar ou colocar uma bola no jogador que é a jogar de modo a identificar
+        drawData(canvas)
     }
-
-
 
     private fun drawBackground(canvas: Canvas?) {
         for (i in 0 until boardGame.getPlayers()) {
@@ -68,7 +66,25 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                     style = Paint.Style.STROKE
                     strokeWidth = 10.0f
                 })
+        }
+    }
 
+    private fun getNameSize() : Float{ //Limitar o nome a 15 chars
+        if(boardGame.getGameMode() != 2)
+            return 56F
+        return 38F
+    }
+
+    private fun getScoreSize() : Float {
+        if(boardGame.getGameMode() != 2)
+            return 82F
+        return 56F
+    }
+
+    private fun drawData(canvas: Canvas?) {
+        for(i in 0 until boardGame.getPlayers()){
+            val right = (windowWidth /boardGame.getPlayers()) * i + (windowWidth / boardGame.getPlayers()) - MARGIN
+            val left = (windowWidth / boardGame.getPlayers()) * i + MARGIN
             /* Image Related */
             val imageSize = 400 / boardGame.getPlayers()
             val middle = right - ((right-left)/2)
@@ -76,7 +92,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             val size = getNameSize()
 
             /* Text Related */
-            val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            val paintName = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.BLACK
                 textSize = size
             }
@@ -87,47 +103,39 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             val centerX = middle + boxQuarter
             val centerY = imageSize + 260
             val paint = Paint().apply { color = boardGame.getColor(i) }
+            val textPosX = middle - boxQuarter
+            val textPosY = imageSize + 290
+            val paintScore = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.BLACK
+                textSize = getScoreSize()
+            }
             val actualScore = boardGame.getTotalPieces(i)
 
             when(boardGame.getGameMode()){
                 0 -> {
                     if(i == 0){ //Jogador atual
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
-                        canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*15).toFloat(),(imageSize + 120).toFloat(),text)
-
+                        canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*15).toFloat(),(imageSize + 120).toFloat(),paintName)
                     }
                     else{ //Anónimo
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
-                        canvas?.drawText("Anónimo",0,7, (middle - 7*15).toFloat(),(imageSize + 120).toFloat(),text)
+                        canvas?.drawText("Anónimo",0,7, (middle - 7*15).toFloat(),(imageSize + 120).toFloat(),paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
                 }
                 1 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
-                    canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*15).toFloat(),(imageSize + 120).toFloat(),text)
+                    canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*15).toFloat(),(imageSize + 120).toFloat(),paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
                 }
                 2 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
-                    canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*8.75).toFloat(),(imageSize + 120).toFloat(),text)
+                    canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*8.75).toFloat(),(imageSize + 120).toFloat(),paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, paint)
                 }
             }
 
-
-        }
-    }
-
-    private fun getNameSize() : Float{ //Limitar o nome a 15 chars
-        if(boardGame.getGameMode() != 2)
-            return 56F
-        return 38F
-    }
-    private fun drawData(canvas: Canvas?) {
-        for(i in 0 until boardGame.getPlayers()){
-            //Definir a imagem do utilizador guardada na class Player
-            //Definir o nome do utilizador guardado na class Player
-            //Definir a pontuação do utilizador armazenada na class Player
+            canvas?.drawText(actualScore.toString(), textPosX.toFloat(),textPosY.toFloat(),paintScore)
         }
     }
 }
