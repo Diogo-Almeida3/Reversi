@@ -137,17 +137,16 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
         return false
     }
 
-    fun move(posX: Int, posY: Int): Int {
+    fun move(posX: Int, posY: Int) {
         // Verificar se está dentro das margens
         if (posX < 0 || posY < 0 || posX >= boardSIZE || posY >= boardSIZE) {
-            return -1
+            return
         }
 
         // Verificar se a cell já está ocupada
         if (pieces[posX][posY] != EMPTY_CELL)
-            return -1
+            return
 
-        var nPiecesCaptured = 0
         for (dx in -1..1) {
             for (dy in -1..1) {
                 if (dx == 0 && dy == 0)
@@ -163,7 +162,7 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
                     if (pieces[checkX][checkY] == getPieceType()) {
                         // Verificar que está num raio maior que 1
                         if (nextStep > 1) {
-                            nPiecesCaptured += nextStep - 1   // Adiciona peças capturadas
+
                             var aux = nextStep
                             while (aux-- > 0) {
                                 pieces[posX + (dx * aux)][posY + (dy * aux)] =
@@ -176,7 +175,6 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
                 }
             }
         }
-        return nPiecesCaptured
     }
 
     private fun checkEndGamePlays(): Boolean {
@@ -198,6 +196,18 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
         if (count >= boardSIZE * boardSIZE)
             return true
         return false
+    }
+
+    fun checkBoardPieces() {
+        for(i in 0 until getPlayers()){
+            var aux = 0
+            for(x in 0 until boardSIZE)
+                for(y in 0 until boardSIZE)
+                    if(pieces[0][0] == players[i].getPieceType())
+                        aux += 1
+            players[i].setPieces(aux)
+        }
+
     }
 
     fun checkWinner(): Player? {
@@ -255,9 +265,13 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
     fun getGameMode() :Int = gamemode
 
-    fun getUsername(number: Int) : String{
-        return players[number].getUsername()
-    }
+    fun getUsername(number: Int) : String = players[number].getUsername()
+
+    fun getTotalPieces(number : Int) : Int = players[number].getPieces()
 
     private fun rafflePlayer(nPlayers: Int): Int = Random.nextInt(1..nPlayers)
+
+    fun setPieces(total: Int) {
+        players[currentPlayer].setPieces(total)
+    }
 }

@@ -7,20 +7,20 @@ import android.view.View
 import pt.isec.amov.reversi.R
 import android.graphics.BitmapFactory
 
-import android.graphics.Bitmap
-import android.net.Uri
-import android.provider.MediaStore
+
 import androidx.core.graphics.scale
-import java.io.File
-import java.net.URL
 
 
 private const val MARGIN = 24
+private const val LINE_SIZE = 5
+private const val MARGIN_PIECE = 8
 
 class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private var windowHeight = 0
     private var windowWidth = 0
+    private var pieceHeight = 0
+    private var pieceWidth = 0
 
     private lateinit var boardGame: BoardGame
 
@@ -33,6 +33,9 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         /* Tamanho da janela */
         windowHeight = MeasureSpec.getSize(heightMeasureSpec)
         windowWidth = MeasureSpec.getSize(widthMeasureSpec)
+
+        pieceHeight = (windowHeight - LINE_SIZE) / boardGame.getBoardSize()
+        pieceWidth = (windowWidth - LINE_SIZE) / boardGame.getBoardSize()
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
@@ -40,6 +43,8 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         drawBackground(canvas)
         //drawData(canvas) //todo Iluminar ou colocar uma bola no jogador que é a jogar de modo a identificar
     }
+
+
 
     private fun drawBackground(canvas: Canvas?) {
         for (i in 0 until boardGame.getPlayers()) {
@@ -59,40 +64,53 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                 20F,
                 20F,
                 Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
-                    color = Color.BLUE
+                    color = boardGame.getBoardColor(1)
                     style = Paint.Style.STROKE
                     strokeWidth = 10.0f
                 })
 
+            /* Image Related */
             val imageSize = 400 / boardGame.getPlayers()
             val middle = right - ((right-left)/2)
             val imagePos = middle - (imageSize/2)
             val size = getNameSize()
 
+            /* Text Related */
             val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.BLACK
                 textSize = size
             }
-
             val nChars = boardGame.getUsername(i).length
+
+            /* Score Related */
+            val boxQuarter = (right - left) / 4
+            val centerX = middle + boxQuarter
+            val centerY = imageSize + 260
+            val paint = Paint().apply { color = boardGame.getColor(i) }
+            val actualScore = boardGame.getTotalPieces(i)
+
             when(boardGame.getGameMode()){
                 0 -> {
                     if(i == 0){ //Jogador atual
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
                         canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*15).toFloat(),(imageSize + 120).toFloat(),text)
+
                     }
                     else{ //Anónimo
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
                         canvas?.drawText("Anónimo",0,7, (middle - 7*15).toFloat(),(imageSize + 120).toFloat(),text)
                     }
+                    canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
                 }
                 1 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
                     canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*15).toFloat(),(imageSize + 120).toFloat(),text)
+                    canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
                 }
                 2 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize,imageSize,false),imagePos.toFloat(),50f,null)
                     canvas?.drawText(boardGame.getUsername(i),0,nChars, (middle - nChars*8.75).toFloat(),(imageSize + 120).toFloat(),text)
+                    canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, paint)
                 }
             }
 

@@ -115,6 +115,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     if (boardGame.confirmMove(x!!, y!!)) {
                         boardGame.move(x, y)
                         boardGame.switchPlayer()
+                        boardGame.checkBoardPieces()
                     }
 
                     if(boardGame.checkEndGame()){
