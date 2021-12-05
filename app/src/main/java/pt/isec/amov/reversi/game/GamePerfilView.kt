@@ -44,14 +44,73 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     override fun onDraw(canvas: Canvas?) {
 
             drawBackground(canvas)
+        if(orientation != Configuration.ORIENTATION_LANDSCAPE)
             drawDataPortrait(canvas)
-
-            //drawDataLandscape(canvas)
+        else
+            drawDataLandscape(canvas)
 
     }
 
     private fun drawDataLandscape(canvas: Canvas?) {
-        TODO("Not yet implemented")
+        for (i in 0 until boardGame.getPlayers()) {
+            val top = (windowHeight / boardGame.getPlayers()) * i + MARGIN
+            val bottom = (windowHeight / boardGame.getPlayers()) * i + (windowHeight / boardGame.getPlayers()) - MARGIN
+            val left = 0
+            val right = windowWidth
+            val middleVertical = bottom - ((bottom - top) / 2)
+            val middleHorizontal = windowWidth / 2
+
+            /* Image Related */
+            val imageSize = 400 / boardGame.getPlayers()
+
+            val imagePos = middleVertical - (imageSize / 2)
+            val size = getNameSize()
+
+            /* Text Related */
+            val paintName = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.BLACK
+                textSize = size
+            }
+            val nChars = boardGame.getUsername(i).length
+
+            /* Score Related */
+            val boxQuarter = (right - left) / 4
+            val centerX = middleHorizontal + boxQuarter
+            val centerY = imageSize + 240
+            val paint = Paint().apply { color = boardGame.getColor(i) }
+            val textPosX = middleHorizontal - boxQuarter
+            val textPosY = imageSize + 275
+            val paintScore = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.BLACK
+                textSize = getScoreSize()
+            }
+            val actualScore = boardGame.getTotalPieces(i)
+
+            when (boardGame.getGameMode()) {
+                0 -> {
+                    if (i == 0) { //Jogador atual
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal - nChars * 15).toFloat(), middleVertical.toFloat(), paintName)
+                    } else { //Anónimo
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText("Anónimo", 0, 7, (middleHorizontal - 7 * 15).toFloat(), middleVertical.toFloat(), paintName)
+                    }
+                    canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
+                }
+                1 -> {
+                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
+                }
+                2 -> {
+                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, paint)
+                }
+            }
+
+            canvas?.drawText(actualScore.toString(), textPosX.toFloat(), textPosY.toFloat(), paintScore)
+        }
     }
 
     private fun drawBackground(canvas: Canvas?) {

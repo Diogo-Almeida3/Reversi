@@ -6,26 +6,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/custom_background"
+    android:baselineAligned="false"
     android:orientation="horizontal"
     tools:context=".fragments.GameFragment">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:orientation="vertical">
-
-        <pt.isec.amov.reversi.game.GamePerfilView
-            android:id="@+id/gamePerfilView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <pt.isec.amov.reversi.game.GamePerfilView
+                android:id="@+id/gamePerfilView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.05"
             android:orientation="horizontal">
 
             <Button
@@ -36,7 +46,8 @@
             <Button
                 android:id="@+id/btnTradePiece"
                 style="@style/buttonSpecialPieces"
-                android:text="@string/piece_exchange" />
+                android:text="@string/piece_exchange"
+                tools:ignore="TextContrastCheck" />
 
         </LinearLayout>
     </LinearLayout>
@@ -44,7 +55,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:orientation="vertical">
 
         <pt.isec.amov.reversi.game.BoardView
