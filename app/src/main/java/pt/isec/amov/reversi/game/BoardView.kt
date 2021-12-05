@@ -12,7 +12,7 @@ import pt.isec.amov.reversi.R
 
 private const val LINE_SIZE = 5
 private const val MARGIN_PIECE = 8
-private const val MARGIN_HIGHLIGHT = 22
+private const val MARGIN_HIGHLIGHT = 32
 
 class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
@@ -142,7 +142,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         for (i in 0 until highlightValidPlays.size) {
             val centerX = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth / 2
             val centerY = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight / 2
-            val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN_HIGHLIGHT * 2
+            val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN_HIGHLIGHT
             canvas?.drawCircle(
                 centerX.toFloat(), centerY.toFloat(),
                 radius.toFloat(), Paint(Paint.ANTI_ALIAS_FLAG).apply {
