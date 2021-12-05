@@ -100,10 +100,10 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             /* Score Related */
             val boxQuarter = (right - left) / 4
             val centerX = middle + boxQuarter
-            val centerY = imageSize + 260
+            val centerY = imageSize + 240
             val paint = Paint().apply { color = boardGame.getColor(i) }
             val textPosX = middle - boxQuarter
-            val textPosY = imageSize + 290
+            val textPosY = imageSize + 275
             val paintScore = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.BLACK
                 textSize = getScoreSize()

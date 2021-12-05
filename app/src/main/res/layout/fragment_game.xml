@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
@@ -16,6 +15,7 @@
         android:layout_gravity="center"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
+        android:layout_marginBottom="40dp"
         android:layout_weight="0.28" />
 
 
@@ -24,25 +24,27 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_margin="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="24dp"
         android:layout_weight="0.5" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnBombPiece"
             style="@style/buttonSpecialPieces"
-            android:text="@string/bomb_piece"
-            app:autoSizeTextType="uniform" />
+            android:text="@string/bomb_piece" />
 
         <Button
             android:id="@+id/btnTradePiece"
             style="@style/buttonSpecialPieces"
-            android:text="@string/piece_exchange"
-            app:autoSizeTextType="uniform" />
+            android:text="@string/piece_exchange" />
 
     </LinearLayout>
 </LinearLayout>
