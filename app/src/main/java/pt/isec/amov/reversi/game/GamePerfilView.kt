@@ -53,7 +53,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun drawDataLandscape(canvas: Canvas?) {
         for (i in 0 until boardGame.getPlayers()) {
-            val top = (windowHeight / boardGame.getPlayers()) * i + MARGIN
+            val top = (windowHeight / boardGame.getPlayers()) * i + MARGIN * 2
             val bottom = (windowHeight / boardGame.getPlayers()) * i + (windowHeight / boardGame.getPlayers()) - MARGIN
             val left = 0
             val right = windowWidth
@@ -62,11 +62,11 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
             /* Image Related */
             val imageSize = 400 / boardGame.getPlayers()
-
             val imagePos = middleVertical - (imageSize / 2)
             val size = getNameSize()
 
             /* Text Related */
+            val textPos = middleVertical - 50
             val paintName = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.BLACK
                 textSize = size
@@ -76,10 +76,8 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             /* Score Related */
             val boxQuarter = (right - left) / 4
             val centerX = middleHorizontal + boxQuarter
-            val centerY = imageSize + 240
+            val centerY = middleVertical + 45
             val paint = Paint().apply { color = boardGame.getColor(i) }
-            val textPosX = middleHorizontal - boxQuarter
-            val textPosY = imageSize + 275
             val paintScore = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.BLACK
                 textSize = getScoreSize()
@@ -90,26 +88,26 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                 0 -> {
                     if (i == 0) { //Jogador atual
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal - nChars * 15).toFloat(), middleVertical.toFloat(), paintName)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter/2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     } else { //Anónimo
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                        canvas?.drawText("Anónimo", 0, 7, (middleHorizontal - 7 * 15).toFloat(), middleVertical.toFloat(), paintName)
+                        canvas?.drawText("Anónimo", 0, 7, (middleHorizontal + boxQuarter/2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
                 }
                 1 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter/2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paint)
                 }
                 2 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter/2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, paint)
                 }
             }
 
-            canvas?.drawText(actualScore.toString(), textPosX.toFloat(), textPosY.toFloat(), paintScore)
+            canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(),  (middleVertical + 75).toFloat(), paintScore)
         }
     }
 
