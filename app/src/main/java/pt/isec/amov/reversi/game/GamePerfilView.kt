@@ -44,6 +44,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawBackground(canvas: Canvas?) {
+        /* Portrait */
         for (i in 0 until boardGame.getPlayers()) {
             val left = (windowWidth / boardGame.getPlayers()) * i + MARGIN
             val top = 0
@@ -81,6 +82,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawData(canvas: Canvas?) {
+        /* Portrait */
         for(i in 0 until boardGame.getPlayers()){
             val right = (windowWidth /boardGame.getPlayers()) * i + (windowWidth / boardGame.getPlayers()) - MARGIN
             val left = (windowWidth / boardGame.getPlayers()) * i + MARGIN
