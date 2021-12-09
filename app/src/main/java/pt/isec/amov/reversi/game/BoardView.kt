@@ -1,5 +1,6 @@
 package pt.isec.amov.reversi.game
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -8,7 +9,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
-import pt.isec.amov.reversi.R
+
 
 private const val LINE_SIZE = 5
 private const val MARGIN_PIECE = 8
@@ -24,6 +25,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private lateinit var boardGame: BoardGame
     private lateinit var gamePerfilView: GamePerfilView
 
+    private var pass = false
     private var boardSIZE = 0
     private val gridPaint = Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG)
 
@@ -109,7 +111,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-
         val x = (event?.x?.div(pieceWidth))?.toInt()
         val y = (event?.y?.div(pieceHeight))?.toInt()
 
@@ -118,12 +119,33 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 0 -> {
                     if (boardGame.confirmMove(x!!, y!!)) {
                         boardGame.move(x, y)
-                        boardGame.switchPlayer()
+                        for (i in 0 until boardGame.getPlayers()) {
+                            boardGame.switchPlayer()
+
+                            if (boardGame.checkNoValidPlays())
+                                break
+
+                            showAlert(boardGame.getName())
+
+                            if (i == boardGame.getPlayers() - 1) {
+                                Toast.makeText(
+                                    context,
+                                    "Acabou o jogo. Não existem jogadas disponiveis",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                endGame = true
+                            }
+                        }
                         boardGame.checkBoardPieces()
                     }
 
+
                     if (boardGame.checkEndGame()) {
-                        Toast.makeText(context, "Acabou o jogo", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            "Acabou o jogo. Tabuleiro Preenchido",
+                            Toast.LENGTH_LONG
+                        ).show()
                         endGame = true
                     }
                     gamePerfilView.invalidate()
@@ -133,6 +155,24 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         }
 
         return super.onTouchEvent(event)
+    }
+
+    private fun showAlert(name: String) {
+
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder1.setMessage(name + " has no available plays..")
+        builder1.setCancelable(true)
+        pass = false
+
+        builder1.setPositiveButton("Pass") { dialog, id ->
+            run {
+                dialog.cancel()
+                pass = true
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+
     }
 
     private fun drawHighlightValidPlays(

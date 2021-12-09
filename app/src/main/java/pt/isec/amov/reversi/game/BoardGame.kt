@@ -35,8 +35,12 @@ class BoardGame(
 
         if (gamemode != 2) {
 
-            for (i in 1..2)
-                players.add(Player(i, 2, colorsPlayers[i - 1]))
+            for (i in 1..2){
+                if(gamemode == 0 && i == 2)
+                    players.add(Player(i, 2, colorsPlayers[i - 1],"Anónimo"))
+                else
+                    players.add(Player(i, 2, colorsPlayers[i - 1]))
+            }
 
 
             pieces[middle - 1][middle - 1] = players[0].getPieceType()
@@ -181,8 +185,8 @@ class BoardGame(
         }
     }
 
-    private fun checkEndGamePlays(): Boolean {
-        var i = 0
+    fun checkNoValidPlays(): Boolean {
+        /*var i = 0
         while (highlightValidPlays().size == 0) {
             if (getPlayers() - 1 == i)
                 return true
@@ -190,6 +194,10 @@ class BoardGame(
             i++
         }
         return false
+        */
+        if(highlightValidPlays().size != 0)
+            return true
+        return false;
     }
 
     private fun checkEndGameBoard(): Boolean {
@@ -238,7 +246,7 @@ class BoardGame(
         }
 
         // para nao colocar a peça bomba nas suas peças
-        if (pieces[posX][posY] != players[currentPlayer].getPieceType())
+        if (pieces[posX][posY] != players[currentPlayer-1 ].getPieceType())
             return
 
         for (dx in -1..1) {
@@ -249,7 +257,7 @@ class BoardGame(
                     pieces[posX + dx][posY + dy] = EMPTY_CELL
             }
         }
-        players[currentPlayer].setBombPiece()
+        players[currentPlayer-1 ].setBombPiece()
 
     }
 
@@ -264,11 +272,11 @@ class BoardGame(
                     return false
 
             if (i != 2) { // 1 e 2 peças sao minhas
-                if (pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] != players[currentPlayer].getPieceType())
+                if (pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] != players[currentPlayer-1 ].getPieceType())
                     return false
             }
             else         // 3 peça é dele
-                if (pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] == players[currentPlayer].getPieceType())
+                if (pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] == players[currentPlayer-1 ].getPieceType())
                     return false
                 else
                     type = pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] // guardar o tipo de peça do jogador
@@ -280,10 +288,10 @@ class BoardGame(
                 pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] = type
             }
             else
-                pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] = players[currentPlayer].getPieceType()
+                pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] = players[currentPlayer-1 ].getPieceType()
         }
 
-        players[currentPlayer].setExchangePieces()
+        players[currentPlayer -1 ].setExchangePieces()
         return true
 
     }
@@ -310,7 +318,7 @@ class BoardGame(
         }
     }
 
-    fun checkEndGame(): Boolean = checkEndGameBoard() || checkEndGamePlays()
+    fun checkEndGame(): Boolean = checkEndGameBoard()
 
     fun getCurrentPlayer(): Int = currentPlayer
 
@@ -329,6 +337,8 @@ class BoardGame(
     fun getUsername(number: Int): String = players[number].getUsername()
 
     fun getTotalPieces(number: Int): Int = players[number].getPieces()
+
+    fun getName() : String = players[currentPlayer-1].getUsername()
 
     private fun rafflePlayer(nPlayers: Int): Int = Random.nextInt(1..nPlayers)
 
