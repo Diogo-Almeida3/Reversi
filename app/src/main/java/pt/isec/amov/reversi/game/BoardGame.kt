@@ -4,7 +4,11 @@ package pt.isec.amov.reversi.game
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<Int>, private var colorsBoard: ArrayList<Int>) {
+class BoardGame(
+    private var gamemode: Int,
+    private var colorsPlayers: ArrayList<Int>,
+    private var colorsBoard: ArrayList<Int>
+) {
 
     companion object {
         const val EMPTY_CELL = 0
@@ -199,11 +203,11 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
     }
 
     fun checkBoardPieces() {
-        for(i in 0 until getPlayers()){
+        for (i in 0 until getPlayers()) {
             var aux = 0
-            for(x in 0 until boardSIZE)
-                for(y in 0 until boardSIZE)
-                    if(pieces[x][y] == players[i].getPieceType())
+            for (x in 0 until boardSIZE)
+                for (y in 0 until boardSIZE)
+                    if (pieces[x][y] == players[i].getPieceType())
                         aux += 1
             players[i].setPieces(aux)
         }
@@ -212,7 +216,7 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
     fun checkWinner(): Player? {
         var winner: Player? = players[0]
-        var count =  false
+        var count = false
 
         for (i in 0 until players.size - 1) // 0, 1 em modo de 3     5 - 10 - 10
             for (j in (i + 1) until players.size) {   // 1, 2 em modo de 3
@@ -227,6 +231,63 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
             return null
         return winner
     }
+
+    fun pieceBomb(posX: Int, posY: Int) {
+        if (posX < 0 || posY < 0 || posX >= boardSIZE || posY >= boardSIZE) {
+            return
+        }
+
+        // para nao colocar a peça bomba nas suas peças
+        if (pieces[posX][posY] != players[currentPlayer].getPieceType())
+            return
+
+        for (dx in -1..1) {
+            for (dy in -1..1) {
+                if (posX + dx < 0 || posY + dy < 0 || posX + dx >= boardSIZE || posY + dy >= boardSIZE)
+                    continue
+                else
+                    pieces[posX + dx][posY + dy] = EMPTY_CELL
+            }
+        }
+        players[currentPlayer].setBombPiece()
+
+    }
+
+    fun exchangePiece(piecesExchange: ArrayList<PieceMoves>): Boolean {
+
+        var type = 0
+        // validar as peças do array
+        for (i in 0 until 3) {
+
+            if(piecesExchange[i].getX() <0 || piecesExchange[i].getX()> boardSIZE
+                || piecesExchange[i].getY() < 0 || piecesExchange[i].getY() >boardSIZE)
+                    return false
+
+            if (i != 2) { // 1 e 2 peças sao minhas
+                if (pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] != players[currentPlayer].getPieceType())
+                    return false
+            }
+            else         // 3 peça é dele
+                if (pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] == players[currentPlayer].getPieceType())
+                    return false
+                else
+                    type = pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] // guardar o tipo de peça do jogador
+        }
+        // trocar as peças
+        for(i in 0 until 3){
+
+            if(i!=2){
+                pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] = type
+            }
+            else
+                pieces[piecesExchange[i].getX()][piecesExchange[i].getY()] = players[currentPlayer].getPieceType()
+        }
+
+        players[currentPlayer].setExchangePieces()
+        return true
+
+    }
+
 
     fun getBoardSize(): Int {
         if (gamemode != 2)
@@ -251,11 +312,11 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
     fun checkEndGame(): Boolean = checkEndGameBoard() || checkEndGamePlays()
 
-    fun getCurrentPlayer(): Int  = currentPlayer
+    fun getCurrentPlayer(): Int = currentPlayer
 
     fun getPlayers(): Int = players.size
 
-    fun getBoardColor(number : Int): Int = colorsBoard[number]
+    fun getBoardColor(number: Int): Int = colorsBoard[number]
 
     fun getPiece(x: Int, y: Int): Int = pieces[x][y]
 
@@ -263,11 +324,11 @@ class BoardGame(private var gamemode: Int, private var colorsPlayers: ArrayList<
 
     fun getColor(playerNumber: Int): Int = players[playerNumber].getColor()
 
-    fun getGameMode() :Int = gamemode
+    fun getGameMode(): Int = gamemode
 
-    fun getUsername(number: Int) : String = players[number].getUsername()
+    fun getUsername(number: Int): String = players[number].getUsername()
 
-    fun getTotalPieces(number : Int) : Int = players[number].getPieces()
+    fun getTotalPieces(number: Int): Int = players[number].getPieces()
 
     private fun rafflePlayer(nPlayers: Int): Int = Random.nextInt(1..nPlayers)
 
