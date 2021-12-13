@@ -119,23 +119,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 0 -> {
                     if (boardGame.confirmMove(x!!, y!!)) {
                         boardGame.move(x, y)
-                        for (i in 0 until boardGame.getPlayers()) {
-                            boardGame.switchPlayer()
-
-                            if (boardGame.checkNoValidPlays())
-                                break
-
-                            showAlert(boardGame.getName())
-
-                            if (i == boardGame.getPlayers() - 1) {
-                                Toast.makeText(
-                                    context,
-                                    "Acabou o jogo. Não existem jogadas disponiveis",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                endGame = true
-                            }
-                        }
+                        checkValid()
                         boardGame.checkBoardPieces()
                     }
 
@@ -155,6 +139,27 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         }
 
         return super.onTouchEvent(event)
+    }
+
+
+    private fun checkValid(){
+        for (i in 0 until boardGame.getPlayers()) {
+            boardGame.switchPlayer()
+
+            if (boardGame.checkNoValidPlays())
+                break
+
+            showAlert(boardGame.getName())
+            /* AQUI FARIA O RETURN  E DEPOIS USARIAMOS UM CONTADOR LA EM CIMA EM VEZ DE UM FOR E COM AS FLAGS CONTROLAVAMOS AS JOGAdAS DisPONIVEIS E SE JA ACABOU O JOGO*/
+            if (i == boardGame.getPlayers() - 1) {
+                Toast.makeText(
+                    context,
+                    "Acabou o jogo. Não existem jogadas disponiveis",
+                    Toast.LENGTH_LONG
+                ).show()
+                endGame = true
+            }
+        }
     }
 
     private fun showAlert(name: String) {
