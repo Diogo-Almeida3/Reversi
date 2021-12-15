@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "895603968343",
+    "project_id": "reversi-fc60d",
+    "storage_bucket": "reversi-fc60d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895603968343:android:bc9b009d0d70b408381612",
+        "android_client_info": {
+          "package_name": "pt.isec.amov.reversi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "895603968343-uvgj85clrvr5j0i043g8m2jv329v6rlp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pt.isec.amov.reversi",
+            "certificate_hash": "98b5173fdc725ea6e786968527f8684173459ae2"
+          }
+        },
+        {
+          "client_id": "895603968343-4k4mnljlbl53kkukipkvlrig9e4c56pu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZKgm1eu4N3sabR9GDYcWoIcTkqa3b9iA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "895603968343-4k4mnljlbl53kkukipkvlrig9e4c56pu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
