@@ -102,7 +102,7 @@
             android:textAlignment="center"
             android:textColor="@color/azul_marinho"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
     </LinearLayout>
 
 </FrameLayout>

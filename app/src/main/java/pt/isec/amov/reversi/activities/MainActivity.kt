@@ -1,5 +1,6 @@
 package pt.isec.amov.reversi.activities
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -13,6 +14,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.fragments.*
 
@@ -23,9 +27,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
     private lateinit var navDirections: NavDirections
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        auth = Firebase.auth
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -48,6 +56,14 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
 
+    }
+
+    fun signOut() {
+        if (auth.currentUser != null) {
+            auth.signOut()
+            startActivity(Intent(this,LoginActivity::class.java))
+            finish()
+        }
     }
 
     private fun setupDrawerToggle(): ActionBarDrawerToggle = ActionBarDrawerToggle(
@@ -143,7 +159,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             R.id.logout -> {
-                finish()
+                signOut()
             }
         }
         drawerLayout.closeDrawers()
