@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import androidx.appcompat.app.AppCompatActivity
 import pt.isec.amov.reversi.activities.MainActivity
 
 
@@ -52,7 +51,7 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentCameraBinding.inflate(inflater)
         // Check camera permissions if all permission granted
@@ -60,7 +59,7 @@ class CameraFragment : Fragment() {
         if (allPermissionsGranted()) {
             startCamera()
         } else {
-            ActivityCompat.requestPermissions(requireActivity(),
+            requestPermissions(
                 REQUIRED_PERMISSIONS,
                 REQUEST_CODE_PERMISSIONS
             )
@@ -190,7 +189,7 @@ class CameraFragment : Fragment() {
         private const val TAG = "CameraXGFG"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 20
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
     override fun onDestroy() {
