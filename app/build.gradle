@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id ('androidx.navigation.safeargs.kotlin')
     id 'com.google.gms.google-services'
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -56,6 +57,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.android.gms:play-services-auth:20.0.0'
 
+    // Dependency for CameraX
+    implementation "androidx.camera:camera-camera2:1.1.0-alpha12"
+    implementation "androidx.camera:camera-lifecycle:1.1.0-alpha12"
+    implementation "androidx.camera:camera-lifecycle:1.1.0-alpha12"
+    implementation "androidx.camera:camera-view:1.0.0-alpha32"
+    
     //Dependency for Circular image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 

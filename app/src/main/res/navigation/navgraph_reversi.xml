@@ -59,6 +59,9 @@
         <action
             android:id="@+id/action_profileFragment_to_gameFragment"
             app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
     </fragment>
 
     <fragment
@@ -73,5 +76,10 @@
             android:id="@+id/action_gameFragment_to_menuFragment"
             app:destination="@id/menuFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="pt.isec.amov.reversi.camerax.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" />
 
 </navigation>
