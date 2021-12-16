@@ -5,11 +5,14 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.util.Rational
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -18,7 +21,14 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Source
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.databinding.FragmentCameraBinding
 import java.io.File
@@ -31,11 +41,15 @@ import pt.isec.amov.reversi.activities.MainActivity
 
 class CameraFragment : Fragment() {
 
+    private var imagePath: String? = null
     private var imageCapture: ImageCapture? = null
+    private val db = Firebase.firestore
+    private lateinit var auth: FirebaseAuth
+    private var nome: String? = null
+
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
-
-    private lateinit var binding : FragmentCameraBinding
+    private lateinit var binding: FragmentCameraBinding
 
     override fun onResume() {
         super.onResume()
@@ -70,6 +84,7 @@ class CameraFragment : Fragment() {
         binding.cameraCaptureButton.setOnClickListener {
             takePhoto()
         }
+        auth = Firebase.auth
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
         return binding.root
@@ -80,17 +95,18 @@ class CameraFragment : Fragment() {
         // modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
+
         // Create time-stamped output file to hold the image
         val photoFile = File(
             outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(System.currentTimeMillis()) + ".jpg"
+            "${auth.currentUser!!.uid}.jpg"
         )
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
 
-
+        imagePath = photoFile.absolutePath
         // Set up image capture listener,
         // which is triggered after photo has
         // been taken
@@ -105,6 +121,10 @@ class CameraFragment : Fragment() {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
 
+                    val navigationView = activity?.findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+                    navigationView?.getHeaderView(0)?.findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.userImage)?.setImageURI(savedUri)
+
+
                     // set the saved uri to the image view
                     binding.ivCapture.visibility = View.VISIBLE
                     binding.ivCapture.setImageURI(savedUri)
@@ -112,6 +132,9 @@ class CameraFragment : Fragment() {
                     val msg = "Photo capture succeeded: $savedUri"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
                     Log.d(TAG, msg)
+
+
+                    findNavController().navigate(R.id.action_cameraFragment_to_profileFragment)
                 }
             })
     }
@@ -131,7 +154,7 @@ class CameraFragment : Fragment() {
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
 
-            imageCapture = ImageCapture.Builder().build()
+            imageCapture = ImageCapture.Builder().setTargetResolution(Size(85,85)).build()
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -179,17 +202,32 @@ class CameraFragment : Fragment() {
                 // If permissions are not granted,
                 // present a toast to notify the user that
                 // the permissions were not granted.
-                Toast.makeText(requireContext(), "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Permissions not granted by the user.",
+                    Toast.LENGTH_SHORT
+                ).show()
 
             }
         }
     }
 
+    /*private fun updatePreview() {
+        if(imagePath != null){
+            ImageUtils.setPic(binding.frPreview,imagePath!!)  // !! => dizer que nao é nulo
+        }else{
+            binding.frPreview.background = ResourcesCompat.getDrawable(
+                resources,android.R.drawable.ic_menu_report_image,null   //resources => identifica o motor de  gestap de recursos da nossa aplicaçao
+            )
+        }
+    }*/
+
     companion object {
         private const val TAG = "CameraXGFG"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 20
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE)
+        private val REQUIRED_PERMISSIONS =
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
     override fun onDestroy() {

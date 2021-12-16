@@ -2,10 +2,12 @@ package pt.isec.amov.reversi.activities
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -21,6 +23,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.fragments.*
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,14 +75,14 @@ class MainActivity : AppCompatActivity() {
                     return@addSnapshotListener
                 if(docs != null && docs.exists()){
                     val headerView = navigationView.getHeaderView(0)
-
                     headerView.findViewById<TextView>(R.id.userName).text = docs.getString("username")
                     headerView.findViewById<TextView>(R.id.userEmail).text = docs.getString("email")
+
+                    val uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
+                    if(uri.exists())
+                        headerView.findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.userImage).setImageURI(Uri.fromFile(uri))
                 }
-
             }
-
-
         }
     }
 

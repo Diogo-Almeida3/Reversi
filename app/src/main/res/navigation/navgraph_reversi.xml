@@ -12,13 +12,22 @@
         tools:layout="@layout/fragment_menu">
         <action
             android:id="@+id/action_menuActivity_to_rulesActivity"
-            app:destination="@id/rulesFragment" />
+            app:destination="@id/rulesFragment"
+
+            app:popUpTo="@layout/fragment_menu"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_menuFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+
+            app:popUpTo="@layout/fragment_menu"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_menuFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/profileFragment"
+
+            app:popUpTo="@layout/fragment_menu"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_menuFragment_self"
             app:destination="@id/menuFragment" />
@@ -31,16 +40,25 @@
         tools:layout="@layout/fragment_rules">
         <action
             android:id="@+id/action_rulesFragment_to_menuFragment"
-            app:destination="@id/menuFragment" />
+            app:destination="@id/menuFragment"
+
+            app:popUpTo="@layout/fragment_rules"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_rulesFragment_self"
             app:destination="@id/rulesFragment" />
         <action
             android:id="@+id/action_rulesFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/profileFragment"
+
+            app:popUpTo="@layout/fragment_rules"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_rulesFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+
+            app:popUpTo="@layout/fragment_rules"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -49,19 +67,35 @@
         tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profileFragment_to_menuFragment2"
-            app:destination="@id/menuFragment" />
+            app:destination="@id/menuFragment"
+
+            app:popUpTo="@layout/fragment_profile"
+            app:popUpToInclusive="true"
+            />
         <action
             android:id="@+id/action_profileFragment_to_rulesFragment"
-            app:destination="@id/rulesFragment" />
+            app:destination="@id/rulesFragment"
+
+            app:popUpTo="@layout/fragment_profile"
+            app:popUpToInclusive="true"
+            />
         <action
             android:id="@+id/action_profileFragment_self"
             app:destination="@id/profileFragment" />
         <action
             android:id="@+id/action_profileFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+
+            app:popUpTo="@layout/fragment_profile"
+            app:popUpToInclusive="true"
+            />
         <action
             android:id="@+id/action_profileFragment_to_cameraFragment"
-            app:destination="@id/cameraFragment" />
+            app:destination="@id/cameraFragment"
+
+            app:popUpTo="@layout/fragment_profile"
+            app:popUpToInclusive="true"
+            />
     </fragment>
 
     <fragment
@@ -74,12 +108,24 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_gameFragment_to_menuFragment"
-            app:destination="@id/menuFragment" />
+            app:destination="@id/menuFragment"
+
+            app:popUpTo="@layout/fragment_menu"
+            app:popUpToInclusive="true"
+            />
     </fragment>
     <fragment
         android:id="@+id/cameraFragment"
         android:name="pt.isec.amov.reversi.camerax.CameraFragment"
         android:label="fragment_camera"
-        tools:layout="@layout/fragment_camera" />
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_cameraFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+
+            app:popUpTo="@layout/fragment_camera"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
 
 </navigation>

@@ -9,10 +9,11 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@mipmap/ic_launcher_round"
+        android:id="@+id/userImage"
         />
 
     <TextView
