@@ -26,6 +26,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import androidx.appcompat.app.AppCompatActivity
+import pt.isec.amov.reversi.activities.MainActivity
+
 
 class CameraFragment : Fragment() {
 
@@ -34,6 +37,16 @@ class CameraFragment : Fragment() {
     private lateinit var cameraExecutor: ExecutorService
 
     private lateinit var binding : FragmentCameraBinding
+
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity?)!!.supportActionBar!!.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as MainActivity?)!!.supportActionBar!!.show()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
