@@ -12,8 +12,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="66dp"
-        android:gravity="bottom"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -34,7 +34,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="18dp"
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/rounded_corners"
                 android:backgroundTint="@color/ar_puro"
@@ -92,6 +91,30 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+                <TextView
+                    style="@style/profileText"
+                    android:text="@string/change_password" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/profileItems"
+                        android:layout_weight="1"
+                        android:text="************" />
+
+                    <Button
+                        android:id="@+id/btnEditPassword"
+                        style="@style/profileButtonLand"
+                        android:layout_weight="1.5"
+                        android:text="@string/edit_password" />
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -109,49 +132,6 @@
             android:paddingEnd="18dp"
             android:paddingBottom="12dp">
 
-            <TextView
-                style="@style/profileText"
-                android:text="@string/change_email" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/profileItems"
-                    android:text="diogo3679@gmail.com" />
-
-                <Button
-                    android:id="@+id/btnEditEmail"
-                    style="@style/profileButton"
-                    android:text="@string/edit_email" />
-
-            </LinearLayout>
-
-            <TextView
-                style="@style/profileText"
-                android:text="@string/change_password" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/profileItems"
-                    android:text="************" />
-
-                <Button
-                    android:id="@+id/btnEditPassword"
-                    style="@style/profileButton"
-                    android:text="@string/edit_password" />
-
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

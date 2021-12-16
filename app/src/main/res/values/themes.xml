@@ -101,18 +101,30 @@
     </style>
 
 
-    <style name="profileButton">
+    <style name="profileButtonPortrait">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/rounded_corners</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:layout_weight">4</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
+        <item name="android:layout_marginEnd">35dp</item>>
+        <item name="android:layout_marginStart">22dp</item>
     </style>
-
+    <style name="profileButtonLand">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/rounded_corners</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_marginEnd">20dp</item>>
+        <item name="android:layout_marginStart">15dp</item>
+    </style>
     <style name="profileText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

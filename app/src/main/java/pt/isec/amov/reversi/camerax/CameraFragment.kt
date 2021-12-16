@@ -125,10 +125,6 @@ class CameraFragment : Fragment() {
                     navigationView?.getHeaderView(0)?.findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.userImage)?.setImageURI(savedUri)
 
 
-                    // set the saved uri to the image view
-                    binding.ivCapture.visibility = View.VISIBLE
-                    binding.ivCapture.setImageURI(savedUri)
-
                     val msg = "Photo capture succeeded: $savedUri"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
                     Log.d(TAG, msg)
