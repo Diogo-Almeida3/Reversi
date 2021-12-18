@@ -15,12 +15,12 @@ import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.databinding.FragmentProfileBinding
 import java.io.File
 
-class ProfileFragment : Fragment(){
+class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
     private var db = Firebase.firestore
-    private lateinit var auth : FirebaseAuth
-    private var email :String? = null
+    private lateinit var auth: FirebaseAuth
+    private var email: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,13 +32,14 @@ class ProfileFragment : Fragment(){
 
         auth = Firebase.auth
 
-        val uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
-        if(uri.exists())
+        val uri =
+            File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
+        if (uri.exists())
             binding.profilePic.setImageURI(Uri.fromFile(uri))
 
         setUserData()
 
-        binding.btnEditPicture.setOnClickListener{
+        binding.btnEditPicture.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_cameraFragment)
         }
 
@@ -74,13 +75,13 @@ class ProfileFragment : Fragment(){
             }
     }
 
-    private fun setUserData(){
-        if(auth.currentUser != null){
+    private fun setUserData() {
+        if (auth.currentUser != null) {
             val v = db.collection("Users").document(auth.currentUser!!.uid)
-            v.addSnapshotListener{ docs, e ->
-                if(e != null)
+            v.addSnapshotListener { docs, e ->
+                if (e != null)
                     return@addSnapshotListener
-                if(docs != null && docs.exists()){
+                if (docs != null && docs.exists()) {
                     binding.profileUsername.text = docs.getString("username")
                     email = docs.getString("email")
                 }

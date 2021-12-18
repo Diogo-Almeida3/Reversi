@@ -79,8 +79,9 @@ class MainActivity : AppCompatActivity() {
                     headerView.findViewById<TextView>(R.id.userEmail).text = docs.getString("email")
 
                     val uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
-                    if(uri.exists())
+                    if(uri.exists()){
                         headerView.findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.userImage).setImageURI(Uri.fromFile(uri))
+                    }
                 }
             }
         }
