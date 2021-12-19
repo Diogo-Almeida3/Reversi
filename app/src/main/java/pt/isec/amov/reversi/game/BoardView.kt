@@ -25,7 +25,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private lateinit var boardGame: BoardGame
     private lateinit var gamePerfilView: GamePerfilView
 
-    private var pass = false
+    private var counter = 0
+    private var flagValidPlays = false
     private var boardSIZE = 0
     private val gridPaint = Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG)
 
@@ -113,27 +114,16 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val x = (event?.x?.div(pieceWidth))?.toInt()
         val y = (event?.y?.div(pieceHeight))?.toInt()
-
+        counter = 0
         if (!endGame) {
             when (boardGame.getGameMode()) {
                 0 -> {
                     if (boardGame.confirmMove(x!!, y!!)) {
                         boardGame.move(x, y)
-                        checkValid()
-                        boardGame.checkBoardPieces()
+                        flagValidPlays = checkAlertNoPlays()
                     }
-
-
-                    if (boardGame.checkEndGame()) {
-                        Toast.makeText(
-                            context,
-                            "Acabou o jogo. Tabuleiro Preenchido",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        endGame = true
-                    }
-                    gamePerfilView.invalidate()
-                    invalidate()
+                    if (flagValidPlays)
+                        updateView()
                 }
             }
         }
@@ -141,25 +131,32 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         return super.onTouchEvent(event)
     }
 
-
-    private fun checkValid(){
-        for (i in 0 until boardGame.getPlayers()) {
-            boardGame.switchPlayer()
-
-            if (boardGame.checkNoValidPlays())
-                break
-
-            showAlert(boardGame.getName())
-            /* AQUI FARIA O RETURN  E DEPOIS USARIAMOS UM CONTADOR LA EM CIMA EM VEZ DE UM FOR E COM AS FLAGS CONTROLAVAMOS AS JOGAdAS DisPONIVEIS E SE JA ACABOU O JOGO*/
-            if (i == boardGame.getPlayers() - 1) {
-                Toast.makeText(
-                    context,
-                    "Acabou o jogo. Não existem jogadas disponiveis",
-                    Toast.LENGTH_LONG
-                ).show()
-                endGame = true
-            }
+    private fun updateView() {
+        boardGame.checkBoardPieces()
+        if (boardGame.checkEndGame()) {
+            Toast.makeText(
+                context,
+                "Acabou o jogo. Tabuleiro Preenchido",
+                Toast.LENGTH_LONG
+            ).show()
+            endGame = true
         }
+        gamePerfilView.invalidate()
+        invalidate()
+    }
+
+    private fun checkAlertNoPlays(): Boolean {
+        //Muda o jogador a jogar
+        boardGame.switchPlayer()
+
+        //Verifica se ele tem jogadas disponiveis se sim saimos daqui e continuamos
+        if (boardGame.checkNoValidPlays())
+            return true
+
+        //Senao mostra o alert e resolve o resto lá dentro
+        showAlert(boardGame.getName())
+        return false
+
     }
 
     private fun showAlert(name: String) {
@@ -167,12 +164,29 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
         builder1.setMessage(name + " has no available plays..")
         builder1.setCancelable(true)
-        pass = false
 
         builder1.setPositiveButton("Pass") { dialog, id ->
             run {
                 dialog.cancel()
-                pass = true
+                if (counter != boardGame.getPlayers() - 1) {
+                    ++counter
+                    flagValidPlays = checkAlertNoPlays()
+
+                    if (flagValidPlays)
+                        updateView()
+                    else {
+                        if (counter == boardGame.getPlayers() - 1) {
+                            Toast.makeText(
+                                context,
+                                "Acabou o jogo. Não existem jogadas disponiveis",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            endGame = true
+
+                        }
+                    }
+                } else
+                    updateView()
             }
         }
         val alert11: AlertDialog = builder1.create()
