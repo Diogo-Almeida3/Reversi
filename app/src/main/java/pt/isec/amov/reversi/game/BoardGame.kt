@@ -195,6 +195,7 @@ class BoardGame(
         }
         return false
         */
+
         if(highlightValidPlays().size != 0)
             return true
         return false;
