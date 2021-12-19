@@ -10,6 +10,10 @@ import android.graphics.BitmapFactory
 
 
 import androidx.core.graphics.scale
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import java.io.File
 
 
 private const val MARGIN = 24
@@ -25,10 +29,11 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private val orientation = resources.configuration.orientation
 
     private lateinit var boardGame: BoardGame
+    private lateinit var auth : FirebaseAuth
 
     fun setData(boardGame: BoardGame) {
         this.boardGame = boardGame
-
+        auth = Firebase.auth
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -43,7 +48,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     override fun onDraw(canvas: Canvas?) {
 
-            drawBackground(canvas)
+        drawBackground(canvas)
         if(orientation != Configuration.ORIENTATION_LANDSCAPE)
             drawDataPortrait(canvas)
         else
@@ -86,8 +91,14 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
             when (boardGame.getGameMode()) {
                 0 -> {
+                    val fileName = "/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg"
+                    val uri = File(fileName)
+
                     if (i == 0) { //Jogador atual
-                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        if(uri.exists())
+                            canvas?.drawBitmap(BitmapFactory.decodeFile(fileName).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        else
+                            canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
                         canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter/2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     } else { //Anónimo
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
@@ -180,9 +191,15 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             val actualScore = boardGame.getTotalPieces(i)
 
             when (boardGame.getGameMode()) {
+
                 0 -> {
+                    val fileName = "/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg"
+                    val uri = File(fileName)
                     if (i == 0) { //Jogador atual
-                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        if(uri.exists())
+                            canvas?.drawBitmap(BitmapFactory.decodeFile(fileName).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        else
+                            canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
                         canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else { //Anónimo
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
