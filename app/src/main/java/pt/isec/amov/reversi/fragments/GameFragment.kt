@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.game.BoardGame
@@ -38,12 +39,19 @@ class GameFragment : Fragment() {
         for (i in 0..2)
             colorsBoard.add(resources.getIntArray(R.array.array_of_board_colors)[i])
 
+
         gamemode = GameFragmentArgs.fromBundle(requireArguments()).game
         boardGame = BoardGame(gamemode,colorsPlayers,colorsBoard)
         boardView = view.findViewById(R.id.boardView)
         gamePerfilView = view.findViewById(R.id.gamePerfilView)
         boardView.setData(boardGame,gamePerfilView)
         gamePerfilView.setData(boardGame)
+
+        view.findViewById<Button>(R.id.btnBombPiece).setOnClickListener {
+        }
+        view.findViewById<Button>(R.id.btnTradePiece).setOnClickListener {
+
+        }
 
         return view
     }

@@ -25,6 +25,8 @@ class BoardGame(
         newGame()
     }
 
+
+
     private fun newGame() {
         for (i in 0 until boardSIZE)
             for (j in 0 until boardSIZE)
