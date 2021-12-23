@@ -168,9 +168,11 @@ class BoardGame(
                     return 1
             }
             1 -> {
-                if(exchangeArrayList[0].getX() == x && exchangeArrayList[0].getY() == y)
-                    return -3
-                return 1
+                if (pieces[x][y] == getPieceType()){
+                    if(exchangeArrayList[0].getX() == x && exchangeArrayList[0].getY() == y)
+                        return -3
+                    return 1
+                }
             }
             else -> {
                 if (pieces[x][y] != getPieceType())
