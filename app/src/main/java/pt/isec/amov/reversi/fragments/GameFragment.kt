@@ -10,6 +10,7 @@ import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.gson.Gson
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.game.BoardGame
 import pt.isec.amov.reversi.game.BoardView
@@ -47,7 +48,16 @@ class GameFragment : Fragment() {
 
 
         gamemode = GameFragmentArgs.fromBundle(requireArguments()).game
-        boardGame = BoardGame(gamemode,colorsPlayers,colorsBoard)
+        if(savedInstanceState == null)
+            boardGame = BoardGame(gamemode,colorsPlayers,colorsBoard)
+        else {
+            val json = savedInstanceState.getString("CUSTOM_CLASS")
+            if (!json!!.isEmpty()) {
+                val gson = Gson()
+                boardGame = gson.fromJson(json, BoardGame::class.java)
+            }
+        }
+
         boardView = view.findViewById(R.id.boardView)
         gamePerfilView = view.findViewById(R.id.gamePerfilView)
         boardView.setData(boardGame,gamePerfilView)
@@ -96,5 +106,12 @@ class GameFragment : Fragment() {
         val alert11: AlertDialog = builder1.create()
         alert11.show()
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val gson = Gson()
+        val json = gson.toJson(boardGame)
+        outState.putString("CUSTOM_CLASS", json)
     }
 }

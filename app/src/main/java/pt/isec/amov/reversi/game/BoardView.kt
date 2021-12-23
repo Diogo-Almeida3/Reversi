@@ -9,6 +9,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import androidx.navigation.findNavController
+import pt.isec.amov.reversi.R
 
 
 private const val LINE_SIZE = 5
@@ -36,7 +38,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var exchangeArrayList = ArrayList<PieceMoves>()
     private var exchangeCounter = 0
     private var boardSIZE = 0
-    private val gridPaint = Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG)
 
     fun setData(boardGame: BoardGame, gamePerfilView: GamePerfilView) {
         this.boardGame = boardGame
@@ -68,28 +69,17 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     private fun drawGrid(canvas: Canvas?) {
-        gridPaint.apply {
-            color = boardGame.getBoardColor(1)
-        }
+        val gridPaint = getGridPaint()
 
         drawCellColor(canvas)
         for (i in -1..boardSIZE) {
             /* Horizontal */
             var low = pieceHeight * (i + 1)
-            canvas?.drawRect(
-                0f,
-                low.toFloat(),
-                width.toFloat() - MARGIN_PIECE,
-                (low + LINE_SIZE).toFloat(),
-                gridPaint
-            )
+            canvas?.drawRect(0f, low.toFloat(), width.toFloat() - MARGIN_PIECE, (low + LINE_SIZE).toFloat(), gridPaint)
 
             /* Vertical */
             low = pieceWidth * (i + 1)
-            canvas?.drawRect(
-                low.toFloat(), 0f, ((low + LINE_SIZE).toFloat()),
-                height.toFloat() - MARGIN_PIECE, gridPaint
-            )
+            canvas?.drawRect(low.toFloat(), 0f, ((low + LINE_SIZE).toFloat()), height.toFloat() - MARGIN_PIECE, gridPaint)
         }
     }
 
@@ -100,11 +90,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 val top = (pieceHeight * j)
                 val right = (pieceWidth * i) + pieceWidth
                 val bottom = (pieceHeight * j) + pieceHeight
-                canvas?.drawRect(left.toFloat(),
-                    top.toFloat(),
-                    right.toFloat(),
-                    bottom.toFloat(),
-                    Paint().apply { color = boardGame.getBoardColor(0) })
+                canvas?.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), getCellPaint())
             }
         }
     }
@@ -113,10 +99,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
-        drawHighlightValidPlays(
-            canvas,
-            boardGame.highlightValidPlays()
-        ) // constroi possiveis jogadas
+        drawHighlightValidPlays(canvas, boardGame.highlightValidPlays()) // constroi possiveis jogadas
 
     }
 
@@ -145,7 +128,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                 boardGame.pieceBomb(x,y)
                                 boardGame.checkBoardPieces()
                                 checkAlertNoPlays()
-                            }
+                            } else
+                                showAlertExchange("You can only select your piece color")
                         }
 
                         EXCHANGE_PIECE -> {
@@ -180,8 +164,9 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         invalidate()
     }
 
-    private fun alertEndGame(texto:String){
-        Toast.makeText(context, texto, Toast.LENGTH_LONG).show()
+    private fun alertEndGame(text:String){
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+        showAlertEndGame(boardGame.checkWinner())
         updateView()
         endGame = true
     }
@@ -198,9 +183,37 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         if(counter == 0)
             updateView()
+
         //Senao mostra o alert e resolve o resto lá dentro
         showAlertPassPlay(boardGame.getName())
         return false
+
+    }
+
+    private fun showAlertEndGame(player: Player?) {
+
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+
+        if(player != null)
+            builder1.setMessage("${player.getUsername()} win the game.")
+        else
+            builder1.setMessage("Draw")
+        builder1.setCancelable(false)
+
+        builder1.setPositiveButton("Check Board") { dialog, id ->
+            run {
+                dialog.cancel()
+            }
+        }
+
+        builder1.setNegativeButton("Back to menu") { dialog, id ->
+            run {
+                dialog.cancel()
+                findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
 
     }
 
@@ -241,26 +254,38 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     }
 
-    private fun drawHighlightValidPlays(
-        canvas: Canvas?,
-        highlightValidPlays: ArrayList<PieceMoves>
-    ) {
+    private fun drawHighlightValidPlays(canvas: Canvas?, highlightValidPlays: ArrayList<PieceMoves>) {
         for (i in 0 until highlightValidPlays.size) {
             val centerX = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth / 2
             val centerY = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight / 2
             val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN_HIGHLIGHT
-            canvas?.drawCircle(
-                centerX.toFloat(), centerY.toFloat(),
-                radius.toFloat(), Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    color = boardGame.getBoardColor(2)
-                })
-            canvas?.drawCircle(
-                centerX.toFloat(), centerY.toFloat(),
-                radius.toFloat(), Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
-                    color = Color.WHITE
-                    style = Paint.Style.STROKE
-                    strokeWidth = 6.0f
-                })
+            canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), radius.toFloat(), getHighlightPlayPaint())
+            canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), radius.toFloat(), getHighlightPlayStrokePaint())
+        }
+    }
+
+
+    private fun getGridPaint() : Paint{
+        return Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG).apply {
+            color = boardGame.getBoardColor(1)
+        }
+    }
+
+    private fun getCellPaint() : Paint{
+        return Paint().apply { color = boardGame.getBoardColor(0) }
+    }
+
+    private fun getHighlightPlayStrokePaint() : Paint{
+        return Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            strokeWidth = 6.0f
+        }
+    }
+
+    private fun getHighlightPlayPaint() : Paint{
+        return Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = boardGame.getBoardColor(2)
         }
     }
 
@@ -289,6 +314,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             centerX.toFloat(), centerY.toFloat(),
             radius.toFloat(), paint
         )
-
     }
+
+    
 }
