@@ -27,7 +27,14 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     private var counter = 0
 
+    companion object{
+        const val NORMAL_PIECE = 0
+        const val BOMB_PIECE = 1
+        const val EXCHANGE_PIECE = 2
+    }
 
+    private var exchangeArrayList = ArrayList<PieceMoves>()
+    private var exchangeCounter = 0
     private var boardSIZE = 0
     private val gridPaint = Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG)
 
@@ -35,6 +42,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         this.boardGame = boardGame
         this.gamePerfilView = gamePerfilView
         boardSIZE = boardGame.getBoardSize()
+        exchangeCounter = 0
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -119,15 +127,47 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         if (!endGame) {
             when (boardGame.getGameMode()) {
                 0 -> {
-                    if (boardGame.confirmMove(x!!, y!!)) {
-                        boardGame.move(x, y)
-                        boardGame.checkBoardPieces()
+                    when(boardGame.getCurrentPiece()){
+                        NORMAL_PIECE -> {
+                            if (boardGame.confirmMove(x!!, y!!)) {
+                                boardGame.move(x, y)
+                                boardGame.checkBoardPieces()
 
-                        if (boardGame.checkEndGame())
-                            alertEndGame("Acabou o jogo. Tabuleiro Preenchido")
-                        else
-                            checkAlertNoPlays()
+                                if (boardGame.checkEndGame())
+                                    alertEndGame("Acabou o jogo. Tabuleiro Preenchido")
+                                else
+                                    checkAlertNoPlays()
+                            }
+                        }
+
+                        BOMB_PIECE -> {
+                            if(boardGame.confirmBombMove(x!!,y!!)){
+                                boardGame.pieceBomb(x,y)
+                                boardGame.checkBoardPieces()
+                                checkAlertNoPlays()
+                            }
+                        }
+
+                        EXCHANGE_PIECE -> {
+                            when(boardGame.confirmExchangeMove(x!!,y!!,exchangeCounter,exchangeArrayList)){
+                                -3 -> showAlertExchange("You can't choose the same pieces twice")
+                                -2 -> showAlertExchange("Wrong Piece selected")
+                                -1 -> showAlertExchange("You can't choose a position outside the board")
+                                1 -> {
+                                    exchangeArrayList.add(PieceMoves(x,y))
+                                    exchangeCounter++
+
+                                    if(exchangeCounter >= 3){
+                                        boardGame.exchangePiece(exchangeArrayList)
+                                        exchangeCounter = 0
+                                        boardGame.checkBoardPieces()
+                                        checkAlertNoPlays()
+                                    }
+                                }
+                            }
+                        }
                     }
+
                 }
             }
         }
@@ -159,16 +199,32 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         if(counter == 0)
             updateView()
         //Senao mostra o alert e resolve o resto lá dentro
-        showAlert(boardGame.getName())
+        showAlertPassPlay(boardGame.getName())
         return false
 
     }
 
-    private fun showAlert(name: String) {
+    private fun showAlertExchange(phrase: String) {
+
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder1.setMessage(phrase)
+        builder1.setCancelable(false)
+
+        builder1.setPositiveButton("Pass") { dialog, id ->
+            run {
+                dialog.cancel()
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+
+    }
+
+    private fun showAlertPassPlay(name: String) {
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
         builder1.setMessage(name + " has no available plays..")
-        builder1.setCancelable(true)
+        builder1.setCancelable(false)
 
         builder1.setPositiveButton("Pass") { dialog, id ->
             run {

@@ -12,11 +12,13 @@ class BoardGame(
 
     companion object {
         const val EMPTY_CELL = 0
+
     }
 
     private var boardSIZE = getBoardSize()
     private var pieces = Array(boardSIZE) { IntArray(boardSIZE) }
 
+    private var currentPiece = 0
     private var currentPlayer = 0
     private var validPlays = ArrayList<PieceMoves>()
     private val players = arrayListOf<Player>()
@@ -147,6 +149,38 @@ class BoardGame(
         return false
     }
 
+    fun confirmBombMove(x: Int, y: Int): Boolean{
+        if (x < 0 || y < 0 || x >= boardSIZE || y >= boardSIZE)
+            return false
+
+        if(pieces[x][y] == getPieceType())
+            return true
+        return false
+    }
+
+    fun confirmExchangeMove(x: Int, y: Int, exchangeCounter: Int, exchangeArrayList: ArrayList<PieceMoves>): Int {
+        if (x < 0 || y < 0 || x >= boardSIZE || y >= boardSIZE)
+            return -1
+
+        when (exchangeCounter) {
+            0 -> {
+                if (pieces[x][y] == getPieceType())
+                    return 1
+            }
+            1 -> {
+                if(exchangeArrayList[0].getX() == x && exchangeArrayList[0].getY() == y)
+                    return -3
+                return 1
+            }
+            else -> {
+                if (pieces[x][y] != getPieceType())
+                    return 1
+            }
+        }
+        return -2
+    }
+
+
     fun move(posX: Int, posY: Int) {
         // Verificar se está dentro das margens
         if (posX < 0 || posY < 0 || posX >= boardSIZE || posY >= boardSIZE) {
@@ -244,14 +278,6 @@ class BoardGame(
     }
 
     fun pieceBomb(posX: Int, posY: Int) {
-        if (posX < 0 || posY < 0 || posX >= boardSIZE || posY >= boardSIZE) {
-            return
-        }
-
-        // para nao colocar a peça bomba nas suas peças
-        if (pieces[posX][posY] != players[currentPlayer-1 ].getPieceType())
-            return
-
         for (dx in -1..1) {
             for (dy in -1..1) {
                 if (posX + dx < 0 || posY + dy < 0 || posX + dx >= boardSIZE || posY + dy >= boardSIZE)
@@ -261,7 +287,7 @@ class BoardGame(
             }
         }
         players[currentPlayer-1 ].setBombPiece()
-
+        currentPiece = 0
     }
 
     fun exchangePiece(piecesExchange: ArrayList<PieceMoves>): Boolean {
@@ -295,10 +321,16 @@ class BoardGame(
         }
 
         players[currentPlayer -1 ].setExchangePieces()
+        currentPiece = 0
         return true
 
     }
 
+
+
+    fun setPieceType(piece : Int){
+        currentPiece = piece
+    }
 
     fun getBoardSize(): Int {
         if (gamemode != 2)
@@ -323,8 +355,6 @@ class BoardGame(
 
     fun checkEndGame(): Boolean = checkEndGameBoard()
 
-    fun getCurrentPlayer(): Int = currentPlayer
-
     fun getPlayers(): Int = players.size
 
     fun getBoardColor(number: Int): Int = colorsBoard[number]
@@ -345,8 +375,17 @@ class BoardGame(
 
     private fun rafflePlayer(nPlayers: Int): Int = Random.nextInt(1..nPlayers)
 
-
     fun setPieces(total: Int) {
-        players[currentPlayer].setPieces(total)
+        players[currentPlayer-1].setPieces(total)
     }
+
+    fun getBombPiece() : Int = players[currentPlayer - 1].getBombPiece()
+
+    fun getExchangePiece() : Int = players[currentPlayer - 1].getExchangePieces()
+
+    fun getCurrentPlayer(): Int = currentPlayer
+
+    fun getCurrentPiece() : Int = currentPiece
+
+
 }
