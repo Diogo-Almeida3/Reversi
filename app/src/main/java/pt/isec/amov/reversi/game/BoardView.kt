@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import pt.isec.amov.reversi.R
+import pt.isec.amov.reversi.game.jsonClasses.GamePerfilData
 import pt.isec.amov.reversi.game.jsonClasses.ProfileData
 import java.io.*
 import java.net.InetSocketAddress
@@ -56,7 +57,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var exchangeCounter = 0
 
     private lateinit var boardGame: BoardGame
-    private lateinit var gamePerfilView: GamePerfilView
+    private  lateinit var gamePerfilView: GamePerfilView
     private lateinit var auth: FirebaseAuth
 
 
@@ -281,9 +282,36 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                         if(type.toString().equals("\"PROFILE\"")) {
                             gamePerfilView.setUsersProfileData(jsonObject.get("name").toString(),jsonObject.get("photo").toString())
                             gamePerfilView.invalidate()
+                            socketO?.run {
+
+                                val gamePerfilData = GamePerfilData(gamePerfilView.getnClients(),gamePerfilView.getUsernames(),gamePerfilView.getBitmaps())
+
+                                val gson = Gson()
+                                val jsonSend = gson.toJson(gamePerfilData)
+
+                                val printStream = PrintStream(this)
+                                printStream.println(jsonSend)
+                                printStream.flush()
+                            }
                         }
                     } else{
+                        if(type.toString().equals("\"PROFILE_VIEW\"")) {
+                            val nClients = jsonObject.get("nClients").asInt
 
+                            var users = jsonObject.get("usernames").asJsonArray
+                            val usernames = ArrayList<String>()
+                            for(i in 0 until nClients)
+                                usernames.add(users[i].toString().replace("\"",""))
+
+
+                            val photos = jsonObject.get("photos").asJsonArray
+                            val userPhotos = ArrayList<String>()
+                            for(i in 0 until nClients)
+                                userPhotos.add(photos[i].toString().replace("\\n","").replace("\"",""))
+
+                            gamePerfilView.updateUsers(nClients,usernames,userPhotos)
+                            gamePerfilView.invalidate()
+                        }
                     }
                 }
             } catch (_: Exception) {
