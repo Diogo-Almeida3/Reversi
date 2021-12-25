@@ -178,16 +178,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     }
 
                 }
-
-                //Se for o servidor
-                //Verificar se é a sua vez de jogar
-                //Verifica logo a jogada
-                //E devolve ao cliente caso nao ocorra nenhum erro
-
-                //Se for o cliente
-                //Verificar se é a sua vez de jogar
-                //Quando joga envia ao server o movimento e o tipo de peça?
-                //O server faz a verificaçao
             }
         }
 
@@ -262,7 +252,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
 
-
     private fun startComs(newSocket: Socket?) {
         //Aqui vamos receber um socket que será usado para toda a comunicação e atribuiremo lo à propriedade socket
 
@@ -292,8 +281,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                         if(type.toString().equals("\"PROFILE\"")) {
                             gamePerfilView.setUsersProfileData(jsonObject.get("name").toString(),jsonObject.get("photo").toString())
                             gamePerfilView.invalidate()
-                        } else{
-                            isServer = false
                         }
                     } else{
 
