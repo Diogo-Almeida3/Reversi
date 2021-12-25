@@ -45,4 +45,5 @@
     <string name="change_email">Change Email</string>
     <string name="edit_email">Edit Email</string>
     <string name="edit_picture">Edit Picture</string>
+    <string name="credits">Credits</string>
 </resources>

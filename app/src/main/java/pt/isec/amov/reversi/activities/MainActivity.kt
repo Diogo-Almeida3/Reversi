@@ -1,5 +1,6 @@
 package pt.isec.amov.reversi.activities
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -131,15 +133,15 @@ class MainActivity : AppCompatActivity() {
             R.id.gameOff2 -> {
                 when (findNavController(R.id.fragment_base).currentDestination?.id) {
                     R.id.menuFragment -> {
-                        navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEOFF2)
+                        navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEOFF2,-1)
                         findNavController(R.id.fragment_base).navigate(navDirections)
                     }
                     R.id.rulesFragment -> {
-                        navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEOFF2)
+                        navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEOFF2,-1)
                         findNavController(R.id.fragment_base).navigate(navDirections)
                     }
                     R.id.profileFragment -> {
-                        navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEOFF2)
+                        navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEOFF2,-1)
                         findNavController(R.id.fragment_base).navigate(navDirections)
                     }
                     else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
@@ -148,16 +150,13 @@ class MainActivity : AppCompatActivity() {
             R.id.gameOn2 -> {
                 when (findNavController(R.id.fragment_base).currentDestination?.id) {
                     R.id.menuFragment -> {
-                        navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON2)
-                        findNavController(R.id.fragment_base).navigate(navDirections)
+                        showAlert(0)
                     }
                     R.id.rulesFragment -> {
-                        navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON2)
-                        findNavController(R.id.fragment_base).navigate(navDirections)
+                        showAlert(0)
                     }
                     R.id.profileFragment -> {
-                        navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON2)
-                        findNavController(R.id.fragment_base).navigate(navDirections)
+                        showAlert(0)
                     }
                     else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
                 }
@@ -165,16 +164,13 @@ class MainActivity : AppCompatActivity() {
             R.id.gameOn3 -> {
                 when (findNavController(R.id.fragment_base).currentDestination?.id) {
                     R.id.menuFragment -> {
-                        navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON3)
-                        findNavController(R.id.fragment_base).navigate(navDirections)
+                        showAlert(1)
                     }
                     R.id.rulesFragment -> {
-                        navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON3)
-                        findNavController(R.id.fragment_base).navigate(navDirections)
+                        showAlert(1)
                     }
                     R.id.profileFragment -> {
-                        navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON3)
-                        findNavController(R.id.fragment_base).navigate(navDirections)
+                        showAlert(1)
                     }
                     else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
                 }
@@ -209,5 +205,55 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         toggle.onConfigurationChanged(newConfig)
+    }
+
+    private fun showAlert(buttonID: Int) {
+
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder1.setMessage("Choose the connection type...")
+        builder1.setCancelable(false)
+
+        builder1.setNegativeButton("Server Mode") { dialog, id ->
+            run {
+                dialog.cancel()
+                if(buttonID == 0)
+                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
+                        GameFragment.GAMEON2,
+                        GameFragment.SERVER_MODE
+                    )
+                else
+                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
+                        GameFragment.GAMEON3,
+                        GameFragment.SERVER_MODE
+                    )
+                findNavController(R.id.fragment_base).navigate(navDirections)
+            }
+        }
+
+        builder1.setNeutralButton("Cancel"){dialog, id ->
+            run{
+                dialog.cancel()
+            }
+        }
+
+        builder1.setPositiveButton("Client Mode"){dialog, id ->
+            run {
+                dialog.cancel()
+                if(buttonID == 0)
+                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
+                        GameFragment.GAMEON2,
+                        GameFragment.CLIENT_MODE
+                    )
+                else
+                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
+                        GameFragment.GAMEON3,
+                        GameFragment.CLIENT_MODE
+                    )
+                findNavController(R.id.fragment_base).navigate(navDirections)
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+
     }
 }

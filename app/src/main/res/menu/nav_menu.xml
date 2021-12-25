@@ -11,6 +11,10 @@
                 android:id="@+id/rules"
                 android:icon="@drawable/ic_rules"
                 android:title="@string/rules" />
+            <item
+                android:id="@+id/credits"
+                android:icon="@drawable/ic_rules"
+                android:title="@string/credits" />
         </menu>
     </item>
 

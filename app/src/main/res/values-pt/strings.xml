@@ -46,5 +46,6 @@
     <string name="change_email">Mudar Email</string>
     <string name="edit_email">Editar Email</string>
     <string name="edit_picture">Editar Foto</string>
+    <string name="credits">Créditos</string>
 
 </resources>

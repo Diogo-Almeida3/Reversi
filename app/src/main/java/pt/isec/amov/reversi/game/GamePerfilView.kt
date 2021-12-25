@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import pt.isec.amov.reversi.R
 import android.graphics.BitmapFactory
+import android.util.Base64
 
 
 import androidx.core.graphics.scale
@@ -31,10 +32,15 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var endgame = false
     private lateinit var boardGame: BoardGame
     private lateinit var auth : FirebaseAuth
+    private var userNames = ArrayList<String>()
+    private var userPhotos = ArrayList<Bitmap>()
+
+    private var nClients = 0
 
     fun setData(boardGame: BoardGame) {
         this.boardGame = boardGame
         auth = Firebase.auth
+        nClients = 0
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -137,6 +143,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(),  (middleVertical + 75).toFloat(), paintScore)
                 }
                 1 -> {
+                    //se for o servidor desenha a sua foto no inicio senao desenha no fim
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
                     canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter/2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
@@ -172,7 +179,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
             /* Text Related */
             val paintName = getNamePaint(size)
-            val nChars = boardGame.getUsername(i).length
+            var nChars = boardGame.getUsername(i).length
 
             /* Score Related */
             val boxQuarter = (right - left) / 4
@@ -207,9 +214,19 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                 }
                 1 -> {
-                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+
+                    if(nClients != 2){
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    } else {
+                        nChars = userNames[i].length
+                        canvas?.drawBitmap(userPhotos[i].scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(userNames[i], 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    }
+
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
+
+
                     if(i == boardGame.getCurrentPlayer()-1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                 }
@@ -225,7 +242,6 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             canvas?.drawText(actualScore.toString(), textPosX.toFloat(), textPosY.toFloat(), paintScore)
         }
     }
-
 
     private fun getBackgroundPaint() : Paint {
         return Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
@@ -275,5 +291,20 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         if (boardGame.getGameMode() != 2)
             return 82F
         return 56F
+    }
+
+    fun setUsersProfileData(name :String,photoFile : String) {
+        val auxName = name.replace("\"","")
+        userNames.add(auxName)
+        if(photoFile != "")
+            userPhotos.add(convertString64ToImage(photoFile))
+        else
+            userPhotos.add(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi))
+        nClients++
+    }
+
+    private fun convertString64ToImage(base64String: String): Bitmap {
+        val decodedString = Base64.decode(base64String, Base64.DEFAULT)
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
     }
 }
