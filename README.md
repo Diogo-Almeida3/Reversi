@@ -1,4 +1,4 @@
-## Reversu
+## Reversi
 * [General info](#general-info)
 * [Technologies](#technologies)
 
