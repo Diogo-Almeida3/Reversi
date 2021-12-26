@@ -393,6 +393,8 @@ class BoardGame(
 
     fun getCurrentPiece() : Int = currentPiece
 
-
+    fun setUsername(number: Int, username: String){
+        players[number].setUsername(username)
+    }
 
 }

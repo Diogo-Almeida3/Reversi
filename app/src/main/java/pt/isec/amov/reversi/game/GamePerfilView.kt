@@ -313,6 +313,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
             userPhotos.add(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi))
         }
+        boardGame.setUsername(nClients,auxName)
         nClients++
     }
 

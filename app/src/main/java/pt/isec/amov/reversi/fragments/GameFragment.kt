@@ -77,6 +77,9 @@ class GameFragment : Fragment() {
                 boardView.state.observe(viewLifecycleOwner){state ->
                     if(state == BoardView.State.PLAYING_SERVER || state == BoardView.State.PLAYING_CLIENT)
                         updateUI()
+
+                    if(state == BoardView.State.GAME_OVER)
+                        updateUI()
                 }
 
                 boardView.connectionState.observe(viewLifecycleOwner){ state ->
@@ -93,7 +96,6 @@ class GameFragment : Fragment() {
                     }
                     if (state == BoardView.ConnectionState.CONNECTION_ENDED){
                         //Toast.makeText(context,"ENDED",Toast.LENGTH_LONG).show()
-                        findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
 
                 }

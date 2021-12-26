@@ -33,4 +33,7 @@ class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String
         this.pieces = pieces
     }
 
+    fun setUsername(username : String){
+        this.username = username
+    }
 }
