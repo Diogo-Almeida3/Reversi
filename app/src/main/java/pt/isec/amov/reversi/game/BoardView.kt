@@ -22,7 +22,9 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.game.jsonClasses.GamePerfilData
+import pt.isec.amov.reversi.game.jsonClasses.ClientMoveData
 import pt.isec.amov.reversi.game.jsonClasses.ProfileData
+import pt.isec.amov.reversi.game.jsonClasses.ServerMoveData
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.ServerSocket
@@ -51,6 +53,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var boardSIZE = 0
 
     private var endGame = false
+    private var validPlay = false
     private var counter = 0
 
     private var exchangeArrayList = ArrayList<PieceMoves>()
@@ -74,7 +77,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     val connectionState = MutableLiveData(ConnectionState.SETTING_PARAMETERS)
 
-    var move: PieceMoves? = null
 
     private var socket: Socket? = null
     private val socketI: InputStream?
@@ -94,10 +96,58 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         exchangeCounter = 0
 
         /* Multiplayer */
-        move = null
         isServer = false
+        validPlay = false
         auth = Firebase.auth
         //state.postValue(State.SETTING_PROFILE_DATA)
+    }
+
+    fun movePiece(x: Int, y:Int){
+        when (boardGame.getCurrentPiece()) {
+            NORMAL_PIECE -> {
+                if (boardGame.confirmMove(x, y)) {
+                    validPlay = true
+                    boardGame.move(x, y)
+                    boardGame.checkBoardPieces()
+
+                    if (boardGame.checkEndGame())
+                        alertEndGame("Acabou o jogo. Tabuleiro Preenchido")
+                    else
+                        checkAlertNoPlays()
+                } else
+                    validPlay = false
+            }
+
+            BOMB_PIECE -> {
+                if (boardGame.confirmBombMove(x, y)) {
+                    boardGame.pieceBomb(x, y)
+                    boardGame.checkBoardPieces()
+                    checkAlertNoPlays()
+                } else{
+                    validPlay = false
+                    showAlertExchange("You can only select your piece color")
+                }
+            }
+
+            EXCHANGE_PIECE -> {
+                when (boardGame.confirmExchangeMove(x, y, exchangeCounter, exchangeArrayList)) {
+                    -3 -> showAlertExchange("You can't choose the same pieces twice")
+                    -2 -> showAlertExchange("Wrong Piece selected")
+                    -1 -> showAlertExchange("You can't choose a position outside the board")
+                    1 -> {
+                        exchangeArrayList.add(PieceMoves(x, y))
+                        exchangeCounter++
+                        //todo ver isto no multiplayer
+                        if (exchangeCounter >= 3) {
+                            boardGame.exchangePiece(exchangeArrayList)
+                            exchangeCounter = 0
+                            boardGame.checkBoardPieces()
+                            checkAlertNoPlays()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -107,77 +157,54 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         when (boardGame.getGameMode()) {
             0 -> {
                 if (!endGame) {
-                    when (boardGame.getCurrentPiece()) {
-                        NORMAL_PIECE -> {
-                            if (boardGame.confirmMove(x!!, y!!)) {
-                                boardGame.move(x, y)
-                                boardGame.checkBoardPieces()
-
-                                if (boardGame.checkEndGame())
-                                    alertEndGame("Acabou o jogo. Tabuleiro Preenchido")
-                                else
-                                    checkAlertNoPlays()
-                            }
-                        }
-
-                        BOMB_PIECE -> {
-                            if (boardGame.confirmBombMove(x!!, y!!)) {
-                                boardGame.pieceBomb(x, y)
-                                boardGame.checkBoardPieces()
-                                checkAlertNoPlays()
-                            } else
-                                showAlertExchange("You can only select your piece color")
-                        }
-
-                        EXCHANGE_PIECE -> {
-                            when (boardGame.confirmExchangeMove(
-                                x!!,
-                                y!!,
-                                exchangeCounter,
-                                exchangeArrayList
-                            )) {
-                                -3 -> showAlertExchange("You can't choose the same pieces twice")
-                                -2 -> showAlertExchange("Wrong Piece selected")
-                                -1 -> showAlertExchange("You can't choose a position outside the board")
-                                1 -> {
-                                    exchangeArrayList.add(PieceMoves(x, y))
-                                    exchangeCounter++
-
-                                    if (exchangeCounter >= 3) {
-                                        boardGame.exchangePiece(exchangeArrayList)
-                                        exchangeCounter = 0
-                                        boardGame.checkBoardPieces()
-                                        checkAlertNoPlays()
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    movePiece(x!!,y!!)
                 }
             }
             1 -> {
 
-                if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED)
+                if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value != State.PLAYING_SERVER && state.value != State.PLAYING_CLIENT)
                     return super.onTouchEvent(event)
 
-                //Cliente
-                if (!isServer) {
+                if(state.value == State.GAME_OVER)
+                    return super.onTouchEvent(event)
 
-                    move = PieceMoves(x!!, y!!)
+                if (!isServer && state.value == State.PLAYING_CLIENT) {
+                    //todo O cliente tem de enviar a sua jogada ao server para ele fazer a verificação e enviar a resposta
+                    val move = PieceMoves(x!!, y!!)
                     socketO?.run {
                         thread {
-                            //todo Passa a jogada para um formato json e envia ao servidor para ver se está tudo ok
-                            val jsonObj = JsonObject()
-                            jsonObj.addProperty("x", x)
-                            jsonObj.addProperty("y", y)
-                            //write(jsonObj.toString().toByteArray())
+                            val moveData = ClientMoveData(move,boardGame.getCurrentPiece())
+
+                            val gson = Gson()
+                            val jsonSend = gson.toJson(moveData)
+
                             val printStream = PrintStream(this)
-                            printStream.println(jsonObj)
+                            printStream.println(jsonSend)
                             printStream.flush()
                         }
 
                     }
 
+                }
+                else if(isServer && state.value == State.PLAYING_SERVER){
+
+                    movePiece(x!!,y!!)
+                    if(validPlay){
+                        state.postValue(State.PLAYING_CLIENT)
+                        val move = PieceMoves(x,y)
+                        socketO?.run {
+                            thread {
+                                val moveData = ServerMoveData(move,boardGame.getCurrentPiece())
+
+                                val gson = Gson()
+                                val jsonSend = gson.toJson(moveData)
+
+                                val printStream = PrintStream(this)
+                                printStream.println(jsonSend)
+                                printStream.flush()
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -191,6 +218,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         //Não interessa se já há server ou não pq nós somos clientes vamos abrir o socket e ficar a espera
         if (socket != null || connectionState.value != ConnectionState.SETTING_PARAMETERS)
             return
+
+        connectionState.postValue(ConnectionState.CLIENT_CONNECTING)
 
         thread {
             try {
@@ -279,9 +308,9 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
 
                     if(isServer){
-                        if(type.toString().equals("\"PROFILE\"")) {
+                        if(type.toString().equals("\"PROFILE\"")){
                             gamePerfilView.setUsersProfileData(jsonObject.get("name").toString(),jsonObject.get("photo").toString())
-                            //gamePerfilView.invalidate()
+
                             val currentPlayer = boardGame.getCurrentPlayer()
                             socketO?.run {
 
@@ -294,13 +323,16 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                 printStream.println(jsonSend)
                                 printStream.flush()
                             }
-                            when(currentPlayer){
+                            when(currentPlayer - 1){
                                 0 -> state.postValue(State.PLAYING_SERVER)
                                 1 -> state.postValue(State.PLAYING_CLIENT)
                             }
                         }
+                        else if(type.toString().equals("\"CLIENT_MOVE\"")){
+
+                        }
                     } else{
-                        if(type.toString().equals("\"PROFILE_VIEW\"")) {
+                        if(type.toString().equals("\"PROFILE_VIEW\"")){
                             val currentPlayer = jsonObject.get("currentPlayer").asInt
                             boardGame.setCurrentPlayer(currentPlayer)
 
@@ -320,13 +352,37 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
 
                             gamePerfilView.updateUsers(nClients,usernames,userPhotos)
-                            when(currentPlayer){
+                            when(currentPlayer - 1){
                                 0 -> state.postValue(State.PLAYING_SERVER)
                                 1 -> state.postValue(State.PLAYING_CLIENT)
                             }
+
+                        }
+                        else if(type.toString().equals("\"SERVER_MOVE\"")){
+                            val posX = (jsonObject.get("move") as JsonObject).get("posX").asInt
+                            val posY = (jsonObject.get("move") as JsonObject).get("posY").asInt
+                            val currentPiece = jsonObject.get("currentPiece").asInt
+
+                            when(currentPiece){
+                                NORMAL_PIECE -> {
+                                    boardGame.move(posX,posY)
+                                    boardGame.checkBoardPieces()
+                                    boardGame.switchPlayer()
+                                    state.postValue(State.PLAYING_CLIENT)
+                                }
+                                BOMB_PIECE -> {
+                                    boardGame.pieceBomb(posX, posY)
+                                    boardGame.checkBoardPieces()
+                                    boardGame.switchPlayer()
+                                    state.postValue(State.PLAYING_CLIENT)
+                                }
+                                EXCHANGE_PIECE -> {
+
+                                }
+                            }
+
                         }
                     }
-
                 }
             } catch (_: Exception) {
             } finally {
