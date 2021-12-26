@@ -137,107 +137,35 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
                     if (i == 0) { //Jogador atual
                         if (uri.exists())
-                            canvas?.drawBitmap(
-                                BitmapFactory.decodeFile(fileName)
-                                    .scale(imageSize, imageSize, false),
-                                50f,
-                                imagePos.toFloat(),
-                                null
-                            )
+                            canvas?.drawBitmap(BitmapFactory.decodeFile(fileName).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
                         else
-                            canvas?.drawBitmap(
-                                BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
-                            )
-                        canvas?.drawText(
-                            boardGame.getUsername(i),
-                            0,
-                            nChars,
-                            (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(),
-                            textPos.toFloat(),
-                            paintName
-                        )
+                            canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     } else { //Anónimo
-                        canvas?.drawBitmap(
-                            BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
-                        )
-                        canvas?.drawText(
-                            "Anónimo",
-                            0,
-                            7,
-                            (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(),
-                            textPos.toFloat(),
-                            paintName
-                        )
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText("Anónimo", 0, 7, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
-                        canvas?.drawCircle(
-                            centerX.toFloat(),
-                            centerY.toFloat(),
-                            65f,
-                            painthighlight
-                        )
-                    canvas?.drawText(
-                        actualScore.toString(),
-                        middleHorizontal.toFloat(),
-                        (middleVertical + 75).toFloat(),
-                        paintScore
-                    )
+                        canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
+                    canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)
                 }
                 1 -> {
                     //se for o servidor desenha a sua foto no inicio senao desenha no fim
-                    canvas?.drawBitmap(
-                        BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
-                    )
-                    canvas?.drawText(
-                        boardGame.getUsername(i),
-                        0,
-                        nChars,
-                        (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(),
-                        textPos.toFloat(),
-                        paintName
-                    )
+                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
-                        canvas?.drawCircle(
-                            centerX.toFloat(),
-                            centerY.toFloat(),
-                            65f,
-                            painthighlight
-                        )
-                    canvas?.drawText(
-                        actualScore.toString(),
-                        middleHorizontal.toFloat(),
-                        (middleVertical + 75).toFloat(),
-                        paintScore
-                    )
+                        canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
+                    canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)
                 }
                 2 -> {
-                    canvas?.drawBitmap(
-                        BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
-                    )
-                    canvas?.drawText(
-                        boardGame.getUsername(i),
-                        0,
-                        nChars,
-                        (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(),
-                        textPos.toFloat(),
-                        paintName
-                    )
+                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat() - 30, 50f, paintPiece)
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
-                        canvas?.drawCircle(
-                            centerX.toFloat(),
-                            centerY.toFloat() - 30,
-                            50f,
-                            painthighlight
-                        )
-                    canvas?.drawText(
-                        actualScore.toString(),
-                        middleHorizontal.toFloat(),
-                        (middleVertical + 45).toFloat(),
-                        paintScore
-                    )
+                        canvas?.drawCircle(centerX.toFloat(), centerY.toFloat() - 30, 50f, painthighlight)
+                    canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 45).toFloat(), paintScore)
                 }
             }
 
@@ -283,125 +211,45 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                     val uri = File(fileName)
                     if (i == 0) {
                         if (uri.exists())
-                            canvas?.drawBitmap(
-                                BitmapFactory.decodeFile(fileName)
-                                    .scale(imageSize, imageSize, false),
-                                imagePos.toFloat(),
-                                50f,
-                                null
-                            )
+                            canvas?.drawBitmap(BitmapFactory.decodeFile(fileName).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
                         else
-                            canvas?.drawBitmap(
-                                BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
-                            )
-                        canvas?.drawText(
-                            boardGame.getUsername(i),
-                            0,
-                            nChars,
-                            (middle - nChars * 15).toFloat(),
-                            (imageSize + 120).toFloat(),
-                            paintName
-                        )
+                            canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else {
-                        canvas?.drawBitmap(
-                            BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
-                        )
-                        canvas?.drawText(
-                            "Anónimo",
-                            0,
-                            7,
-                            (middle - 7 * 15).toFloat(),
-                            (imageSize + 120).toFloat(),
-                            paintName
-                        )
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText("Anónimo", 0, 7, (middle - 7 * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
-                        canvas?.drawCircle(
-                            centerX.toFloat(),
-                            centerY.toFloat(),
-                            65f,
-                            painthighlight
-                        )
+                        canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                 }
                 1 -> {
 
                     if (nClients != 2) {
-                        canvas?.drawBitmap(
-                            BitmapFactory.decodeResource(
-                                resources,
-                                R.drawable.logo_reversi
-                            ).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
-                        )
-                        canvas?.drawText(
-                            boardGame.getUsername(i),
-                            0,
-                            nChars,
-                            (middle - nChars * 15).toFloat(),
-                            (imageSize + 120).toFloat(),
-                            paintName
-                        )
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else {
                         nChars = userNames[i].length
-                        canvas?.drawBitmap(
-                            userPhotos[i].scale(imageSize, imageSize, false),
-                            imagePos.toFloat(),
-                            50f,
-                            null
-                        )
-                        canvas?.drawText(
-                            userNames[i],
-                            0,
-                            nChars,
-                            (middle - nChars * 15).toFloat(),
-                            (imageSize + 120).toFloat(),
-                            paintName
-                        )
+                        canvas?.drawBitmap(userPhotos[i].scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(userNames[i], 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
 
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
 
 
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
-                        canvas?.drawCircle(
-                            centerX.toFloat(),
-                            centerY.toFloat(),
-                            65f,
-                            painthighlight
-                        )
+                        canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                 }
                 2 -> {
-                    canvas?.drawBitmap(
-                        BitmapFactory.decodeResource(
-                            resources,
-                            R.drawable.logo_reversi
-                        ).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
-                    )
-                    canvas?.drawText(
-                        boardGame.getUsername(i),
-                        0,
-                        nChars,
-                        (middle - nChars * 8.75).toFloat(),
-                        (imageSize + 120).toFloat(),
-                        paintName
-                    )
+                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, paintPiece)
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
-                        canvas?.drawCircle(
-                            centerX.toFloat(),
-                            centerY.toFloat(),
-                            50f,
-                            painthighlight
-                        )
+                        canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, painthighlight)
                 }
             }
 
-            canvas?.drawText(
-                actualScore.toString(),
-                textPosX.toFloat(),
-                textPosY.toFloat(),
-                paintScore
-            )
+            canvas?.drawText(actualScore.toString(), textPosX.toFloat(), textPosY.toFloat(), paintScore)
         }
     }
 
@@ -472,6 +320,8 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         val decodedString = Base64.decode(base64String, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
     }
+
+
 
     fun getUsernames(): ArrayList<String> {
         return userNames

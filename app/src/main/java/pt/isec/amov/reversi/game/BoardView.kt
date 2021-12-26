@@ -62,7 +62,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
 
     enum class State {
-        STARTING, SETTING_PROFILE_DATA, PLAYING_ME, PLAYING_OTHER, GAME_OVER
+        STARTING, SETTING_PROFILE_DATA, PLAYING_SERVER, PLAYING_CLIENT, GAME_OVER
     }
 
     enum class ConnectionState {
@@ -281,10 +281,11 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     if(isServer){
                         if(type.toString().equals("\"PROFILE\"")) {
                             gamePerfilView.setUsersProfileData(jsonObject.get("name").toString(),jsonObject.get("photo").toString())
-                            gamePerfilView.invalidate()
+                            //gamePerfilView.invalidate()
+                            val currentPlayer = boardGame.getCurrentPlayer()
                             socketO?.run {
 
-                                val gamePerfilData = GamePerfilData(gamePerfilView.getnClients(),gamePerfilView.getUsernames(),gamePerfilView.getBitmaps())
+                                val gamePerfilData = GamePerfilData(gamePerfilView.getnClients(),gamePerfilView.getUsernames(),gamePerfilView.getBitmaps(),currentPlayer)
 
                                 val gson = Gson()
                                 val jsonSend = gson.toJson(gamePerfilData)
@@ -293,12 +294,20 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                 printStream.println(jsonSend)
                                 printStream.flush()
                             }
+                            when(currentPlayer){
+                                0 -> state.postValue(State.PLAYING_SERVER)
+                                1 -> state.postValue(State.PLAYING_CLIENT)
+                            }
                         }
                     } else{
                         if(type.toString().equals("\"PROFILE_VIEW\"")) {
+                            val currentPlayer = jsonObject.get("currentPlayer").asInt
+                            boardGame.setCurrentPlayer(currentPlayer)
+
+
                             val nClients = jsonObject.get("nClients").asInt
 
-                            var users = jsonObject.get("usernames").asJsonArray
+                            val users = jsonObject.get("usernames").asJsonArray
                             val usernames = ArrayList<String>()
                             for(i in 0 until nClients)
                                 usernames.add(users[i].toString().replace("\"",""))
@@ -309,10 +318,15 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                             for(i in 0 until nClients)
                                 userPhotos.add(photos[i].toString().replace("\\n","").replace("\"",""))
 
+
                             gamePerfilView.updateUsers(nClients,usernames,userPhotos)
-                            gamePerfilView.invalidate()
+                            when(currentPlayer){
+                                0 -> state.postValue(State.PLAYING_SERVER)
+                                1 -> state.postValue(State.PLAYING_CLIENT)
+                            }
                         }
                     }
+
                 }
             } catch (_: Exception) {
             } finally {

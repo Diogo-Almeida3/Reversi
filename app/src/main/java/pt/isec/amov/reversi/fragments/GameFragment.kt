@@ -74,6 +74,11 @@ class GameFragment : Fragment() {
             }
             1 -> {
 
+                boardView.state.observe(viewLifecycleOwner){state ->
+                    if(state == BoardView.State.PLAYING_SERVER || state == BoardView.State.PLAYING_CLIENT)
+                        updateUI()
+                }
+
                 boardView.connectionState.observe(viewLifecycleOwner){ state ->
                     if (state != BoardView.ConnectionState.SETTING_PARAMETERS &&
                         state != BoardView.ConnectionState.SERVER_CONNECTING &&
@@ -90,8 +95,6 @@ class GameFragment : Fragment() {
                         Toast.makeText(context,"ENDED",Toast.LENGTH_LONG).show()
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
-
-                    //todo quando se receber um state aqui que estamos a iniciar manda se ao cliente a pedir os seus dados e depois o cliente vai devolver os dados e la resolvemos as coisas
 
                 }
                 if(boardView.connectionState.value != BoardView.ConnectionState.CONNECTION_ESTABLISHED){
@@ -209,7 +212,6 @@ class GameFragment : Fragment() {
 
     private fun getName() : String{
         val navigationView = requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
-        /* Change navigation header with the photo taken*/
         return navigationView.findViewById<TextView>(R.id.userName).text as String
     }
 

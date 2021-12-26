@@ -387,6 +387,10 @@ class BoardGame(
 
     fun getCurrentPlayer(): Int = currentPlayer
 
+    fun setCurrentPlayer(number : Int){
+        currentPlayer = number
+    }
+
     fun getCurrentPiece() : Int = currentPiece
 
 
