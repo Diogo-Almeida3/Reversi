@@ -71,6 +71,8 @@ class GameFragment : Fragment() {
             0-> {
 
                 setButtons(view)
+                boardGame.setUsername(0,getName())
+                updateUI()
             }
             1 -> {
 
@@ -202,7 +204,6 @@ class GameFragment : Fragment() {
             .setView(ll)
             .setOnCancelListener {
                 boardView.stopServer()
-                findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
             }
             .create()
 

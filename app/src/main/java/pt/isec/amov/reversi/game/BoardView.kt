@@ -456,7 +456,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     fun stopServer() {
         serverSocket?.close()
-        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        connectionState.postValue(ConnectionState.CONNECTION_ERROR)
         serverSocket = null
     }
 
