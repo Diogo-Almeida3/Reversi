@@ -146,10 +146,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                             )
                         else
                             canvas?.drawBitmap(
-                                BitmapFactory.decodeResource(
-                                    resources,
-                                    R.drawable.logo_reversi
-                                ).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
+                                BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
                             )
                         canvas?.drawText(
                             boardGame.getUsername(i),
@@ -161,10 +158,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                         )
                     } else { //Anónimo
                         canvas?.drawBitmap(
-                            BitmapFactory.decodeResource(
-                                resources,
-                                R.drawable.ic_launcher_foreground
-                            ).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
+                            BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
                         )
                         canvas?.drawText(
                             "Anónimo",
@@ -193,10 +187,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                 1 -> {
                     //se for o servidor desenha a sua foto no inicio senao desenha no fim
                     canvas?.drawBitmap(
-                        BitmapFactory.decodeResource(
-                            resources,
-                            R.drawable.logo_reversi
-                        ).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
+                        BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
                     )
                     canvas?.drawText(
                         boardGame.getUsername(i),
@@ -223,10 +214,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                 }
                 2 -> {
                     canvas?.drawBitmap(
-                        BitmapFactory.decodeResource(
-                            resources,
-                            R.drawable.logo_reversi
-                        ).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
+                        BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null
                     )
                     canvas?.drawText(
                         boardGame.getUsername(i),
@@ -304,10 +292,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                             )
                         else
                             canvas?.drawBitmap(
-                                BitmapFactory.decodeResource(
-                                    resources,
-                                    R.drawable.logo_reversi
-                                ).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
+                                BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
                             )
                         canvas?.drawText(
                             boardGame.getUsername(i),
@@ -319,10 +304,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                         )
                     } else {
                         canvas?.drawBitmap(
-                            BitmapFactory.decodeResource(
-                                resources,
-                                R.drawable.ic_launcher_foreground
-                            ).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
+                            BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null
                         )
                         canvas?.drawText(
                             "Anónimo",
