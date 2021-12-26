@@ -490,6 +490,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     }
                 }
             } catch (_: Exception) {
+                connectionState.postValue(ConnectionState.CONNECTION_ERROR)
                 stopGame()
             }
         }

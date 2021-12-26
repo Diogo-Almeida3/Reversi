@@ -27,6 +27,7 @@ import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.game.BoardGame
 import pt.isec.amov.reversi.game.BoardView
 import pt.isec.amov.reversi.game.GamePerfilView
+import pt.isec.amov.reversi.game.SERVER_PORT
 
 class GameFragment : Fragment() {
 
@@ -69,7 +70,6 @@ class GameFragment : Fragment() {
 
         when(gamemode){
             0-> {
-
                 setButtons(view)
                 boardGame.setUsername(0,getName())
                 updateUI()
@@ -153,7 +153,7 @@ class GameFragment : Fragment() {
                 }
             }
             .setNeutralButton("Connect to emulator") { _: DialogInterface, _: Int ->
-                boardView.startClient(getName(),"10.0.2.2", 9998)
+                boardView.startClient(getName(),"10.0.2.2", SERVER_PORT-1)
             }
             .setNegativeButton("Cancel") { _: DialogInterface, _: Int ->
 
