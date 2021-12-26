@@ -113,7 +113,7 @@
             android:id="@+id/action_gameFragment_to_menuFragment"
             app:destination="@id/menuFragment"
 
-            app:popUpTo="@layout/fragment_menu"
+            app:popUpTo="@layout/fragment_game"
             app:popUpToInclusive="true"
             />
 

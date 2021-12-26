@@ -88,11 +88,11 @@ class GameFragment : Fragment() {
                     }
                     if (state == BoardView.ConnectionState.CONNECTION_ERROR) {
 
-                        Toast.makeText(context,"ERRO",Toast.LENGTH_LONG).show()
+                        //Toast.makeText(context,"ERRO",Toast.LENGTH_LONG).show()
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
                     if (state == BoardView.ConnectionState.CONNECTION_ENDED){
-                        Toast.makeText(context,"ENDED",Toast.LENGTH_LONG).show()
+                        //Toast.makeText(context,"ENDED",Toast.LENGTH_LONG).show()
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
 

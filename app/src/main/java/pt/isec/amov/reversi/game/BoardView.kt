@@ -102,8 +102,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         //state.postValue(State.SETTING_PROFILE_DATA)
     }
 
-    fun movePiece(x: Int, y:Int){
-        when (boardGame.getCurrentPiece()) {
+    fun movePiece(x: Int, y:Int,piece: Int){
+        when (piece) {
             NORMAL_PIECE -> {
                 if (boardGame.confirmMove(x, y)) {
                     validPlay = true
@@ -157,7 +157,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         when (boardGame.getGameMode()) {
             0 -> {
                 if (!endGame) {
-                    movePiece(x!!,y!!)
+                    movePiece(x!!,y!!,boardGame.getCurrentPiece())
                 }
             }
             1 -> {
@@ -188,7 +188,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 }
                 else if(isServer && state.value == State.PLAYING_SERVER){
 
-                    movePiece(x!!,y!!)
+                    movePiece(x!!,y!!,boardGame.getCurrentPiece())
                     if(validPlay){
                         state.postValue(State.PLAYING_CLIENT)
                         val move = PieceMoves(x,y)
@@ -215,7 +215,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     fun startClient(name: String , serverIP: String, serverPort: Int = SERVER_PORT) {
 
-        //Não interessa se já há server ou não pq nós somos clientes vamos abrir o socket e ficar a espera
         if (socket != null || connectionState.value != ConnectionState.SETTING_PARAMETERS)
             return
 
@@ -266,8 +265,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     val newServerSocket = serverSocket!!.accept()
                     startComs(newServerSocket)
                     Log.v("COMMS", "A thread cooms foi iniciada para o $isServer")
-                } catch (_: Exception) {
 
+                } catch (_: Exception) {
                     connectionState.postValue(ConnectionState.CONNECTION_ERROR)
                 } finally {
                     serverSocket?.close()
@@ -329,7 +328,27 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                             }
                         }
                         else if(type.toString().equals("\"CLIENT_MOVE\"")){
+                            val posX = (jsonObject.get("move") as JsonObject).get("posX").asInt
+                            val posY = (jsonObject.get("move") as JsonObject).get("posY").asInt
+                            val currentPiece = jsonObject.get("currentPiece").asInt
 
+                            movePiece(posX,posY,currentPiece)
+                            if(validPlay){
+                                state.postValue(State.PLAYING_SERVER)
+                                val move = PieceMoves(posX,posY)
+                                socketO?.run {
+                                    thread {
+                                        val moveData = ServerMoveData(move,boardGame.getCurrentPiece())
+
+                                        val gson = Gson()
+                                        val jsonSend = gson.toJson(moveData)
+
+                                        val printStream = PrintStream(this)
+                                        printStream.println(jsonSend)
+                                        printStream.flush()
+                                    }
+                                }
+                            }
                         }
                     } else{
                         if(type.toString().equals("\"PROFILE_VIEW\"")){
@@ -359,6 +378,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
                         }
                         else if(type.toString().equals("\"SERVER_MOVE\"")){
+
                             val posX = (jsonObject.get("move") as JsonObject).get("posX").asInt
                             val posY = (jsonObject.get("move") as JsonObject).get("posY").asInt
                             val currentPiece = jsonObject.get("currentPiece").asInt
@@ -368,7 +388,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                     boardGame.move(posX,posY)
                                     boardGame.checkBoardPieces()
                                     boardGame.switchPlayer()
-                                    state.postValue(State.PLAYING_CLIENT)
+                                    if(state.value == State.PLAYING_CLIENT)
+                                        state.postValue(State.PLAYING_SERVER)
+                                    else
+                                        state.postValue(State.PLAYING_CLIENT)
                                 }
                                 BOMB_PIECE -> {
                                     boardGame.pieceBomb(posX, posY)
