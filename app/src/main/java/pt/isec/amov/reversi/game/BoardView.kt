@@ -32,9 +32,8 @@ import pt.isec.amov.reversi.game.jsonClasses.profile.ProfileData
 import pt.isec.amov.reversi.game.jsonClasses.specialPieces.RequestBomb
 import pt.isec.amov.reversi.game.jsonClasses.specialPieces.RequestExchange
 import java.io.*
-import java.net.InetSocketAddress
-import java.net.ServerSocket
-import java.net.Socket
+import java.lang.NullPointerException
+import java.net.*
 import kotlin.concurrent.thread
 
 
@@ -76,7 +75,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     enum class ConnectionState {
         SETTING_PARAMETERS, SERVER_CONNECTING, CLIENT_CONNECTING, CONNECTION_ESTABLISHED,
-        CONNECTION_ERROR, CONNECTION_ENDED
+        CONNECTION_ERROR, CONNECTION_ENDED,CONNECTION_TIMEOUT
     }
 
     val state = MutableLiveData(State.STARTING)
@@ -189,8 +188,9 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             }
             1 -> {
 
-                if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value != State.PLAYING_SERVER && state.value != State.PLAYING_CLIENT)
+                if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value != State.PLAYING_SERVER && state.value != State.PLAYING_CLIENT){
                     return super.onTouchEvent(event)
+                }
 
                 if(state.value == State.GAME_OVER)
                     return super.onTouchEvent(event)
@@ -198,20 +198,22 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 if (!isServer && state.value == State.PLAYING_CLIENT) {
 
                     val move = PieceMoves(x!!, y!!)
-                    socketO?.run {
-                        thread {
-                            val moveData = ClientMoveData(move,boardGame.getCurrentPiece())
 
-                            val gson = Gson()
-                            val jsonSend = gson.toJson(moveData)
+                        socketO?.run {
+                            thread {
 
-                            val printStream = PrintStream(this)
-                            printStream.println(jsonSend)
-                            printStream.flush()
+                                    val moveData = ClientMoveData(move,boardGame.getCurrentPiece())
+
+                                    val gson = Gson()
+                                    val jsonSend = gson.toJson(moveData)
+
+                                    val printStream = PrintStream(this)
+                                    printStream.println(jsonSend)
+                                    printStream.flush()
+
+                            }
+
                         }
-
-                    }
-
                 }
                 else if(isServer && state.value == State.PLAYING_SERVER){
 
@@ -222,25 +224,30 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     if(validPlay){
                         state.postValue(State.PLAYING_CLIENT)
                         val move = PieceMoves(x,y)
-                        socketO?.run {
-                            thread{
-                                val moveData : ServerMoveData
-                                when(auxPiece){
-                                    EXCHANGE_PIECE -> {
-                                        moveData = ServerMoveData(move,auxPiece,exchangeArrayList)
-                                        exchangeArrayList.clear()
-                                    }
-                                    else -> moveData = ServerMoveData(move,auxPiece)
+
+                            socketO?.run {
+
+                                thread{
+                                        val moveData : ServerMoveData
+                                        when(auxPiece){
+                                            EXCHANGE_PIECE -> {
+                                                moveData = ServerMoveData(move,auxPiece,exchangeArrayList)
+                                                exchangeArrayList.clear()
+                                            }
+                                            else -> moveData = ServerMoveData(move,auxPiece)
+                                        }
+
+                                        val gson = Gson()
+                                        val jsonSend = gson.toJson(moveData)
+
+                                        val printStream = PrintStream(this)
+                                        printStream.println(jsonSend)
+                                        printStream.flush()
+
                                 }
-
-                                val gson = Gson()
-                                val jsonSend = gson.toJson(moveData)
-
-                                val printStream = PrintStream(this)
-                                printStream.println(jsonSend)
-                                printStream.flush()
                             }
-                        }
+
+
                     }
                 }
             }
@@ -258,6 +265,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             return
 
         socket = newSocket
+        socket?.soTimeout = 60 * 1000
+
 
         //Esta thread vai ficar a correr permantemente ate o jogo acabar e for necessario reiniciar
         threadComm = thread {
@@ -634,7 +643,19 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                         }
                     }
                 }
-            } catch (exc: Exception) {
+            }catch (socketE : SocketTimeoutException){
+                //Quando dá timeout
+                cleanTimeout()
+            }
+            catch (nullEx : NullPointerException){
+                //Quando dá uma exceção e ja nao existe o outro socket
+                cleanTimeout()
+            }
+            catch(softwareE: SocketException){
+                //Quando desligo a net e perco a conexao vai para o modo 1
+                cleanTimeout()
+            }
+            catch (exc: Exception) {
                 Log.d("BUG", exc.toString())
             } finally {
                 if(connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
@@ -816,6 +837,12 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
             }
         }
+    }
+
+    fun cleanTimeout(){
+
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.GAME_OVER)
     }
 
 

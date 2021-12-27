@@ -116,7 +116,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             /* Text Related */
             val textPos = middleVertical - 50
             val paintName = getNamePaint(size)
-            val nChars = boardGame.getUsername(i).length
+            var nChars = boardGame.getUsername(i).length
 
             /* Score Related */
             val boxQuarter = (right - left) / 4
@@ -151,10 +151,18 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)
                 }
                 1 -> {
-                    //se for o servidor desenha a sua foto no inicio senao desenha no fim
-                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                    if (nClients != 2) {
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                    } else {
+                        nChars = userNames[i].length
+                        canvas?.drawBitmap(userPhotos[i].scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(userNames[i], 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                    }
+
+
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
+
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)

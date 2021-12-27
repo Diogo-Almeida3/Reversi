@@ -37,14 +37,17 @@
         android:orientation="horizontal">
 
         <Button
+
             android:id="@+id/btnBombPiece"
             style="@style/buttonSpecialPieces"
-            android:text="@string/bomb_piece" />
+            android:text="@string/bomb_piece"
+            android:drawableLeft="@drawable/ic_bomb"/>
 
         <Button
             android:id="@+id/btnTradePiece"
             style="@style/buttonSpecialPieces"
-            android:text="@string/piece_exchange" />
+            android:text="@string/piece_exchange"
+            android:drawableLeft="@drawable/ic_switch"/>
 
     </LinearLayout>
 </LinearLayout>

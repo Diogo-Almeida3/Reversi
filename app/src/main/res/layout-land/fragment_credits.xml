@@ -37,53 +37,53 @@
             android:gravity="center">
             <TextView
                 style="@style/creditsTitle"
-                android:text="Créditos"
+                android:text="@string/creditos"
                 android:textSize="25sp"
                 android:textAlignment="center"/>
 
             <TextView
                 style="@style/creditsTitle"
-                android:text="Unidade Curricular"/>
+                android:text="@string/unidade_curricular"/>
             <TextView
                 style="@style/creditsText"
-                android:text="Arquiteturas Móveis"/>
+                android:text="@string/arquiteturas_moveis"/>
 
             <TextView
                 style="@style/creditsTitle"
-                android:text="Ano letivo"/>
+                android:text="@string/ano_letivo"/>
             <TextView
                 style="@style/creditsText"
-                android:text="2021/2022"/>
+                android:text="@string/_2021_2022"/>
             <TextView
                 style="@style/creditsTitle"
-                android:text="Programadores"/>
+                android:text="@string/programadores"/>
             <TextView
                 style="@style/creditsText"
-                android:text="André Lima Domingues - a2019127839@isec.pt"/>
+                android:text="@string/andre_lima_domingues_2019127839"/>
             <TextView
                 style="@style/creditsText"
-                android:text="Diogo Dias Almeida - a2019126638@isec.pt"/>
+                android:text="@string/diogo_dias_almeida_2019126638"/>
             <TextView
                 style="@style/creditsText"
-                android:text="João Pedro Borges Pinto - a2019140339@isec.pt"/>
+                android:text="@string/joao_pedro_borges_pinto_2019140339"/>
             <TextView
                 style="@style/creditsTitle"
-                android:text="Dependências"/>
+                android:text="@string/dependencias"/>
             <TextView
                 style="@style/creditsText"
-                android:text="CameraX"/>
+                android:text="@string/camerax"/>
             <TextView
                 style="@style/creditsText"
-                android:text="Firebase"/>
+                android:text="@string/firebase"/>
             <TextView
                 style="@style/creditsText"
-                android:text="Circular image"/>
+                android:text="@string/circular_image"/>
             <TextView
                 style="@style/creditsText"
-                android:text="Gson"/>
+                android:text="@string/gson"/>
             <TextView
                 style="@style/creditsText"
-                android:text="Justified text"/>
+                android:text="@string/justified_text"/>
 
         </LinearLayout>
 

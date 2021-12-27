@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Query
@@ -33,6 +34,12 @@ import pt.isec.amov.reversi.game.BoardView
 import pt.isec.amov.reversi.game.GamePerfilView
 import pt.isec.amov.reversi.game.SERVER_PORT
 import com.google.firebase.firestore.DocumentSnapshot
+import androidx.annotation.NonNull
+
+import com.google.firebase.firestore.DocumentReference
+
+
+
 
 
 
@@ -150,7 +157,8 @@ class GameFragment : Fragment() {
         )
 
         val path = db.collection("Users").document(auth.currentUser!!.uid)
-        var numberGames : Int = 0
+        var numberGames = 0
+        //Update que quantos jogos já realizou
         db.runTransaction{ transition ->
             val doc = transition.get(path)
             numberGames = doc.getLong("nrgames")!!.toInt()
@@ -159,31 +167,48 @@ class GameFragment : Fragment() {
             null
         }
 
-        var min = 0L
-        var id = ""
+        var aux = -1L
+        var min = -1L
+        var id = 1
         var count = 0
-        //Ver se ja tem 5 jogos e se tiver ver o mais pequeno score
-        path.collection("TopScores").get().addOnCompleteListener{task ->
-            if(task.isSuccessful){
-                for (document in task.result){
-                    if(count == 0)
-                        min = document.getLong("myScore")!!
-                    count++
-                    if(document.getLong("myScore")!! < min){
-                        min = document.getLong("myScore")!!
-                        id = document.id
+        for(i in 5 downTo 1){
+            val pathTopScore = db.collection("Users").document(auth.currentUser!!.uid)
+                .collection("TopScores").document(i.toString()).get()
+            pathTopScore.addOnCompleteListener{ task ->
+                if(task.isSuccessful){
+                    val doc = task.result
+                    //Ele nunca entra aqui mesmo já existindo topScores definidos
+                    if(doc.exists()){
+                        aux = doc.getLong("myScore")!!
+                        count++
                     }
                 }
+            }
+            if(min  == -1L) min = aux
+            if(min > aux){
+                aux = min
+                id = i
             }
         }
 
         if(count < 5){
             path.collection("TopScores")
-                .document(numberGames.toString())
+                .document(count.toString())
                 .set(game)
         } else{
-            path.collection("TopScores").document(id).delete()
+            val pathTopScore = db.collection("Users").document(auth.currentUser!!.uid)
+                .collection("TopScores").document(id.toString())
+
+            db.runTransaction { transition ->
+                transition.update(pathTopScore,"user",user)
+                transition.update(pathTopScore,"opponent",opponent)
+                transition.update(pathTopScore,"myScore",myScore)
+                transition.update(pathTopScore,"opponentScore",opponentScore)
+                null
+            }
         }
+
+
 
 
     }
