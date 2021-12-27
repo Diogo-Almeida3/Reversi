@@ -64,12 +64,7 @@ class GameFragment : Fragment() {
         gamemode = GameFragmentArgs.fromBundle(requireArguments()).game
         webMode = GameFragmentArgs.fromBundle(requireArguments()).online
 
-
-
-        getColors()
-        restoreData(savedInstanceState)
-        writeData(view)
-        setButtons(view)
+        startGame(savedInstanceState,view)
 
         when(gamemode){
             0-> {
@@ -124,12 +119,16 @@ class GameFragment : Fragment() {
         return view
     }
 
-    fun moveToOff(savedInstanceState: Bundle?, view: View) {
-        gamemode = 0
+    private fun startGame(savedInstanceState: Bundle?, view: View){
         getColors()
         restoreData(savedInstanceState)
         writeData(view)
         setButtons(view)
+    }
+
+    fun moveToOff(savedInstanceState: Bundle?, view: View) {
+        gamemode = 0
+        startGame(savedInstanceState,view)
         boardGame.setUsername(0,getName())
         updateUI()
     }
