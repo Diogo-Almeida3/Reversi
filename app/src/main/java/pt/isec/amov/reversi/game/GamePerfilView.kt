@@ -16,6 +16,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.io.File
 import android.graphics.Bitmap
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
 import java.io.ByteArrayOutputStream
 
@@ -39,6 +41,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var userPhotos = ArrayList<Bitmap>()
 
     private var nClients = 0
+
 
     fun setData(boardGame: BoardGame) {
         this.boardGame = boardGame

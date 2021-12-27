@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Base64
 import android.util.Log
@@ -22,6 +23,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import kotlinx.android.parcel.Parcelize
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.game.jsonClasses.*
 import pt.isec.amov.reversi.game.jsonClasses.alerts.*
@@ -43,6 +45,7 @@ private const val MARGIN_HIGHLIGHT = 32
 
 const val SERVER_PORT = 9999
 
+
 class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     companion object {
@@ -63,10 +66,12 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     private var exchangeArrayList = ArrayList<PieceMoves>()
     private var exchangeCounter = 0
+    private var loading = false
 
     private lateinit var boardGame: BoardGame
     private  lateinit var gamePerfilView: GamePerfilView
     private lateinit var auth: FirebaseAuth
+
 
 
     enum class State {
@@ -644,15 +649,18 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     }
                 }
             }catch (socketE : SocketTimeoutException){
+                Log.d("BUG", socketE.toString())
                 //Quando dá timeout
                 cleanTimeout()
             }
             catch (nullEx : NullPointerException){
                 //Quando dá uma exceção e ja nao existe o outro socket
+                Log.d("BUG", nullEx.toString())
                 cleanTimeout()
             }
             catch(softwareE: SocketException){
                 //Quando desligo a net e perco a conexao vai para o modo 1
+                Log.d("BUG", softwareE.toString())
                 cleanTimeout()
             }
             catch (exc: Exception) {

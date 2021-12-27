@@ -65,7 +65,9 @@ class GameFragment : Fragment() {
 
 
     private lateinit var boardGame: BoardGame
-    private lateinit var boardView: BoardView
+    @Transient
+    private lateinit var  boardView: BoardView
+
     private lateinit var gamePerfilView: GamePerfilView
 
     private var dlg: androidx.appcompat.app.AlertDialog? = null
@@ -82,7 +84,10 @@ class GameFragment : Fragment() {
 
         when(gamemode){
             0-> {
-                boardGame.setUsername(0,getName())
+                if(boardGame.getInitial() == 1){
+                    boardGame.setUsername(0,getName())
+                    boardGame.setInitial(2)
+                }
                 updateUI()
             }
             1 -> {
@@ -120,12 +125,16 @@ class GameFragment : Fragment() {
                     }
 
                 }
-                if(boardView.connectionState.value != BoardView.ConnectionState.CONNECTION_ESTABLISHED){
-                    when(webMode){
-                        SERVER_MODE -> startAsServer()
-                        CLIENT_MODE -> startAsClient()
+                if(boardGame.getInitial() == 1){
+                    if(boardView.connectionState.value != BoardView.ConnectionState.CONNECTION_ESTABLISHED){
+                        when(webMode){
+                            SERVER_MODE -> startAsServer()
+                            CLIENT_MODE -> startAsClient()
+                        }
                     }
+                    boardGame.setInitial(2)
                 }
+
 
             }
         }
@@ -318,7 +327,7 @@ class GameFragment : Fragment() {
         }
 
         dlg = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Server Mode")
+            .setTitle(resources.getString(R.string.serverMode))
             .setView(ll)
             .setOnCancelListener {
                 boardView.stopServer()
@@ -364,7 +373,9 @@ class GameFragment : Fragment() {
             if (!json!!.isEmpty()) {
                 val gson = Gson()
                 boardGame = gson.fromJson(json, BoardGame::class.java)
+
             }
+
         }
     }
 

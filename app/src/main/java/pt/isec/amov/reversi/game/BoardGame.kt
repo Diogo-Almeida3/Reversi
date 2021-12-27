@@ -10,6 +10,7 @@ class BoardGame(
     private var colorsBoard: ArrayList<Int>
 ) {
 
+
     companion object {
         const val EMPTY_CELL = 0
 
@@ -22,13 +23,17 @@ class BoardGame(
     private var currentPlayer = 0
     private var validPlays = ArrayList<PieceMoves>()
     private val players = arrayListOf<Player>()
-
+    private var initial = 1
     init {
         newGame()
     }
 
 
+    fun getInitial() :Int = initial
 
+    fun setInitial(number: Int) {
+        initial = number
+    }
     private fun newGame() {
         for (i in 0 until boardSIZE)
             for (j in 0 until boardSIZE)
