@@ -61,4 +61,18 @@
     <string name="programadores">Programmers</string>
     <string name="dependencias">Dependencies</string>
     <string name="arquiteturas_moveis">Mobile Architectures</string>
+    <string name="bombPieceSelect">You can only select your piece color.</string>
+    <string name="exchangeSelectTwice">You can\'t choose the same piece twice.</string>
+    <string name="exchangeWrongPiece">Wrong Piece selected.</string>
+    <string name="exchangeBoardError">You can\'t choose a position outside the board.</string>
+    <string name="exchangeNoBoardPieces">don\'t got enough pieces!</string>
+    <string name="exchangeNoAvailablePieces">has no available exchange pieces!</string>
+    <string name="winner">win the game.</string>
+    <string name="draw">Draw</string>
+    <string name="checkBoard">Check Board</string>
+    <string name="backToMenu">Back to menu</string>
+    <string name="pass">Pass</string>
+    <string name="noAvailablePlays">No available plays...</string>
+    <string name="noAvailablePlaysName">has no available plays...</string>
+    <string name="anonymous">Anonymous</string>
 </resources>

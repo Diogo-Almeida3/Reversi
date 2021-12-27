@@ -62,5 +62,19 @@
     <string name="circular_image">Circular image</string>
     <string name="gson">Gson</string>
     <string name="justified_text">Justified text</string>
+    <string name="anonymous">Anónimo</string>
+    <string name="draw">Empate</string>
+    <string name="winner">" ganhou o jogo."</string>
+    <string name="exchangeNoBoardPieces">não tem peças suficientes no tabuleiro.</string>
+    <string name="exchangeBoardError">Não pode escolher uma posição fora do tabuleiro</string>
+    <string name="exchangeWrongPiece">Peça errada selecionada.</string>
+    <string name="exchangeSelectTwice">Não pode escolher a mesma peça duas vezes.</string>
+    <string name="bombPieceSelect">Só pode selecionar peças da sua cor.</string>
+    <string name="checkBoard">Verificar tabuleiro</string>
+    <string name="backToMenu">Voltar ao menu</string>
+    <string name="pass">Passar</string>
+    <string name="noAvailablePlays">Não tem jogadas disponiveis...</string>
+    <string name="noAvailablePlaysName">" não tem jogadas disponiveis..."</string>
+    <string name="exchangeNoAvailablePieces">"  não tem peças de troca disponíveis!"</string>
 
 </resources>

@@ -133,7 +133,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 } else{
                     validPlay = false
                     if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
-                        showAlertGeneral("You can only select your piece color")
+                        showAlertGeneral(context.resources.getString(R.string.bombPieceSelect))
                 }
             }
 
@@ -143,19 +143,19 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                         exchangeError = -3
                         validPlay = false
                         if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
-                            showAlertGeneral("You can't choose the same pieces twice")
+                            showAlertGeneral(context.resources.getString(R.string.exchangeSelectTwice))
                     }
                     -2 -> {
                         exchangeError = -2
                         validPlay = false
                         if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
-                            showAlertGeneral("Wrong Piece selected")
+                            showAlertGeneral(context.resources.getString(R.string.exchangeWrongPiece))
                     }
                     -1 -> {
                         exchangeError = -1
                         validPlay = false
                         if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
-                            showAlertGeneral("You can't choose a position outside the board")
+                            showAlertGeneral(context.resources.getString(R.string.exchangeBoardError))
                     }
                     1 -> {
                         exchangeError = 0
@@ -601,37 +601,37 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                 when(jsonObject.get("switchToExchange").asInt){
                                     0 -> {
                                         Handler(Looper.getMainLooper()).post{
-                                            showAlertGeneral(boardGame.getName() + " don't got enough pieces!")
+                                            showAlertGeneral(boardGame.getName() + context.resources.getString(R.string.exchangeNoBoardPieces))
                                         }
                                     }
                                     1 -> boardGame.setPieceType(EXCHANGE_PIECE)
                                     2 -> {
                                         Handler(Looper.getMainLooper()).post{
-                                            showAlertGeneral(boardGame.getName() + " has no available exchange pieces!")
+                                            showAlertGeneral(boardGame.getName() + context.resources.getString(R.string.exchangeNoAvailablePieces))
                                         }
                                     }
                                 }
                             }
                             type.toString().equals("\"ALERT_INVALID_BOMB\"") -> {
                                 Handler(Looper.getMainLooper()).post{
-                                    showAlertGeneral("You can only select your piece color")
+                                    showAlertGeneral(context.resources.getString(R.string.bombPieceSelect))
                                 }
                             }
                             type.toString().equals("\"ALERT_INVALID_EXCHANGE\"") -> {
                                 when(jsonObject.get("error").asInt) {
                                     -1 -> {
                                         Handler(Looper.getMainLooper()).post{
-                                            showAlertGeneral("You can't choose a position outside the board")
+                                            showAlertGeneral(context.resources.getString(R.string.exchangeBoardError))
                                         }
                                     }
                                     -2 -> {
                                         Handler(Looper.getMainLooper()).post{
-                                            showAlertGeneral("Wrong Piece selected")
+                                            showAlertGeneral(context.resources.getString(R.string.exchangeWrongPiece))
                                         }
                                     }
                                     -3 -> {
                                         Handler(Looper.getMainLooper()).post{
-                                            showAlertGeneral("You can't choose the same pieces twice")
+                                            showAlertGeneral(context.resources.getString(R.string.exchangeSelectTwice))
                                         }
                                     }
                                 }
@@ -997,12 +997,12 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
 
         if (player != null)
-            builder1.setMessage("${player.getUsername()} win the game.")
+            builder1.setMessage(player.getUsername() + context.resources.getString(R.string.winner))
         else
-            builder1.setMessage("Draw")
+            builder1.setMessage(context.resources.getString(R.string.draw))
         builder1.setCancelable(false)
 
-        builder1.setPositiveButton("Check Board") { dialog, id ->
+        builder1.setPositiveButton(context.resources.getString(R.string.checkBoard)) { dialog, id ->
             run {
                 dialog.cancel()
 
@@ -1011,7 +1011,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             }
         }
 
-        builder1.setNegativeButton("Back to menu") { dialog, id ->
+        builder1.setNegativeButton(context.resources.getString(R.string.backToMenu)) { dialog, id ->
             run {
                 dialog.cancel()
                 if(connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
@@ -1031,7 +1031,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         builder1.setMessage(phrase)
         builder1.setCancelable(false)
 
-        builder1.setPositiveButton("Pass") { dialog, id ->
+        builder1.setPositiveButton(context.resources.getString(R.string.pass)) { dialog, id ->
             run {
                 dialog.cancel()
             }
@@ -1045,12 +1045,12 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
         if (name.equals(""))
-            builder1.setMessage("No Available Plays...")
+            builder1.setMessage(context.resources.getString(R.string.noAvailablePlays))
         else
-            builder1.setMessage(name + " has no available plays..")
+            builder1.setMessage(name + context.resources.getString(R.string.noAvailablePlaysName))
         builder1.setCancelable(false)
 
-        builder1.setPositiveButton("Pass") { dialog, id ->
+        builder1.setPositiveButton(context.resources.getString(R.string.pass)) { dialog, id ->
             run {
                 dialog.cancel()
                 if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED){

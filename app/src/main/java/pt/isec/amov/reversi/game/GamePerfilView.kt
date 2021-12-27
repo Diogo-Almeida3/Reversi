@@ -143,7 +143,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                         canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     } else { //Anónimo
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                        canvas?.drawText("Anónimo", 0, 7, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                        canvas?.drawText(context.resources.getString(R.string.anonymous), 0, 7, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
@@ -225,7 +225,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                         canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else {
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                        canvas?.drawText("Anónimo", 0, 7, (middle - 7 * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                        canvas?.drawText(context.resources.getString(R.string.anonymous), 0, 7, (middle - 7 * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
                     if (i == boardGame.getCurrentPlayer() - 1 && !endgame)

@@ -39,6 +39,7 @@ class BoardGame(
 
         if (gamemode != 2) {
 
+
             for (i in 1..2){
                 if(gamemode == 0 && i == 2)
                     players.add(Player(i, 2, colorsPlayers[i - 1],"Anónimo"))
