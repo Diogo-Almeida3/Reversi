@@ -11,12 +11,6 @@
         android:label="fragment_menu"
         tools:layout="@layout/fragment_menu">
         <action
-            android:id="@+id/action_menuActivity_to_rulesActivity"
-            app:destination="@id/rulesFragment"
-
-            app:popUpTo="@layout/fragment_menu"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_menuFragment_to_gameFragment"
             app:destination="@id/gameFragment"
 
@@ -31,6 +25,16 @@
         <action
             android:id="@+id/action_menuFragment_self"
             app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_creditsFragment"
+            app:destination="@id/creditsFragment"
+            app:popUpTo="@layout/fragment_menu"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_menuFragment_to_rulesFragment"
+            app:destination="@id/rulesFragment"
+            app:popUpTo="@layout/fragment_menu"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -59,6 +63,11 @@
 
             app:popUpTo="@layout/fragment_rules"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_rulesFragment_to_creditsFragment"
+            app:destination="@id/creditsFragment"
+            app:popUpTo="@layout/fragment_rules"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -96,6 +105,11 @@
             app:popUpTo="@layout/fragment_profile"
             app:popUpToInclusive="true"
             />
+        <action
+            android:id="@+id/action_profileFragment_to_creditsFragment"
+            app:destination="@id/creditsFragment"
+            app:popUpTo="@layout/fragment_profile"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -130,6 +144,30 @@
             app:popUpTo="@layout/fragment_camera"
             app:popUpToInclusive="true"
             />
+    </fragment>
+    <fragment
+        android:id="@+id/creditsFragment"
+        android:name="pt.isec.amov.reversi.fragments.CreditsFragment"
+        android:label="fragment_credits"
+        tools:layout="@layout/fragment_credits" >
+        <action
+            android:id="@+id/action_creditsFragment_to_menuFragment"
+            app:destination="@id/menuFragment"
+            app:popUpTo="@layout/fragment_credits"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_creditsFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@layout/fragment_credits"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_creditsFragment_to_rulesFragment"
+            app:destination="@id/rulesFragment"
+            app:popUpTo="@layout/fragment_credits"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_creditsFragment_self"
+            app:destination="@id/creditsFragment" />
     </fragment>
 
 </navigation>

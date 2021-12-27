@@ -119,14 +119,25 @@ class MainActivity : AppCompatActivity() {
                     R.id.rulesFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_rulesFragment_to_menuFragment)
                     R.id.profileFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_profileFragment_to_menuFragment2)
                     R.id.gameFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_gameFragment_to_menuFragment)
+                    R.id.creditsFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_creditsFragment_to_menuFragment)
+
                 }
 
             }
             R.id.rules -> {
                 when (findNavController(R.id.fragment_base).currentDestination?.id) {
-                    R.id.menuFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_menuActivity_to_rulesActivity)
+                    R.id.menuFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_menuFragment_to_rulesFragment)
                     R.id.rulesFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_rulesFragment_self)
                     R.id.profileFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_profileFragment_to_rulesFragment)
+                    R.id.creditsFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_creditsFragment_to_rulesFragment)
+                }
+            }
+            R.id.credits->{
+                when(findNavController(R.id.fragment_base).currentDestination?.id){
+                    R.id.menuFragment-> findNavController(R.id.fragment_base).navigate(R.id.action_menuFragment_to_creditsFragment)
+                    R.id.rulesFragment-> findNavController(R.id.fragment_base).navigate(R.id.action_rulesFragment_to_creditsFragment)
+                    R.id.profileFragment-> findNavController(R.id.fragment_base).navigate(R.id.action_profileFragment_to_creditsFragment)
+                    R.id.creditsFragment-> findNavController(R.id.fragment_base).navigate(R.id.action_creditsFragment_self)
                 }
             }
 
@@ -181,6 +192,8 @@ class MainActivity : AppCompatActivity() {
                     R.id.menuFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_menuFragment_to_profileFragment)
                     R.id.rulesFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_rulesFragment_to_profileFragment)
                     R.id.profileFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_profileFragment_self)
+                    R.id.creditsFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_creditsFragment_to_profileFragment)
+
                 }
             }
             R.id.logout -> {

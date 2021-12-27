@@ -58,7 +58,7 @@ class MenuFragment : Fragment() {
         }
         binding.btnRules.setOnClickListener {
             binding.btnRules.startAnimation(btnAnimation)
-            findNavController().navigate(R.id.action_menuActivity_to_rulesActivity)
+            findNavController().navigate(R.id.action_menuFragment_to_rulesFragment)
         }
         binding.btnExit.setOnClickListener{
             binding.btnExit.startAnimation(btnAnimation)

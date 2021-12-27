@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rulesScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/custom_background"
+    tools:context=".fragments.CreditsFragment">
+
+    <LinearLayout
+        android:id="@+id/firstLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/titleReversi"
+            android:text="@string/reversi" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/logo"
+            android:maxWidth="100dp"
+            android:maxHeight="100dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_reversi" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+            <TextView
+                style="@style/creditsTitle"
+                android:text="Créditos"
+                android:textSize="25sp"
+                android:textAlignment="center"/>
+
+        <TextView
+            style="@style/creditsTitle"
+            android:text="Unidade Curricular"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="Arquiteturas Móveis"/>
+
+        <TextView
+            style="@style/creditsTitle"
+            android:text="Ano letivo"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="2021/2022"/>
+        <TextView
+            style="@style/creditsTitle"
+            android:text="Programadores"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="André Lima Domingues - 2019127839"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="Diogo Dias Almeida - 2019126638"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="João Pedro Borges Pinto - 2019140339"/>
+        <TextView
+            style="@style/creditsTitle"
+            android:text="Dependências"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="CameraX"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="Firebase"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="Circular image"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="Gson"/>
+        <TextView
+            style="@style/creditsText"
+            android:text="Justified text"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

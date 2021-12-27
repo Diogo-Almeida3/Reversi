@@ -92,6 +92,27 @@
         <item name="android:textAlignment">center</item>
     </style>
 
+
+    <style name="creditsTitle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/creme_canela</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20dp</item>
+
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="creditsText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/branco</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:textAlignment">center</item>
+
+    </style>
     <style name="NavigationViewStyleTitle">
         <item name="android:textSize">30sp</item>
     </style>
