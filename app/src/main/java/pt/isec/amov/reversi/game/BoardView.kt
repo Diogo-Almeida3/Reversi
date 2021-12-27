@@ -375,10 +375,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                         else if(type.toString().equals("\"ALERT_PASS\"")){
                             ++counter
                             if (counter < boardGame.getPlayers()){
-                                switchStatePlay()
+
                                 if(checkAlertNoPlays()){
                                     socketO?.run {
-                                        val okData = OkData()
+                                        val okData = OkData(false)
 
                                         val gson = Gson()
                                         val jsonSend = gson.toJson(okData)
@@ -389,7 +389,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
                                     }
                                 }
-
+                                switchStatePlay() // Manda ok
                             }
                             else{
                                 alertEndGame()
@@ -570,9 +570,12 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                 state.postValue(State.GAME_OVER)
                             }
                             type.toString().equals("\"OK\"") -> {
-                                boardGame.switchPlayer()
-                                boardGame.checkNoValidPlays()
-                                switchStatePlay()
+                                if(jsonObject.get("aux").asBoolean){
+                                    boardGame.switchPlayer()
+                                    boardGame.checkNoValidPlays()
+                                    boardGame.checkBoardPieces()
+                                    switchStatePlay()
+                                }
                             }
                             type.toString().equals("\"REQUEST_BOMB\"") ->{
                                 when(jsonObject.get("switchToBomb").asBoolean){
@@ -649,7 +652,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     fun switchStatePlay(){
         socketO?.run {
             thread {
-                val OkData = OkData()
+                val OkData = OkData(true)
                 val gson = Gson()
                 val jsonSend = gson.toJson(OkData)
 
@@ -794,7 +797,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        cleanUp()
+        if(state.value != State.GAME_OVER)
+            cleanUp()
 
         //Quando eu sair e der pop do fragmento anterior o garbage collector elimina as ligações
     }

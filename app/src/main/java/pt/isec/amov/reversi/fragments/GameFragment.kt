@@ -19,8 +19,11 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
@@ -29,6 +32,10 @@ import pt.isec.amov.reversi.game.BoardGame
 import pt.isec.amov.reversi.game.BoardView
 import pt.isec.amov.reversi.game.GamePerfilView
 import pt.isec.amov.reversi.game.SERVER_PORT
+import com.google.firebase.firestore.DocumentSnapshot
+
+
+
 
 class GameFragment : Fragment() {
 
@@ -143,17 +150,42 @@ class GameFragment : Fragment() {
         )
 
         val path = db.collection("Users").document(auth.currentUser!!.uid)
-        var numberGames : Long = 0
+        var numberGames : Int = 0
         db.runTransaction{ transition ->
             val doc = transition.get(path)
-            numberGames = doc.getLong("nrgames")!! + 1
+            numberGames = doc.getLong("nrgames")!!.toInt()
+            numberGames++
             transition.update(path, "nrgames", numberGames)
             null
         }
 
-        path.collection("TopScores")
-            .document(numberGames.toString())
-            .set(game)
+        var min = 0L
+        var id = ""
+        var count = 0
+        //Ver se ja tem 5 jogos e se tiver ver o mais pequeno score
+        path.collection("TopScores").get().addOnCompleteListener{task ->
+            if(task.isSuccessful){
+                for (document in task.result){
+                    if(count == 0)
+                        min = document.getLong("myScore")!!
+                    count++
+                    if(document.getLong("myScore")!! < min){
+                        min = document.getLong("myScore")!!
+                        id = document.id
+                    }
+                }
+            }
+        }
+
+        if(count < 5){
+            path.collection("TopScores")
+                .document(numberGames.toString())
+                .set(game)
+        } else{
+            path.collection("TopScores").document(id).delete()
+        }
+
+
     }
 
 
