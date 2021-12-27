@@ -9,6 +9,7 @@ import androidx.annotation.NonNull
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -36,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.etLoginPassword.text.toString().trim()
 
             when {
-                email.isEmpty() || password.isEmpty() -> showAlertError("Fields must not be empty")
+                email.isEmpty() || password.isEmpty() -> showAlertError(resources.getString(R.string.emptyFields))
 
                 else -> signInWithEmail(email, password)
             }
@@ -54,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
             var email = binding.etLoginEmail.text.toString().trim()
 
             when {
-                email.isEmpty() -> showAlertError("Fields must not be empty")
+                email.isEmpty() -> showAlertError(resources.getString(R.string.emptyFields))
 
                 else -> forgotPassword(email)
             }
@@ -72,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
         val builder1: AlertDialog.Builder = AlertDialog.Builder(this)
         builder1.setMessage(name)
         builder1.setCancelable(true)
-        builder1.setPositiveButton("Ok") { dialog, id ->
+        builder1.setPositiveButton(resources.getString(R.string.ok)) { dialog, id ->
             run {
                 dialog.cancel()
             }
@@ -84,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
     private fun forgotPassword(email: String) {
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener {
-                showAlertError("An email was sent to $email reset the password.")
+                showAlertError(resources.getString(R.string.emailSent) + " $email " + resources.getString(R.string.resetPassword))
 
             }
             .addOnFailureListener(this) { e ->

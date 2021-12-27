@@ -75,4 +75,20 @@
     <string name="noAvailablePlays">No available plays...</string>
     <string name="noAvailablePlaysName">has no available plays...</string>
     <string name="anonymous">Anonymous</string>
+    <string name="serverIp">Server IP adress</string>
+    <string name="waitingForClient">Waiting for client...</string>
+    <string name="cancel">Cancel</string>
+    <string name="adressNotRecognized">Address not recognized</string>
+    <string name="connect">Connect</string>
+    <string name="clientMode">Client Mode</string>
+    <string name="ok" translatable="false">Ok</string>
+    <string name="emailSent">An email was sent to</string>
+    <string name="resetPassword">reset the password.</string>
+    <string name="serverMode">Server Mode</string>
+    <string name="connectionType">Choose the connection type...</string>
+    <string name="checkWifi">Check the wifi connection...</string>
+    <string name="permissionsNotGranted">Permissions not granted.</string>
+    <string name="emptyFields">Fields must not be empty</string>
+    <string name="passwordNoMatch">Passwords don\'t match</string>
+    <string name="usernameLetters">Username must have at least 3 letters</string>
 </resources>

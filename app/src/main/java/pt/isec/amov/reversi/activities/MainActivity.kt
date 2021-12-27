@@ -223,10 +223,10 @@ class MainActivity : AppCompatActivity() {
     private fun showAlert(buttonID: Int) {
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder1.setMessage("Choose the connection type...")
+        builder1.setMessage(resources.getString(R.string.connectionType))
         builder1.setCancelable(false)
 
-        builder1.setNegativeButton("Server Mode") { dialog, id ->
+        builder1.setNegativeButton(resources.getString(R.string.serverMode)) { dialog, id ->
             run {
                 dialog.cancel()
                 if(buttonID == 0)
@@ -243,13 +243,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        builder1.setNeutralButton("Cancel"){dialog, id ->
+        builder1.setNeutralButton(resources.getString(R.string.cancel)){dialog, id ->
             run{
                 dialog.cancel()
             }
         }
 
-        builder1.setPositiveButton("Client Mode"){dialog, id ->
+        builder1.setPositiveButton(resources.getString(R.string.clientMode)){dialog, id ->
             run {
                 dialog.cancel()
                 if(buttonID == 0)

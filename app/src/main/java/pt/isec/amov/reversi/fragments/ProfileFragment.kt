@@ -55,7 +55,7 @@ class ProfileFragment : Fragment() {
         val builder1: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         builder1.setMessage(name)
         builder1.setCancelable(true)
-        builder1.setPositiveButton("Ok") { dialog, id ->
+        builder1.setPositiveButton(resources.getString(R.string.ok)) { dialog, id ->
             run {
                 dialog.cancel()
             }
@@ -67,7 +67,7 @@ class ProfileFragment : Fragment() {
     private fun forgotPassword(email: String) {
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener {
-                showAlertError("An email was sent to $email reset the password.")
+                showAlertError(resources.getString(R.string.emailSent) +" $email " + resources.getString(R.string.resetPassword))
 
             }
             .addOnFailureListener(requireActivity()) { e ->

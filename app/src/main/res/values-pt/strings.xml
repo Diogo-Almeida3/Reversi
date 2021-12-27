@@ -76,5 +76,20 @@
     <string name="noAvailablePlays">Não tem jogadas disponiveis...</string>
     <string name="noAvailablePlaysName">" não tem jogadas disponiveis..."</string>
     <string name="exchangeNoAvailablePieces">"  não tem peças de troca disponíveis!"</string>
+    <string name="serverIp">Endereço IP do servidor</string>
+    <string name="waitingForClient">À espera do cliente...</string>
+    <string name="cancel">Cancelar</string>
+    <string name="adressNotRecognized">Endereço não reconhecido</string>
+    <string name="connect">Conectar</string>
+    <string name="clientMode">Modo Cliente</string>
+    <string name="emailSent">Um email foi enviado para</string>
+    <string name="resetPassword">resetar a password.</string>
+    <string name="serverMode">Modo Servidor</string>
+    <string name="connectionType">Escolha o tipo de conexão...</string>
+    <string name="checkWifi">Verifique a conexão do wifi...</string>
+    <string name="permissionsNotGranted">Permissões não garantidas.</string>
+    <string name="emptyFields">Campos não devem estar vazios</string>
+    <string name="passwordNoMatch">As passwords não coincidem</string>
+    <string name="usernameLetters">Username deve ter pelo menos 3 letras</string>
 
 </resources>

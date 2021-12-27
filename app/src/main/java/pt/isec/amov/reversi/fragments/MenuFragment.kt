@@ -72,7 +72,7 @@ class MenuFragment : Fragment() {
         val activeNetwork = cm.activeNetworkInfo
         val isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting
         if(!isConnected){
-            Toast.makeText(requireContext(),"Check the wifi connection",Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(),resources.getString(R.string.checkWifi),Toast.LENGTH_LONG).show()
             return false
         }
         return  true
@@ -81,10 +81,10 @@ class MenuFragment : Fragment() {
     private fun showAlert(buttonID: Int) {
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder1.setMessage("Choose the connection type...")
+        builder1.setMessage(resources.getString(R.string.connectionType))
         builder1.setCancelable(false)
 
-        builder1.setNegativeButton("Server Mode") { dialog, id ->
+        builder1.setNegativeButton(resources.getString(R.string.serverMode)) { dialog, id ->
             run {
                 dialog.cancel()
                 if(buttonID == 0)
@@ -95,13 +95,13 @@ class MenuFragment : Fragment() {
             }
         }
 
-        builder1.setNeutralButton("Cancel"){dialog, id ->
+        builder1.setNeutralButton(resources.getString(R.string.cancel)){dialog, id ->
             run{
                 dialog.cancel()
             }
         }
 
-        builder1.setPositiveButton("Client Mode"){dialog, id ->
+        builder1.setPositiveButton(resources.getString(R.string.clientMode)){dialog, id ->
             run {
                 dialog.cancel()
                 if(buttonID == 0)

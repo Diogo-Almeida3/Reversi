@@ -259,12 +259,12 @@ class GameFragment : Fragment() {
             })
         }
         val dlg = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Client mode")
-            .setMessage("Server IP address:")
-            .setPositiveButton("Connect") { _: DialogInterface, _: Int ->
+            .setTitle(resources.getString(R.string.clientMode))
+            .setMessage(resources.getString(R.string.serverIp))
+            .setPositiveButton(resources.getString(R.string.connect)) { _: DialogInterface, _: Int ->
                 val strIP = edtBox.text.toString()
                 if (strIP.isEmpty() || !Patterns.IP_ADDRESS.matcher(strIP).matches()) {
-                    Toast.makeText(context, "Address not recognized", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, resources.getString(R.string.adressNotRecognized), Toast.LENGTH_LONG).show()
                     findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                 } else {
                     boardView.startClient(getName(),strIP)
@@ -273,7 +273,7 @@ class GameFragment : Fragment() {
             .setNeutralButton("Connect to emulator") { _: DialogInterface, _: Int ->
                 boardView.startClient(getName(),"10.0.2.2", SERVER_PORT-1)
             }
-            .setNegativeButton("Cancel") { _: DialogInterface, _: Int ->
+            .setNegativeButton(resources.getString(R.string.cancel)) { _: DialogInterface, _: Int ->
 
                 findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
             }
@@ -310,7 +310,7 @@ class GameFragment : Fragment() {
             addView(TextView(context).apply {
                 val paramsTV = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 layoutParams = paramsTV
-                text = String.format("IP do servidor: %s\nÀ espera de um cliente...",strIPAddress)
+                text = String.format( resources.getString(R.string.serverIp) +": %s\n" + resources.getString(R.string.waitingForClient),strIPAddress)
                 textSize = 20f
                 setTextColor(Color.rgb(96, 96, 32))
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
@@ -350,9 +350,9 @@ class GameFragment : Fragment() {
 
     private fun ExchangeFunc(){
         when {
-            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> showAlert(boardGame.getName() + " don't got enough pieces!")
+            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> showAlert(boardGame.getName() + resources.getString(R.string.exchangeNoBoardPieces))
             boardGame.getExchangePiece() > 0 -> boardGame.setPieceType(2)
-            else -> showAlert(boardGame.getName() + " has no available exchange pieces!")
+            else -> showAlert(boardGame.getName() + resources.getString(R.string.exchangeNoAvailablePieces))
         }
     }
 

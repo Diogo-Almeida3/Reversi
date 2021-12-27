@@ -215,7 +215,7 @@ class CameraFragment : Fragment() {
                 startCamera()
             } else {
                 /* User don't give permissions go back to profile view */
-                Toast.makeText(requireContext(), "Permissions not granted.", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), resources.getString(R.string.permissionsNotGranted), Toast.LENGTH_SHORT)
                     .show()
                 findNavController().navigate(R.id.action_cameraFragment_to_profileFragment)
             }

@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
@@ -40,11 +41,11 @@ class RegisterActivity : AppCompatActivity() {
             val confirmPassword = binding.etRegisterConfirmPassword.text.toString().trim()
 
             when {
-                email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> showAlertError("Fields must not be empty")
+                email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> showAlertError(resources.getString(R.string.emptyFields))
 
-                password != confirmPassword -> showAlertError("Passwords don't match")
+                password != confirmPassword -> showAlertError(resources.getString(R.string.passwordNoMatch))
 
-                username.length < 3 -> showAlertError("Username must have at least 3 letters")
+                username.length < 3 -> showAlertError(resources.getString(R.string.usernameLetters))
 
                 else -> createUserWithEmail(email, password,username)
             }
