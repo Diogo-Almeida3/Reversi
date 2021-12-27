@@ -2,7 +2,6 @@ package pt.isec.amov.reversi.fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.wifi.WifiManager
@@ -26,14 +25,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import pt.isec.amov.reversi.R
-import pt.isec.amov.reversi.activities.MainActivity
 import pt.isec.amov.reversi.game.BoardGame
 import pt.isec.amov.reversi.game.BoardView
 import pt.isec.amov.reversi.game.GamePerfilView
 import pt.isec.amov.reversi.game.SERVER_PORT
-import pt.isec.amov.reversi.game.jsonClasses.alerts.PassPlayData
-import java.io.PrintStream
-import kotlin.concurrent.thread
 
 class GameFragment : Fragment() {
 
@@ -87,12 +82,16 @@ class GameFragment : Fragment() {
                     if(state == BoardView.State.PLAYING_SERVER || state == BoardView.State.PLAYING_CLIENT)
                         updateUI()
 
-                    if(state == BoardView.State.GAME_OVER){
+                    if(state == BoardView.State.GAME_OVER && boardView.getConnectionState() == BoardView.ConnectionState.CONNECTION_ESTABLISHED){
                         updateUI()
                         if(boardView.getIsServer())
                             UploadTopScore2Players(getName(),boardGame.getUsername(1),boardGame.getTotalPieces(0),boardGame.getTotalPieces(1))
                         else
                             UploadTopScore2Players(getName(),boardGame.getUsername(0),boardGame.getTotalPieces(1),boardGame.getTotalPieces(0))
+                    } else if(state == BoardView.State.GAME_OVER && boardView.getConnectionState() != BoardView.ConnectionState.CONNECTION_ESTABLISHED) {
+                        //todo tratar para quando alguem sai de repente
+                        Toast.makeText(context,"Perdi connection com o outro",Toast.LENGTH_LONG).show()
+                        moveToOff(savedInstanceState,view)
                     }
 
                 }
@@ -106,11 +105,10 @@ class GameFragment : Fragment() {
                     }
                     if (state == BoardView.ConnectionState.CONNECTION_ERROR) {
 
-                        //Toast.makeText(context,"ERRO",Toast.LENGTH_LONG).show()
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
                     if (state == BoardView.ConnectionState.CONNECTION_ENDED){
-                        //Toast.makeText(context,"ENDED",Toast.LENGTH_LONG).show()
+
                     }
 
                 }
@@ -127,6 +125,15 @@ class GameFragment : Fragment() {
         return view
     }
 
+    fun moveToOff(savedInstanceState: Bundle?, view: View) {
+        gamemode = 0
+        getColors()
+        restoreData(savedInstanceState)
+        writeData(view)
+        setButtons(view)
+        boardGame.setUsername(0,getName())
+        updateUI()
+    }
 
     fun UploadTopScore2Players(user: String, opponent : String, myScore : Int, opponentScore : Int) {
         val db = Firebase.firestore
@@ -152,7 +159,12 @@ class GameFragment : Fragment() {
     }
 
 
-
+    private fun writeData(view: View) {
+        boardView = view.findViewById(R.id.boardView)
+        gamePerfilView = view.findViewById(R.id.gamePerfilView)
+        boardView.setData(boardGame,gamePerfilView)
+        gamePerfilView.setData(boardGame)
+    }
 
 
 
@@ -347,12 +359,7 @@ class GameFragment : Fragment() {
         }
     }
 
-    private fun writeData(view: View) {
-        boardView = view.findViewById(R.id.boardView)
-        gamePerfilView = view.findViewById(R.id.gamePerfilView)
-        boardView.setData(boardGame,gamePerfilView)
-        gamePerfilView.setData(boardGame)
-    }
+
 
     private fun getColors(){
         for(i in 0..2)

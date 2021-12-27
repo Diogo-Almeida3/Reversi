@@ -397,4 +397,11 @@ class BoardGame(
         players[number].setUsername(username)
     }
 
+    fun setGamemode(number: Int) {
+        gamemode = number
+    }
+
+
+
+
 }

@@ -90,7 +90,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private val socketO: OutputStream?
         get() = socket?.getOutputStream()
 
-    private var db = Firebase.firestore
     private var serverSocket: ServerSocket? = null
     private var threadComm: Thread? = null
     private var isServer = false
@@ -250,8 +249,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         return super.onTouchEvent(event)
     }
-
-
 
 
     private fun startComs(newSocket: Socket?) {
@@ -489,6 +486,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                 }
                             }
                         }
+                        else if(type.toString().equals("\"CLOSE_CONNECTION\"")){
+                            connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+                            state.postValue(State.GAME_OVER)
+                        }
                     } else{
                         when {
                             type.toString().equals("\"PROFILE_VIEW\"") -> {
@@ -623,13 +624,24 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                     }
                                 }
                             }
+                            type.toString().equals("\"CLOSE_CONNECTION\"") -> {
+                                connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+                                state.postValue(State.GAME_OVER)
+                            }
                         }
                     }
                 }
             } catch (exc: Exception) {
                 Log.d("BUG", exc.toString())
             } finally {
-                stopGame()
+                if(connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
+                    stopGame()
+                else{
+                    socket?.close()
+                    isServer = false
+                    validPlay = false
+                }
+
             }
         }
     }
@@ -660,8 +672,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         try {
             state.postValue(State.GAME_OVER)
 
-            Toast.makeText(context,"PARAR JOGO",Toast.LENGTH_LONG).show()
-            //connectionState.postValue(ConnectionState.CONNECTION_ERROR)
             socket?.close()
             socket = null
             threadComm?.interrupt()
@@ -775,8 +785,27 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        cleanUp()
 
+        //Quando eu sair e der pop do fragmento anterior o garbage collector elimina as ligações
+    }
 
+    fun cleanUp(){
+        socketO?.run {
+            thread {
+                val closeConnection = CloseConnection()
+                val gson = Gson()
+                val jsonSend = gson.toJson(closeConnection)
+
+                val printStream = PrintStream(this)
+                printStream.println(jsonSend)
+                printStream.flush()
+
+            }
+        }
+    }
 
 
 
