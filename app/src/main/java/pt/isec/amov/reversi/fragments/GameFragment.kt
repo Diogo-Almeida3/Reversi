@@ -89,7 +89,6 @@ class GameFragment : Fragment() {
                         else
                             UploadTopScore2Players(getName(),boardGame.getUsername(0),boardGame.getTotalPieces(1),boardGame.getTotalPieces(0))
                     } else if(state == BoardView.State.GAME_OVER && boardView.getConnectionState() != BoardView.ConnectionState.CONNECTION_ESTABLISHED) {
-                        //todo tratar para quando alguem sai de repente
                         Toast.makeText(context,"Perdi connection com o outro",Toast.LENGTH_LONG).show()
                         moveToOff(savedInstanceState,view)
                     }
