@@ -1,4 +1,4 @@
-package pt.isec.amov.reversi.game.jsonClasses
+package pt.isec.amov.reversi.game.jsonClasses.moves
 
 import pt.isec.amov.reversi.game.PieceMoves
 import java.util.ArrayList

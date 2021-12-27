@@ -24,9 +24,13 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.game.jsonClasses.*
-import pt.isec.amov.reversi.game.jsonClasses.alerts.AlertEndgameData
-import pt.isec.amov.reversi.game.jsonClasses.alerts.AlertNoValidPlayData
-import pt.isec.amov.reversi.game.jsonClasses.alerts.PassPlayData
+import pt.isec.amov.reversi.game.jsonClasses.alerts.*
+import pt.isec.amov.reversi.game.jsonClasses.moves.ClientMoveData
+import pt.isec.amov.reversi.game.jsonClasses.moves.ServerMoveData
+import pt.isec.amov.reversi.game.jsonClasses.profile.GamePerfilData
+import pt.isec.amov.reversi.game.jsonClasses.profile.ProfileData
+import pt.isec.amov.reversi.game.jsonClasses.specialPieces.RequestBomb
+import pt.isec.amov.reversi.game.jsonClasses.specialPieces.RequestExchange
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.ServerSocket
@@ -90,12 +94,14 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var serverSocket: ServerSocket? = null
     private var threadComm: Thread? = null
     private var isServer = false
+    private var exchangeError = 0
 
     fun setData(boardGame: BoardGame, gameProfileView: GamePerfilView) {
         this.boardGame = boardGame
         this.gamePerfilView = gameProfileView
         boardSIZE = boardGame.getBoardSize()
         exchangeCounter = 0
+        exchangeError = 0
 
         /* Multiplayer */
         isServer = false
@@ -116,30 +122,51 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                         alertEndGame()
                     else
                         checkAlertNoPlays()
-                }
+                } else
+                    validPlay = false
             }
 
             BOMB_PIECE -> {
                 if (boardGame.confirmBombMove(x, y)) {
+                    validPlay = true
                     boardGame.pieceBomb(x, y)
                     boardGame.checkBoardPieces()
                     checkAlertNoPlays()
                 } else{
                     validPlay = false
-                    showAlertGeneral("You can only select your piece color")
+                    if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
+                        showAlertGeneral("You can only select your piece color")
                 }
             }
 
             EXCHANGE_PIECE -> {
                 when (boardGame.confirmExchangeMove(x, y, exchangeCounter, exchangeArrayList)) {
-                    -3 -> showAlertGeneral("You can't choose the same pieces twice")
-                    -2 -> showAlertGeneral("Wrong Piece selected")
-                    -1 -> showAlertGeneral("You can't choose a position outside the board")
+                    -3 ->{
+                        exchangeError = -3
+                        validPlay = false
+                        if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
+                            showAlertGeneral("You can't choose the same pieces twice")
+                    }
+                    -2 -> {
+                        exchangeError = -2
+                        validPlay = false
+                        if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
+                            showAlertGeneral("Wrong Piece selected")
+                    }
+                    -1 -> {
+                        exchangeError = -1
+                        validPlay = false
+                        if(connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value == State.PLAYING_SERVER)
+                            showAlertGeneral("You can't choose a position outside the board")
+                    }
                     1 -> {
+                        exchangeError = 0
+                        validPlay = false
                         exchangeArrayList.add(PieceMoves(x, y))
                         exchangeCounter++
-                        //todo ver isto no multiplayer
+
                         if (exchangeCounter >= 3) {
+                            validPlay = true
                             boardGame.exchangePiece(exchangeArrayList)
                             exchangeCounter = 0
                             boardGame.checkBoardPieces()
@@ -189,13 +216,23 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 }
                 else if(isServer && state.value == State.PLAYING_SERVER){
 
-                    movePiece(x!!,y!!,boardGame.getCurrentPiece())
+                    val auxPiece = boardGame.getCurrentPiece()
+
+                    movePiece(x!!,y!!,auxPiece)
+
                     if(validPlay){
                         state.postValue(State.PLAYING_CLIENT)
                         val move = PieceMoves(x,y)
                         socketO?.run {
                             thread{
-                                val moveData = ServerMoveData(move,boardGame.getCurrentPiece())
+                                val moveData : ServerMoveData
+                                when(auxPiece){
+                                    EXCHANGE_PIECE -> {
+                                        moveData = ServerMoveData(move,auxPiece,exchangeArrayList)
+                                        exchangeArrayList.clear()
+                                    }
+                                    else -> moveData = ServerMoveData(move,auxPiece)
+                                }
 
                                 val gson = Gson()
                                 val jsonSend = gson.toJson(moveData)
@@ -273,7 +310,15 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                             if(validPlay){
                                 val move = PieceMoves(posX,posY)
                                 socketO?.run {
-                                    val moveData = ServerMoveData(move,boardGame.getCurrentPiece())
+                                    val moveData :ServerMoveData
+                                    when(currentPiece){
+                                        EXCHANGE_PIECE ->{
+                                            moveData = ServerMoveData(move,currentPiece,exchangeArrayList)
+                                            exchangeArrayList.clear()
+                                        }
+                                        else -> moveData = ServerMoveData(move,currentPiece)
+                                    }
+
 
                                     val gson = Gson()
                                     val jsonSend = gson.toJson(moveData)
@@ -285,6 +330,34 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
                                 state.postValue(State.PLAYING_SERVER)
                                 validPlay = false
+                            }
+                            else {
+                                when(currentPiece){
+                                    BOMB_PIECE -> {
+                                        socketO?.run {
+                                            val alertInvalidBomb = AlertInvalidBomb()
+
+                                            val gson = Gson()
+                                            val jsonSend = gson.toJson(alertInvalidBomb)
+
+                                            val printStream = PrintStream(this)
+                                            printStream.println(jsonSend)
+                                            printStream.flush()
+                                        }
+                                    }
+                                    EXCHANGE_PIECE -> {
+                                        socketO?.run {
+                                            val alertInvalidExchange = AlertInvalidExchange(exchangeError)
+
+                                            val gson = Gson()
+                                            val jsonSend = gson.toJson(alertInvalidExchange)
+
+                                            val printStream = PrintStream(this)
+                                            printStream.println(jsonSend)
+                                            printStream.flush()
+                                        }
+                                    }
+                                }
                             }
                         }
                         else if(type.toString().equals("\"OK\"")){
@@ -336,6 +409,86 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                 }
                             }
                         }
+                        else if(type.toString().equals("\"REQUEST_BOMB\"")){
+                            if(boardGame.getBombPiece() > 0){
+                                socketO?.run {
+                                    thread {
+                                        val requestBomb = RequestBomb(true)
+
+                                        val gson = Gson()
+                                        val jsonSend:String = gson.toJson(requestBomb)
+
+
+                                        val printStream = PrintStream(this)
+                                        printStream.println(jsonSend)
+                                        printStream.flush()
+                                    }
+                                }
+                            } else{
+                                socketO?.run {
+                                    thread {
+                                        val requestBomb = RequestBomb(false)
+
+                                        val gson = Gson()
+                                        val jsonSend:String = gson.toJson(requestBomb)
+
+
+                                        val printStream = PrintStream(this)
+                                        printStream.println(jsonSend)
+                                        printStream.flush()
+                                    }
+                                }
+                            }
+                        }
+                        else if(type.toString().equals("\"REQUEST_EXCHANGE\"")){
+                            when {
+                                boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> {
+                                    socketO?.run {
+                                        thread {
+                                            val requestExchange = RequestExchange(0)
+
+                                            val gson = Gson()
+                                            val jsonSend:String = gson.toJson(requestExchange)
+
+
+                                            val printStream = PrintStream(this)
+                                            printStream.println(jsonSend)
+                                            printStream.flush()
+                                        }
+                                    }
+                                }
+                                boardGame.getExchangePiece() > 0 -> {
+                                    socketO?.run {
+                                        thread {
+                                            val requestExchange = RequestExchange(1)
+
+                                            val gson = Gson()
+                                            val jsonSend:String = gson.toJson(requestExchange)
+
+
+                                            val printStream = PrintStream(this)
+                                            printStream.println(jsonSend)
+                                            printStream.flush()
+                                        }
+                                    }
+                                }
+                                else -> {
+                                    socketO?.run {
+                                        thread {
+                                            val requestExchange = RequestExchange(2)
+
+                                            val gson = Gson()
+                                            val jsonSend:String = gson.toJson(requestExchange)
+
+
+                                            val printStream = PrintStream(this)
+                                            printStream.println(jsonSend)
+                                            printStream.flush()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     } else{
                         when {
                             type.toString().equals("\"PROFILE_VIEW\"") -> {
@@ -368,6 +521,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
                             }
                             type.toString().equals("\"SERVER_MOVE\"") -> {
+                                //Ele só recebe esta estrutura após o servidor já ter validado
 
                                 val posX = (jsonObject.get("move") as JsonObject).get("posX").asInt
                                 val posY = (jsonObject.get("move") as JsonObject).get("posY").asInt
@@ -384,16 +538,26 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                                         boardGame.pieceBomb(posX, posY)
                                         boardGame.checkBoardPieces()
                                         boardGame.switchPlayer()
-                                        state.postValue(State.PLAYING_CLIENT)
+                                        switchStatePlay()
                                     }
                                     EXCHANGE_PIECE -> {
-
+                                        val movesX = jsonObject.get("exchangeArrayListX").asJsonArray
+                                        val movesY = jsonObject.get("exchangeArrayListY").asJsonArray
+                                        for(i in 0 until 3){
+                                            exchangeArrayList.add(PieceMoves(movesX[i].asInt,movesY[i].asInt))
+                                        }
+                                        boardGame.exchangePiece(exchangeArrayList)
+                                        boardGame.checkBoardPieces()
+                                        exchangeArrayList.clear()
+                                        boardGame.switchPlayer()
+                                        switchStatePlay()
                                     }
                                 }
 
                             }
                             type.toString().equals("\"ALERT_ENDGAME\"") -> {
                                 alertEndGame()
+                                state.postValue(State.GAME_OVER)
                             }
                             type.toString().equals("\"ALERT_NO_VALID_PLAYS\"") -> {
                                 Handler(Looper.getMainLooper()).post{
@@ -402,11 +566,62 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                             }
                             type.toString().equals("\"ALERT_PASS\"") -> {
                                 alertEndGame()
+                                state.postValue(State.GAME_OVER)
                             }
                             type.toString().equals("\"OK\"") -> {
                                 boardGame.switchPlayer()
                                 boardGame.checkNoValidPlays()
                                 switchStatePlay()
+                            }
+                            type.toString().equals("\"REQUEST_BOMB\"") ->{
+                                when(jsonObject.get("switchToBomb").asBoolean){
+                                    true -> boardGame.setPieceType(BOMB_PIECE)
+                                    false -> {
+                                        Handler(Looper.getMainLooper()).post{
+                                            showAlertGeneral(boardGame.getName() + " has no available bomb pieces!")
+                                        }
+                                    }
+                                }
+
+                            }
+                            type.toString().equals("\"REQUEST_EXCHANGE\"") -> {
+                                when(jsonObject.get("switchToExchange").asInt){
+                                    0 -> {
+                                        Handler(Looper.getMainLooper()).post{
+                                            showAlertGeneral(boardGame.getName() + " don't got enough pieces!")
+                                        }
+                                    }
+                                    1 -> boardGame.setPieceType(EXCHANGE_PIECE)
+                                    2 -> {
+                                        Handler(Looper.getMainLooper()).post{
+                                            showAlertGeneral(boardGame.getName() + " has no available exchange pieces!")
+                                        }
+                                    }
+                                }
+                            }
+                            type.toString().equals("\"ALERT_INVALID_BOMB\"") -> {
+                                Handler(Looper.getMainLooper()).post{
+                                    showAlertGeneral("You can only select your piece color")
+                                }
+                            }
+                            type.toString().equals("\"ALERT_INVALID_EXCHANGE\"") -> {
+                                when(jsonObject.get("error").asInt) {
+                                    -1 -> {
+                                        Handler(Looper.getMainLooper()).post{
+                                            showAlertGeneral("You can't choose a position outside the board")
+                                        }
+                                    }
+                                    -2 -> {
+                                        Handler(Looper.getMainLooper()).post{
+                                            showAlertGeneral("Wrong Piece selected")
+                                        }
+                                    }
+                                    -3 -> {
+                                        Handler(Looper.getMainLooper()).post{
+                                            showAlertGeneral("You can't choose the same pieces twice")
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -529,9 +744,35 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
 
+    fun switchBombPiece() {
+        socketO?.run {
+            thread{
+                val requestBomb = RequestBomb()
 
+                val gson = Gson()
+                val jsonSend = gson.toJson(requestBomb)
 
+                val printStream = PrintStream(this)
+                printStream.println(jsonSend)
+                printStream.flush()
+            }
+        }
+    }
 
+    fun switchExchangePiece() {
+        socketO?.run {
+            thread{
+                val requestExchange = RequestExchange()
+
+                val gson = Gson()
+                val jsonSend = gson.toJson(requestExchange)
+
+                val printStream = PrintStream(this)
+                printStream.println(jsonSend)
+                printStream.flush()
+            }
+        }
+    }
 
 
 
@@ -876,6 +1117,14 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             radius.toFloat(), paint
         )
     }
+
+
+    fun getConnectionState(): ConnectionState? = connectionState.value
+
+    fun getGameState() : State? = state.value
+
+    fun getIsServer():Boolean = isServer
+
 
 
 }

@@ -82,8 +82,7 @@ class RegisterActivity : AppCompatActivity() {
                 val data = hashMapOf(
                     "email" to auth.currentUser?.email,
                     "username" to username,
-                    "nrgames" to 0,
-                    "topscore" to 0
+                    "nrgames" to 0
                 )
 
                 db.collection("Users").

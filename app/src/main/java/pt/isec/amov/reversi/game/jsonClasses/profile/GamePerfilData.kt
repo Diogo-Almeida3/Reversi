@@ -1,4 +1,4 @@
-package pt.isec.amov.reversi.game.jsonClasses
+package pt.isec.amov.reversi.game.jsonClasses.profile
 
 import android.graphics.Bitmap
 import com.google.gson.annotations.SerializedName

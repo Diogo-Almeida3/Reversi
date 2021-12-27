@@ -2,6 +2,7 @@ package pt.isec.amov.reversi.fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.wifi.WifiManager
@@ -21,13 +22,18 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import pt.isec.amov.reversi.R
+import pt.isec.amov.reversi.activities.MainActivity
 import pt.isec.amov.reversi.game.BoardGame
 import pt.isec.amov.reversi.game.BoardView
 import pt.isec.amov.reversi.game.GamePerfilView
 import pt.isec.amov.reversi.game.SERVER_PORT
+import pt.isec.amov.reversi.game.jsonClasses.alerts.PassPlayData
+import java.io.PrintStream
+import kotlin.concurrent.thread
 
 class GameFragment : Fragment() {
 
@@ -48,6 +54,7 @@ class GameFragment : Fragment() {
 
     private lateinit var auth : FirebaseAuth
 
+
     private lateinit var boardGame: BoardGame
     private lateinit var boardView: BoardView
     private lateinit var gamePerfilView: GamePerfilView
@@ -67,10 +74,10 @@ class GameFragment : Fragment() {
         getColors()
         restoreData(savedInstanceState)
         writeData(view)
+        setButtons(view)
 
         when(gamemode){
             0-> {
-                setButtons(view)
                 boardGame.setUsername(0,getName())
                 updateUI()
             }
@@ -80,8 +87,14 @@ class GameFragment : Fragment() {
                     if(state == BoardView.State.PLAYING_SERVER || state == BoardView.State.PLAYING_CLIENT)
                         updateUI()
 
-                    if(state == BoardView.State.GAME_OVER)
+                    if(state == BoardView.State.GAME_OVER){
                         updateUI()
+                        if(boardView.getIsServer())
+                            UploadTopScore2Players(getName(),boardGame.getUsername(1),boardGame.getTotalPieces(0),boardGame.getTotalPieces(1))
+                        else
+                            UploadTopScore2Players(getName(),boardGame.getUsername(0),boardGame.getTotalPieces(1),boardGame.getTotalPieces(0))
+                    }
+
                 }
 
                 boardView.connectionState.observe(viewLifecycleOwner){ state ->
@@ -113,6 +126,44 @@ class GameFragment : Fragment() {
 
         return view
     }
+
+
+    fun UploadTopScore2Players(user: String, opponent : String, myScore : Int, opponentScore : Int) {
+        val db = Firebase.firestore
+        val game = hashMapOf(
+            "user" to user,
+            "opponent" to opponent,
+            "myScore" to myScore,
+            "opponentScore" to opponentScore,
+        )
+
+        val path = db.collection("Users").document(auth.currentUser!!.uid)
+        var numberGames : Long = 0
+        db.runTransaction{ transition ->
+            val doc = transition.get(path)
+            numberGames = doc.getLong("nrgames")!! + 1
+            transition.update(path, "nrgames", numberGames)
+            null
+        }
+
+        path.collection("TopScores")
+            .document(numberGames.toString())
+            .set(game)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private fun startAsClient() {
 
@@ -223,31 +274,20 @@ class GameFragment : Fragment() {
         gamePerfilView.invalidate()
     }
 
+    private fun bombFunc(){
+        if(boardGame.getBombPiece() > 0)
+            boardGame.setPieceType(1)
+        else
+            showAlert(boardGame.getName() + " has no available bomb pieces!")
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private fun ExchangeFunc(){
+        when {
+            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> showAlert(boardGame.getName() + " don't got enough pieces!")
+            boardGame.getExchangePiece() > 0 -> boardGame.setPieceType(2)
+            else -> showAlert(boardGame.getName() + " has no available exchange pieces!")
+        }
+    }
 
     private fun restoreData(savedInstanceState: Bundle?) {
         if(savedInstanceState == null)
@@ -263,7 +303,7 @@ class GameFragment : Fragment() {
 
     private fun setButtons(view: View) {
         btnAnimation = AlphaAnimation(1F,0.8F).apply {
-            duration = 500
+            duration = 450
             interpolator = AccelerateInterpolator(0.05F)
         }
         val buttonBomb = view.findViewById<Button>(R.id.btnBombPiece)
@@ -272,20 +312,38 @@ class GameFragment : Fragment() {
         buttonBomb.setOnClickListener {
 
             buttonBomb.startAnimation(btnAnimation)
-            if(boardGame.getBombPiece() > 0)
-                boardGame.setPieceType(1)
+            if(BoardView.ConnectionState.CONNECTION_ESTABLISHED != boardView.getConnectionState())
+                bombFunc()
             else
-                showAlert(boardGame.getName() + " has no avaible bomb pieces!")
+                when(boardView.getIsServer()){
+                    true -> {
+                        if(boardView.getGameState() == BoardView.State.PLAYING_SERVER)
+                            bombFunc()
+                    } //Server
+                    false -> {
+                        if(boardView.getGameState() == BoardView.State.PLAYING_CLIENT)
+                            boardView.switchBombPiece()
+                    } //Cliente
+                }
         }
 
 
         buttonExchange.setOnClickListener {
             buttonExchange.startAnimation(btnAnimation)
-            when {
-                boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> showAlert(boardGame.getName() + " don't got enough pieces!")
-                boardGame.getExchangePiece() > 0 -> boardGame.setPieceType(2)
-                else -> showAlert(boardGame.getName() + " has no available exchange pieces!")
-            }
+            if(BoardView.ConnectionState.CONNECTION_ESTABLISHED != boardView.getConnectionState())
+                ExchangeFunc()
+            else
+                when(boardView.getIsServer()){
+                    true -> {
+                        if(boardView.getGameState() == BoardView.State.PLAYING_SERVER)
+                            ExchangeFunc()
+                    } //Server
+                    false -> {
+                        if(boardView.getGameState() == BoardView.State.PLAYING_CLIENT){
+                            boardView.switchExchangePiece()
+                        }
+                    } //Cliente
+                }
         }
     }
 

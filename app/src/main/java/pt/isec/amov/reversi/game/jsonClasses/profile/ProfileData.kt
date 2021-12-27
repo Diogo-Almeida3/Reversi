@@ -1,4 +1,4 @@
-package pt.isec.amov.reversi.game.jsonClasses
+package pt.isec.amov.reversi.game.jsonClasses.profile
 
 class ProfileData {
     var type: String? = null

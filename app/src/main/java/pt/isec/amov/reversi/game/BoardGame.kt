@@ -175,7 +175,7 @@ class BoardGame(
                 }
             }
             else -> {
-                if (pieces[x][y] != getPieceType())
+                if (pieces[x][y] != getPieceType() && pieces[x][y] != EMPTY_CELL)
                     return 1
             }
         }
