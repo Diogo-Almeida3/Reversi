@@ -701,10 +701,14 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 Log.v("COMMS", "A thread cooms foi iniciada para o cliente")
                 socketO?.run {
                     thread {
-                        val uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
-
-                        val profileData = ProfileData(name,convertToBase64(uri))
-
+                        val profileData: ProfileData
+                        var uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
+                        if(uri.exists()) {
+                            profileData= ProfileData(name, convertToBase64(uri))
+                        }
+                        else{
+                            profileData= ProfileData(name, "null")
+                        }
                         val gson = Gson()
                         val jsonSend:String = gson.toJson(profileData)
 
@@ -729,7 +733,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         isServer = true
         val uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
-        gamePerfilView.setUsersProfileData(name,convertToBase64(uri))
+        if(uri.exists())
+            gamePerfilView.setUsersProfileData(name,convertToBase64(uri))
+        else
+            gamePerfilView.setUsersProfileData(name,"null")
 
         thread {
             serverSocket = ServerSocket(SERVER_PORT)

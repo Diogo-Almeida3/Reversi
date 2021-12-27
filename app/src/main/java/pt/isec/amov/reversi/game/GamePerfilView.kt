@@ -234,6 +234,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                         canvas?.drawText(userNames[i], 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
 
+
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
 
 
@@ -306,7 +307,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     fun setUsersProfileData(name: String, photoFile: String) {
         val auxName = name.replace("\"", "")
         userNames.add(auxName)
-        if (photoFile != "") {
+        if (photoFile != "\"null\"") {
             userPhotos.add(convertString64ToImage(photoFile))
 
         } else {
@@ -352,7 +353,10 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
         userPhotos.clear()
         for(i in 0 until nClients){
-            userPhotos.add(convertString64ToImage(photosBase64[i]))
+            if(photosBase64[i] != "\"null\"")
+                userPhotos.add(convertString64ToImage(photosBase64[i]))
+            else
+                userPhotos.add(BitmapFactory.decodeResource(resources,R.drawable.logo_reversi))
         }
     }
 }
