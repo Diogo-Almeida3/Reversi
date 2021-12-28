@@ -175,8 +175,15 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)
                 }
                 2 -> {
-                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                    canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                    if (gameFragment.boardGame.getNClients() != 3) {
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                    } else {
+                        nChars = gameFragment.boardGame.getUsername(i).length
+                        canvas?.drawBitmap(gameFragment.boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                    }
+
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat() - 30, 50f, paintPiece)
                     if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat() - 30, 50f, painthighlight)
@@ -253,13 +260,19 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
 
-
                     if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                 }
                 2 -> {
-                    canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                    canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    if (gameFragment.boardGame.getNClients() != 3) {
+                        canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    } else {
+                        nChars = gameFragment.boardGame.getUsername(i).length
+                        canvas?.drawBitmap(gameFragment.boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    }
+
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, paintPiece)
                     if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, painthighlight)
@@ -335,6 +348,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         }
         gameFragment.boardGame.setUsername(nClients,auxName)
         nClients++
+
         gameFragment.boardGame.setNClients(nClients)
     }
 

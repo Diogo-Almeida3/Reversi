@@ -34,7 +34,7 @@ import kotlin.concurrent.thread
 class GameViewModel : ViewModel() {
 
     enum class State {
-        STARTING, SETTING_PROFILE_DATA, PLAYING_SERVER, PLAYING_CLIENT, GAME_OVER,LEFT_GAME
+        STARTING, SETTING_PROFILE_DATA, PLAYING_SERVER, PLAYING_CLIENT,PLAYING_SECOND_CLIENT, GAME_OVER,LEFT_GAME
     }
 
     enum class ConnectionState {
@@ -67,6 +67,9 @@ class GameViewModel : ViewModel() {
 
     private var serverSocket: ServerSocket? = null
     private var threadComm: Thread? = null
+
+    private var socketArrayServer : ArrayList<Socket>? = null
+    private var threadCommServer3 : ArrayList<Thread>? = null
     private var isServer = false
     private var endGame = false
 
@@ -90,6 +93,79 @@ class GameViewModel : ViewModel() {
 
     fun getGameState() : State? = state.value
 
+    private fun startComsServer3(socketArray : ArrayList<Socket>){
+
+        if(threadCommServer3 != null)
+            return
+
+        this.socketArrayServer = socketArray
+
+        val threadList = ArrayList<Thread>()
+        threadList.clear()
+
+        for(i in 0 until socketArrayServer!!.size){
+            val threadAux = thread {
+                val socketInput = socketArrayServer!![i].getInputStream()
+
+                //todo se um deles for null podemos acabar logo com o Jogo
+                if(socketInput == null)
+                    return@thread
+
+                val bufInput = socketInput.bufferedReader()
+                try{
+
+                    //Aqui iniciamos a leitura para os dois clientes
+                    while (state.value != State.GAME_OVER){
+                        val message = bufInput.readLine()
+                        val jsonObject = JsonParser().parse(message).asJsonObject
+                        val type = jsonObject.get("type")
+
+                        when{
+                            type.toString().equals("\"PROFILE\"") -> {
+
+                                gameFragment.setUsersProfileData(jsonObject.get("name").toString(),jsonObject.get("photo").toString())
+
+
+                                //Quando ambos os utilizadores enviarem o nome e a foto ele vai mandar a resposta aos dois
+                                if(boardGame.getNClients() >= 3){
+
+                                    val currentPlayer = boardGame.getCurrentPlayer()
+                                    for(j in 0 until socketArrayServer!!.size){
+                                            socketArrayServer!![j].getOutputStream().run {
+                                                val gamePerfilData = GamePerfilData(gameFragment.getnClients(),gameFragment.getUsernames(),gameFragment.getBitmaps(),currentPlayer)
+
+                                                val gson = Gson()
+                                                val jsonSend = gson.toJson(gamePerfilData)
+
+                                                val printStream = PrintStream(this)
+                                                printStream.println(jsonSend)
+                                                printStream.flush()
+                                            }
+                                    }
+                                    when(currentPlayer - 1){
+                                        0 -> state.postValue(State.PLAYING_SERVER)
+                                        1 -> state.postValue(State.PLAYING_CLIENT)
+                                        2 -> state.postValue(State.PLAYING_SECOND_CLIENT)
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                } catch (e : Exception){
+                    Log.d("Thread Server 3",e.toString())
+                }
+            }
+
+            threadList.add(threadAux)
+        }
+        threadCommServer3 = threadList
+        connectionState.postValue(ConnectionState.CONNECTION_ESTABLISHED)
+    }
+
+
+
     private fun startComs(newSocket: Socket?) {
         //Aqui vamos receber um socket que será usado para toda a comunicação e atribuiremo lo à propriedade socket
 
@@ -97,7 +173,7 @@ class GameViewModel : ViewModel() {
             return
 
         socket = newSocket
-        socket?.soTimeout = 10 * 1000
+        //socket?.soTimeout = 30 * 1000
 
 
         //Esta thread vai ficar a correr permantemente ate o jogo acabar e for necessario reiniciar
@@ -583,19 +659,25 @@ class GameViewModel : ViewModel() {
         thread {
             try {
                 val clientSocket = Socket()
-                clientSocket.connect(InetSocketAddress(serverIP, serverPort), 5000)
+                when(boardGame.getGameMode()){
+                    1 -> {
+                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 5)
+                    }
+                    2 -> {
+                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 20)
+                    }
+                }
                 startComs(clientSocket)
-
                 Log.v("COMMS", "A thread cooms foi iniciada para o cliente")
                 socketO?.run {
                     thread {
                         val profileData: ProfileData
-                        var uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
-                        if(uri.exists()) {
-                            profileData= ProfileData(name, convertToBase64(uri))
-                        }
-                        else{
-                            profileData= ProfileData(name, "null")
+                        val uri = File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
+
+                        profileData = if(uri.exists()) {
+                            ProfileData(name, convertToBase64(uri))
+                        } else{
+                            ProfileData(name, "null")
                         }
                         val gson = Gson()
                         val jsonSend:String = gson.toJson(profileData)
@@ -630,8 +712,21 @@ class GameViewModel : ViewModel() {
             serverSocket = ServerSocket(SERVER_PORT)
             serverSocket?.run{
                 try {
-                    val newServerSocket = serverSocket!!.accept()
-                    startComs(newServerSocket)
+                    when(boardGame.getGameMode()){
+                        1 -> {
+                            val newServerSocket = serverSocket!!.accept()
+                            startComs(newServerSocket)
+                        }
+                        2 -> {
+                            var nConnections = 0
+                            val arraySocketAux = ArrayList<Socket>()
+                            while(nConnections != 2) {
+                                arraySocketAux.add(serverSocket!!.accept())
+                                nConnections++
+                            }
+                            startComsServer3(arraySocketAux)
+                        }
+                    }
                     Log.v("COMMS", "A thread cooms foi iniciada para o $isServer")
 
                 } catch (_: Exception) {

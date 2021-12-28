@@ -134,8 +134,34 @@ class GameFragment : Fragment() {
                 }
 
             }
-        }
+            2 -> {
+                model.state.observe(viewLifecycleOwner) { state ->
+                    if (state == GameViewModel.State.PLAYING_SERVER || state == GameViewModel.State.PLAYING_CLIENT || state == GameViewModel.State.PLAYING_SECOND_CLIENT)
+                        updateUI()
+                }
 
+                model.connectionState.observe(viewLifecycleOwner) { state ->
+                    if (state != GameViewModel.ConnectionState.SETTING_PARAMETERS &&
+                        state != GameViewModel.ConnectionState.SERVER_CONNECTING &&
+                        dlg?.isShowing == true
+                    ) {
+                        dlg?.dismiss()
+                        dlg = null
+                    }
+                    if (state == GameViewModel.ConnectionState.CONNECTION_ERROR) {
+
+                        findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
+                    }
+                }
+
+                if(model.connectionState.value != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED){
+                    when(webMode){
+                        CLIENT_MODE -> startAsClient()
+                        SERVER_MODE -> startAsServer()
+                    }
+                }
+            }
+        }
         return view
     }
 
@@ -226,13 +252,13 @@ class GameFragment : Fragment() {
 
     }
 
-
     private fun writeData(view: View) {
         boardView = view.findViewById(R.id.boardView)
         gamePerfilView = view.findViewById(R.id.gamePerfilView)
         boardView.setData(this)
         gamePerfilView.setData(this)
     }
+
 
     private fun startAsClient() {
 
@@ -265,7 +291,7 @@ class GameFragment : Fragment() {
             .setMessage(resources.getString(R.string.serverIp))
             .setPositiveButton(resources.getString(R.string.connect)) { _: DialogInterface, _: Int ->
                 val strIp = edtBox.text.toString()
-                if (strIp!!.isEmpty() || !Patterns.IP_ADDRESS.matcher(strIp).matches()) {
+                if (strIp.isEmpty() || !Patterns.IP_ADDRESS.matcher(strIp).matches()) {
                     Toast.makeText(
                         context,
                         resources.getString(R.string.adressNotRecognized),
@@ -273,7 +299,7 @@ class GameFragment : Fragment() {
                     ).show()
                     findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                 } else {
-                    model.startClient(getName(), strIp!!)
+                    model.startClient(getName(), strIp)
                 }
             }
             .setNeutralButton("Connect to emulator") { _: DialogInterface, _: Int ->
@@ -484,7 +510,6 @@ class GameFragment : Fragment() {
 
     }
 
-
     fun showAlertEndGame(player: Player?) {
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
@@ -562,8 +587,7 @@ class GameFragment : Fragment() {
 
     fun getBombPieceSelect(): String = resources.getString(R.string.bombPieceSelect)
 
-    fun getExchangeNoAvailablePieces(): String =
-        resources.getString(R.string.exchangeNoAvailablePieces)
+    fun getExchangeNoAvailablePieces(): String = resources.getString(R.string.exchangeNoAvailablePieces)
 
     fun getExchangeNoBoardPieces(): String = resources.getString(R.string.exchangeNoBoardPieces)
 
