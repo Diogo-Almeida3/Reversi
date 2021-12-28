@@ -28,26 +28,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.game.*
-import pt.isec.amov.reversi.game.jsonClasses.alerts.PassPlayData
-import java.io.File
-import java.io.PrintStream
 import kotlin.concurrent.thread
-import kotlin.coroutines.coroutineContext
-import com.google.firebase.firestore.DocumentSnapshot
-
-import com.google.firebase.firestore.QuerySnapshot
-
-import androidx.annotation.NonNull
-
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 
 import com.google.android.gms.tasks.Tasks
-
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.tasks.await
-import kotlin.coroutines.Continuation
 
 
 class GameFragment : Fragment() {
@@ -333,6 +316,7 @@ class GameFragment : Fragment() {
         //val navigationView = requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
         //return navigationView.findViewById<TextView>(R.id.userName).text as String
         val aux =  db.collection("Users").document(auth.currentUser!!.uid).get()
+
         val threadCom = thread {
             Tasks.await(aux)
         }
@@ -365,13 +349,16 @@ class GameFragment : Fragment() {
         if(savedInstanceState == null)
             boardGame = BoardGame(gamemode,colorsPlayers,colorsBoard)
         else {
-            val json = savedInstanceState.getString("CUSTOM_CLASS")
-            if (!json!!.isEmpty()) {
-                val gson = Gson()
-                boardGame = gson.fromJson(json, BoardGame::class.java)
+            val threadCom = thread {
+                val json = savedInstanceState.getString("CUSTOM_CLASS")
+                if (!json!!.isEmpty()) {
+                    val gson = Gson()
+                    boardGame = gson.fromJson(json, BoardGame::class.java)
 
+                }
             }
 
+            threadCom.join()
         }
     }
 
