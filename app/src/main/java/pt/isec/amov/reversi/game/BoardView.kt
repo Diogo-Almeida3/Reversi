@@ -21,13 +21,6 @@ const val SERVER_PORT = 9999
 
 
 class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-
-    companion object {
-        const val NORMAL_PIECE = 0
-        const val BOMB_PIECE = 1
-        const val EXCHANGE_PIECE = 2
-    }
-
     private var windowHeight = 0
     private var windowWidth = 0
     private var pieceHeight = 0
@@ -35,44 +28,21 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var boardSIZE = 0
 
 
-
-    private lateinit var boardGame: BoardGame
-    private  lateinit var gamePerfilView: GamePerfilView
     private lateinit var gameFragment: GameFragment
 
-    //fun getexchangeError() : Int = exchangeError
-
-    fun setData(boardGame: BoardGame, gameProfileView: GamePerfilView,gameFragment: GameFragment) {
-        this.boardGame = boardGame
-        this.gamePerfilView = gameProfileView
+    fun setData(gameFragment: GameFragment) {
         this.gameFragment = gameFragment
-        boardSIZE = boardGame.getBoardSize()
-        //exchangeCounter = 0
-       // exchangeError = 0
-
-        /* Multiplayer */
-        //validPlay = false
-        //state.postValue(State.SETTING_PROFILE_DATA)
-    }
-
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        //if(gameFragment.getGameState() != GameFragment.State.GAME_OVER){
-            //gameFragment.cleanUp()
-        //}
-
-        //Quando eu sair e der pop do fragmento anterior o garbage collector elimina as ligações
+        boardSIZE = gameFragment.boardGame.getBoardSize()
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val x = (event?.x?.div(pieceWidth))?.toInt()
         val y = (event?.y?.div(pieceHeight))?.toInt()
         gameFragment.resetCounter()
-        when (boardGame.getGameMode()) {
+        when (gameFragment.boardGame.getGameMode()) {
             0 -> {
                 if (!gameFragment.getEndgame()) {
-                    gameFragment.movePiece(x!!,y!!,boardGame.getCurrentPiece())
+                    gameFragment.movePiece(x!!,y!!,gameFragment.boardGame.getCurrentPiece())
                 }
             }
             1 -> {
@@ -102,7 +72,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private fun drawBoard(canvas: Canvas?) {
         for (i in 0 until boardSIZE)
             for (j in 0 until boardSIZE) {
-                val pieceType = boardGame.getPiece(i, j)
+                val pieceType = gameFragment.boardGame.getPiece(i, j)
                 if (pieceType != 0)
                     drawPiece(canvas, i, j, pieceType)
             }
@@ -160,17 +130,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         drawBoard(canvas) // Constrói as peças iniciais
         drawHighlightValidPlays(
             canvas,
-            boardGame.highlightValidPlays()
+            gameFragment.boardGame.highlightValidPlays()
         ) // constroi possiveis jogadas
 
     }
-
-    private fun updateView() {
-        gamePerfilView.invalidate()
-        invalidate()
-    }
-
-
 
     private fun drawHighlightValidPlays(
         canvas: Canvas?,
@@ -197,12 +160,12 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     private fun getGridPaint(): Paint {
         return Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG).apply {
-            color = boardGame.getBoardColor(1)
+            color = gameFragment.boardGame.getBoardColor(1)
         }
     }
 
     private fun getCellPaint(): Paint {
-        return Paint().apply { color = boardGame.getBoardColor(0) }
+        return Paint().apply { color = gameFragment.boardGame.getBoardColor(0) }
     }
 
     private fun getHighlightPlayStrokePaint(): Paint {
@@ -215,7 +178,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     private fun getHighlightPlayPaint(): Paint {
         return Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = boardGame.getBoardColor(2)
+            color = gameFragment.boardGame.getBoardColor(2)
         }
     }
 
@@ -227,16 +190,16 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         val radius = Math.min(pieceWidth, pieceHeight) / 2 - MARGIN_PIECE * 2
         val paint = Paint().apply { color = Color.WHITE }
 
-        if (boardGame.getGameMode() != 2) {
+        if (gameFragment.boardGame.getGameMode() != 2) {
             when (pieceType) {
-                1 -> paint.color = boardGame.getColor(0)
-                2 -> paint.color = boardGame.getColor(1)
+                1 -> paint.color = gameFragment.boardGame.getColor(0)
+                2 -> paint.color = gameFragment.boardGame.getColor(1)
             }
         } else {
             when (pieceType) {
-                1 -> paint.color = boardGame.getColor(0)
-                2 -> paint.color = boardGame.getColor(1)
-                3 -> paint.color = boardGame.getColor(2)
+                1 -> paint.color = gameFragment.boardGame.getColor(0)
+                2 -> paint.color = gameFragment.boardGame.getColor(1)
+                3 -> paint.color = gameFragment.boardGame.getColor(2)
             }
         }
 

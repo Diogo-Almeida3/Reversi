@@ -1,6 +1,5 @@
 package pt.isec.amov.reversi.game
 
-import android.app.AlertDialog
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
@@ -50,6 +49,12 @@ class GameViewModel : ViewModel() {
     private var exchangeArrayList = ArrayList<PieceMoves>()
     private var exchangeCounter = 0
 
+    companion object {
+        const val NORMAL_PIECE = 0
+        const val BOMB_PIECE = 1
+        const val EXCHANGE_PIECE = 2
+    }
+
     private var exchangeError = 0
     private var validPlay = false
     private var counter = 0
@@ -92,7 +97,7 @@ class GameViewModel : ViewModel() {
             return
 
         socket = newSocket
-        socket?.soTimeout = 60 * 1000
+        socket?.soTimeout = 10 * 1000
 
 
         //Esta thread vai ficar a correr permantemente ate o jogo acabar e for necessario reiniciar
@@ -145,7 +150,7 @@ class GameViewModel : ViewModel() {
                                 socketO?.run {
                                     val moveData : ServerMoveData
                                     when(currentPiece){
-                                        BoardView.EXCHANGE_PIECE ->{
+                                        EXCHANGE_PIECE ->{
                                             moveData = ServerMoveData(move,currentPiece,exchangeArrayList)
                                             exchangeArrayList.clear()
                                         }
@@ -166,7 +171,7 @@ class GameViewModel : ViewModel() {
                             }
                             else {
                                 when(currentPiece){
-                                    BoardView.BOMB_PIECE -> {
+                                    BOMB_PIECE -> {
                                         socketO?.run {
                                             val alertInvalidBomb = AlertInvalidBomb()
 
@@ -178,7 +183,7 @@ class GameViewModel : ViewModel() {
                                             printStream.flush()
                                         }
                                     }
-                                    BoardView.EXCHANGE_PIECE -> {
+                                    EXCHANGE_PIECE -> {
                                         socketO?.run {
                                             val alertInvalidExchange = AlertInvalidExchange(exchangeError)
 
@@ -323,7 +328,7 @@ class GameViewModel : ViewModel() {
                             }
                         }
                         else if(type.toString().equals("\"CLOSE_CONNECTION\"")){
-                            cleanTimeout()
+                            cleanOnExit()
                         }
                     } else{
                         when {
@@ -364,19 +369,19 @@ class GameViewModel : ViewModel() {
                                 val currentPiece = jsonObject.get("currentPiece").asInt
 
                                 when(currentPiece){
-                                    BoardView.NORMAL_PIECE -> {
+                                    NORMAL_PIECE -> {
                                         boardGame.move(posX,posY)
                                         boardGame.checkBoardPieces()
                                         boardGame.switchPlayer()
                                         switchStatePlay()
                                     }
-                                    BoardView.BOMB_PIECE -> {
+                                    BOMB_PIECE -> {
                                         boardGame.pieceBomb(posX, posY)
                                         boardGame.checkBoardPieces()
                                         boardGame.switchPlayer()
                                         switchStatePlay()
                                     }
-                                    BoardView.EXCHANGE_PIECE -> {
+                                    EXCHANGE_PIECE -> {
                                         val movesX = jsonObject.get("exchangeArrayListX").asJsonArray
                                         val movesY = jsonObject.get("exchangeArrayListY").asJsonArray
                                         for(i in 0 until 3){
@@ -414,7 +419,7 @@ class GameViewModel : ViewModel() {
                             }
                             type.toString().equals("\"REQUEST_BOMB\"") ->{
                                 when(jsonObject.get("switchToBomb").asBoolean){
-                                    true -> boardGame.setPieceType(BoardView.BOMB_PIECE)
+                                    true -> boardGame.setPieceType(BOMB_PIECE)
                                     false -> {
                                         Handler(Looper.getMainLooper()).post{
                                             gameFragment.showAlertGeneral(boardGame.getName() + " has no available bomb pieces!")
@@ -430,7 +435,7 @@ class GameViewModel : ViewModel() {
                                             gameFragment.showAlertGeneral(boardGame.getName() + gameFragment.getExchangeNoBoardPieces())
                                         }
                                     }
-                                    1 -> boardGame.setPieceType(BoardView.EXCHANGE_PIECE)
+                                    1 -> boardGame.setPieceType(EXCHANGE_PIECE)
                                     2 -> {
                                         Handler(Looper.getMainLooper()).post{
                                             gameFragment.showAlertGeneral(boardGame.getName() + gameFragment.getExchangeNoAvailablePieces())
@@ -463,40 +468,71 @@ class GameViewModel : ViewModel() {
                                 }
                             }
                             type.toString().equals("\"CLOSE_CONNECTION\"") -> {
-                                cleanTimeout()
+                                cleanOnExit()
                             }
                         }
                     }
                 }
             }catch (socketE : SocketTimeoutException){
                 Log.d("BUG", socketE.toString())
-                //Quando dá timeout
-                cleanTimeout()
+                cleanUp()
             }
             catch (nullEx : NullPointerException){
                 //Quando dá uma exceção e ja nao existe o outro socket
                 Log.d("BUG", nullEx.toString())
-                cleanTimeout()
+                cleanOnExit()
             }
             catch(softwareE: SocketException){
                 //Quando desligo a net e perco a conexao vai para o modo 1
                 Log.d("BUG", softwareE.toString())
-                cleanTimeout()
+                cleanOnExit()
             }
             catch (exc: Exception) {
                 Log.d("BUG", exc.toString())
             } finally {
                 if(connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
                     stopGame()
-                else{
-                    socket?.close()
-                    isServer = false
-                    validPlay = false
-                }
-
             }
         }
     }
+
+    fun cleanUp(){
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+        val threadSendClose = thread {
+            socketO?.run {
+
+                val closeConnection = CloseConnection()
+                val gson = Gson()
+                val jsonSend = gson.toJson(closeConnection)
+
+                val printStream = PrintStream(this)
+                printStream.println(jsonSend)
+                printStream.flush()
+            }
+        }
+        threadSendClose.join()
+
+        endGame = false
+        isServer = false
+
+        socket?.close()
+        socket = null
+        threadComm?.interrupt()
+        threadComm = null
+    }
+
+    fun cleanOnExit(){
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+        socket?.close()
+        socket = null
+        threadComm?.interrupt()
+        threadComm = null
+    }
+
 
     fun switchStatePlay(){
         socketO?.run {
@@ -645,30 +681,6 @@ class GameViewModel : ViewModel() {
 
 
 
-
-    fun cleanUp(){
-        socketO?.run {
-            thread {
-                val closeConnection = CloseConnection()
-                val gson = Gson()
-                val jsonSend = gson.toJson(closeConnection)
-
-                val printStream = PrintStream(this)
-                printStream.println(jsonSend)
-                printStream.flush()
-
-            }
-        }
-    }
-
-    fun cleanTimeout(){
-
-        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
-
-        state.postValue(State.LEFT_GAME)
-
-    }
-
     fun alertEndGame() {
         val aux = boardGame.checkWinner()
         if(connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
@@ -776,7 +788,7 @@ class GameViewModel : ViewModel() {
                     thread{
                         val moveData : ServerMoveData
                         when(auxPiece){
-                            BoardView.EXCHANGE_PIECE -> {
+                            EXCHANGE_PIECE -> {
                                 moveData = ServerMoveData(move,auxPiece,exchangeArrayList)
                                 exchangeArrayList.clear()
                             }
@@ -800,7 +812,7 @@ class GameViewModel : ViewModel() {
 
     fun movePiece(x: Int, y:Int,piece: Int){
         when (piece) {
-            BoardView.NORMAL_PIECE -> {
+            NORMAL_PIECE -> {
                 if (boardGame.confirmMove(x, y)) {
                     validPlay = true
                     boardGame.move(x, y)
@@ -814,7 +826,7 @@ class GameViewModel : ViewModel() {
                     validPlay = false
             }
 
-            BoardView.BOMB_PIECE -> {
+            BOMB_PIECE -> {
                 if (boardGame.confirmBombMove(x, y)) {
                     validPlay = true
                     boardGame.pieceBomb(x, y)
@@ -827,7 +839,7 @@ class GameViewModel : ViewModel() {
                 }
             }
 
-            BoardView.EXCHANGE_PIECE -> {
+            EXCHANGE_PIECE -> {
                 when (boardGame.confirmExchangeMove(x, y, exchangeCounter, exchangeArrayList)) {
                     -3 ->{
                         exchangeError = -3

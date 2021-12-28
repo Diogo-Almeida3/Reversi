@@ -18,6 +18,7 @@ import java.io.File
 import android.graphics.Bitmap
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import pt.isec.amov.reversi.fragments.GameFragment
 
 import java.io.ByteArrayOutputStream
 
@@ -35,7 +36,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var pieceWidth = 0
     private val orientation = resources.configuration.orientation
     private var endgame = false
-    private lateinit var boardGame: BoardGame
+    private lateinit var gameFragment: GameFragment
     private lateinit var auth: FirebaseAuth
     private var userNames = ArrayList<String>()
     private var userPhotos = ArrayList<Bitmap>()
@@ -43,8 +44,8 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var nClients = 0
 
 
-    fun setData(boardGame: BoardGame) {
-        this.boardGame = boardGame
+    fun setData(gameFragment: GameFragment) {
+        this.gameFragment = gameFragment
         auth = Firebase.auth
         nClients = 0
     }
@@ -55,13 +56,13 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         windowHeight = MeasureSpec.getSize(heightMeasureSpec)
         windowWidth = MeasureSpec.getSize(widthMeasureSpec)
 
-        pieceHeight = (windowHeight - LINE_SIZE) / boardGame.getBoardSize()
-        pieceWidth = (windowWidth - LINE_SIZE) / boardGame.getBoardSize()
+        pieceHeight = (windowHeight - LINE_SIZE) / gameFragment.boardGame.getBoardSize()
+        pieceWidth = (windowWidth - LINE_SIZE) / gameFragment.boardGame.getBoardSize()
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onDraw(canvas: Canvas?) {
-        endgame = boardGame.checkEndGame()
+        endgame = gameFragment.boardGame.checkEndGame()
 
         drawBackground(canvas)
         if (orientation != Configuration.ORIENTATION_LANDSCAPE)
@@ -72,7 +73,8 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawBackground(canvas: Canvas?) {
-        for (i in 0 until boardGame.getPlayers()) {
+        val nPlayers =  gameFragment.boardGame.getPlayers()
+        for (i in 0 until nPlayers) {
             var left: Int
             var top: Int
             var right: Int
@@ -80,18 +82,18 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             var rect: RectF
 
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                left = (windowWidth / boardGame.getPlayers()) * i + MARGIN
+                left = (windowWidth / nPlayers) * i + MARGIN
                 top = 0
                 right =
-                    (windowWidth / boardGame.getPlayers()) * i + (windowWidth / boardGame.getPlayers()) - MARGIN
+                    (windowWidth / nPlayers) * i + (windowWidth / nPlayers) - MARGIN
                 bottom = windowHeight
                 rect = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
             } else {
                 left = 0
-                top = (windowHeight / boardGame.getPlayers()) * i + MARGIN
+                top = (windowHeight / nPlayers) * i + MARGIN
                 right = windowWidth
                 bottom =
-                    (windowHeight / boardGame.getPlayers()) * i + (windowHeight / boardGame.getPlayers()) - MARGIN
+                    (windowHeight / nPlayers) * i + (windowHeight / nPlayers) - MARGIN
                 rect = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
             }
 
@@ -102,24 +104,26 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun drawDataLandscape(canvas: Canvas?) {
-        for (i in 0 until boardGame.getPlayers()) {
-            val top = (windowHeight / boardGame.getPlayers()) * i + MARGIN * 2
+        val nPlayers =  gameFragment.boardGame.getPlayers()
+
+        for (i in 0 until nPlayers) {
+            val top = (windowHeight / nPlayers) * i + MARGIN * 2
             val bottom =
-                (windowHeight / boardGame.getPlayers()) * i + (windowHeight / boardGame.getPlayers()) - MARGIN
+                (windowHeight / nPlayers) * i + (windowHeight / nPlayers) - MARGIN
             val left = 0
             val right = windowWidth
             val middleVertical = bottom - ((bottom - top) / 2)
             val middleHorizontal = windowWidth / 2
 
             /* Image Related */
-            val imageSize = 400 / boardGame.getPlayers()
+            val imageSize = 400 / nPlayers
             val imagePos = middleVertical - (imageSize / 2)
             val size = getNameSize()
 
             /* Text Related */
             val textPos = middleVertical - 50
             val paintName = getNamePaint(size)
-            var nChars = boardGame.getUsername(i).length
+            var nChars = gameFragment.boardGame.getUsername(i).length
 
             /* Score Related */
             val boxQuarter = (right - left) / 4
@@ -130,9 +134,9 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             val paintScore = getScorePaint()
             val painthighlight = getHighlightPaint()
 
-            val actualScore = boardGame.getTotalPieces(i)
+            val actualScore = gameFragment.boardGame.getTotalPieces(i)
 
-            when (boardGame.getGameMode()) {
+            when (gameFragment.boardGame.getGameMode()) {
                 0 -> {
                     val fileName =
                         "/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg"
@@ -143,38 +147,38 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                             canvas?.drawBitmap(BitmapFactory.decodeFile(fileName).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
                         else
                             canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     } else { //Anónimo
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
                         canvas?.drawText(context.resources.getString(R.string.anonymous), 0, 7, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
-                    if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
+                    if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)
                 }
                 1 -> {
-                    if (boardGame.getNClients() != 2) {
+                    if (gameFragment.boardGame.getNClients() != 2) {
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     } else {
-                        nChars = boardGame.getUsername(i).length
-                        canvas?.drawBitmap(boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                        nChars = gameFragment.boardGame.getUsername(i).length
+                        canvas?.drawBitmap(gameFragment.boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     }
 
 
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
 
-                    if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
+                    if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)
                 }
                 2 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                    canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat() - 30, 50f, paintPiece)
-                    if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
+                    if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat() - 30, 50f, painthighlight)
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 45).toFloat(), paintScore)
                 }
@@ -186,20 +190,21 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun drawDataPortrait(canvas: Canvas?) {
         /* Portrait */
-        for (i in 0 until boardGame.getPlayers()) {
+        val nPlayers = gameFragment.boardGame.getPlayers()
+        for (i in 0 until nPlayers) {
             val right =
-                (windowWidth / boardGame.getPlayers()) * i + (windowWidth / boardGame.getPlayers()) - MARGIN
-            val left = (windowWidth / boardGame.getPlayers()) * i + MARGIN
+                (windowWidth / nPlayers) * i + (windowWidth / nPlayers) - MARGIN
+            val left = (windowWidth / nPlayers) * i + MARGIN
 
             /* Image Related */
-            val imageSize = 400 / boardGame.getPlayers()
+            val imageSize = 400 / nPlayers
             val middle = right - ((right - left) / 2)
             val imagePos = middle - (imageSize / 2)
             val size = getNameSize()
 
             /* Text Related */
             val paintName = getNamePaint(size)
-            var nChars = boardGame.getUsername(i).length
+            var nChars = gameFragment.boardGame.getUsername(i).length
 
             /* Score Related */
             val boxQuarter = (right - left) / 4
@@ -212,9 +217,9 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             val paintScore = getScorePaint()
             val painthighlight = getHighlightPaint()
 
-            val actualScore = boardGame.getTotalPieces(i)
+            val actualScore = gameFragment.boardGame.getTotalPieces(i)
 
-            when (boardGame.getGameMode()) {
+            when (gameFragment.boardGame.getGameMode()) {
 
                 0 -> {
                     val fileName =
@@ -225,38 +230,38 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                             canvas?.drawBitmap(BitmapFactory.decodeFile(fileName).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
                         else
                             canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else {
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
                         canvas?.drawText(context.resources.getString(R.string.anonymous), 0, 7, (middle - 7 * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
-                    if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
+                    if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                 }
                 1 -> {
 
-                    if (boardGame.getNClients() != 2) {
+                    if (gameFragment.boardGame.getNClients() != 2) {
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else {
-                        nChars = boardGame.getUsername(i).length
-                        canvas?.drawBitmap(boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                        nChars = gameFragment.boardGame.getUsername(i).length
+                        canvas?.drawBitmap(gameFragment.boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
 
 
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
 
 
-                    if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
+                    if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, painthighlight)
                 }
                 2 -> {
                     canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                    canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
+                    canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 8.75).toFloat(), (imageSize + 120).toFloat(), paintName)
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, paintPiece)
-                    if (i == boardGame.getCurrentPlayer() - 1 && !endgame)
+                    if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
                         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 50f, painthighlight)
                 }
             }
@@ -271,7 +276,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun getBackgroundStrokePaint(): Paint {
         return Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
-            color = boardGame.getBoardColor(1)
+            color = gameFragment.boardGame.getBoardColor(1)
             style = Paint.Style.STROKE
             strokeWidth = 10.0f
         }
@@ -285,7 +290,7 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun getPiecePaint(i: Int): Paint {
-        return Paint().apply { color = boardGame.getColor(i) }
+        return Paint().apply { color = gameFragment.boardGame.getColor(i) }
     }
 
     private fun getScorePaint(): Paint {
@@ -297,20 +302,20 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun getHighlightPaint(): Paint {
         return Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = boardGame.getBoardColor(2)
+            color = gameFragment.boardGame.getBoardColor(2)
             style = Paint.Style.STROKE
             strokeWidth = 11F
         }
     }
 
     private fun getNameSize(): Float { //Limitar o nome a 15 chars
-        if (boardGame.getGameMode() != 2)
+        if (gameFragment.boardGame.getGameMode() != 2)
             return 56F
         return 38F
     }
 
     private fun getScoreSize(): Float {
-        if (boardGame.getGameMode() != 2)
+        if (gameFragment.boardGame.getGameMode() != 2)
             return 82F
         return 56F
     }
@@ -318,19 +323,19 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     fun setUsersProfileData(name: String, photoFile: String) {
         val auxName = name.replace("\"", "")
         userNames.add(auxName)
-        boardGame.setUsername(nClients,auxName)
+        gameFragment.boardGame.setUsername(nClients,auxName)
         if (photoFile != "\"null\"") {
             val aux = convertString64ToImage(photoFile)
             userPhotos.add(aux)
-            boardGame.setPhoto(nClients,aux)
+            gameFragment.boardGame.setPhoto(nClients,aux)
         } else {
             val aux = BitmapFactory.decodeResource(resources, R.drawable.logo_reversi)
             userPhotos.add(aux)
-            boardGame.setPhoto(nClients,aux)
+            gameFragment.boardGame.setPhoto(nClients,aux)
         }
-        boardGame.setUsername(nClients,auxName)
+        gameFragment.boardGame.setUsername(nClients,auxName)
         nClients++
-        boardGame.setNClients(nClients)
+        gameFragment.boardGame.setNClients(nClients)
     }
 
     private fun convertString64ToImage(base64String: String): Bitmap {
@@ -363,21 +368,21 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     fun updateUsers(nClients: Int, userNames: ArrayList<String>, photosBase64: ArrayList<String>) {
         this.nClients = nClients
-        boardGame.setNClients(nClients)
+        gameFragment.boardGame.setNClients(nClients)
         this.userNames = userNames
 
         userPhotos.clear()
         for(i in 0 until nClients){
-            boardGame.setUsername(i,userNames[i])
+            gameFragment.boardGame.setUsername(i,userNames[i])
             if(photosBase64[i] != "\"null\""){
                 val aux = convertString64ToImage(photosBase64[i])
                 userPhotos.add(aux)
-                boardGame.setPhoto(i,aux)
+                gameFragment.boardGame.setPhoto(i,aux)
             }
             else{
                 val aux = BitmapFactory.decodeResource(resources,R.drawable.logo_reversi)
                 userPhotos.add(aux)
-                boardGame.setPhoto(i,aux)
+                gameFragment.boardGame.setPhoto(i,aux)
             }
         }
     }
