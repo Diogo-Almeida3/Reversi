@@ -154,13 +154,13 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                     canvas?.drawText(actualScore.toString(), middleHorizontal.toFloat(), (middleVertical + 75).toFloat(), paintScore)
                 }
                 1 -> {
-                    if (nClients != 2) {
+                    if (boardGame.getNClients() != 2) {
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
                         canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     } else {
-                        nChars = userNames[i].length
-                        canvas?.drawBitmap(userPhotos[i].scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
-                        canvas?.drawText(userNames[i], 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
+                        nChars = boardGame.getUsername(i).length
+                        canvas?.drawBitmap(boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), 50f, imagePos.toFloat(), null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middleHorizontal + boxQuarter / 2 - nChars * 12).toFloat(), textPos.toFloat(), paintName)
                     }
 
 
@@ -236,13 +236,13 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                 }
                 1 -> {
 
-                    if (nClients != 2) {
+                    if (boardGame.getNClients() != 2) {
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
                         canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else {
-                        nChars = userNames[i].length
-                        canvas?.drawBitmap(userPhotos[i].scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                        canvas?.drawText(userNames[i], 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                        nChars = boardGame.getUsername(i).length
+                        canvas?.drawBitmap(boardGame.getPhoto(i)!!.scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
+                        canvas?.drawText(boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
 
 
@@ -318,15 +318,19 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     fun setUsersProfileData(name: String, photoFile: String) {
         val auxName = name.replace("\"", "")
         userNames.add(auxName)
+        boardGame.setUsername(nClients,auxName)
         if (photoFile != "\"null\"") {
-            userPhotos.add(convertString64ToImage(photoFile))
-
+            val aux = convertString64ToImage(photoFile)
+            userPhotos.add(aux)
+            boardGame.setPhoto(nClients,aux)
         } else {
-
-            userPhotos.add(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi))
+            val aux = BitmapFactory.decodeResource(resources, R.drawable.logo_reversi)
+            userPhotos.add(aux)
+            boardGame.setPhoto(nClients,aux)
         }
         boardGame.setUsername(nClients,auxName)
         nClients++
+        boardGame.setNClients(nClients)
     }
 
     private fun convertString64ToImage(base64String: String): Bitmap {
@@ -359,15 +363,22 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     fun updateUsers(nClients: Int, userNames: ArrayList<String>, photosBase64: ArrayList<String>) {
         this.nClients = nClients
+        boardGame.setNClients(nClients)
         this.userNames = userNames
-
 
         userPhotos.clear()
         for(i in 0 until nClients){
-            if(photosBase64[i] != "\"null\"")
-                userPhotos.add(convertString64ToImage(photosBase64[i]))
-            else
-                userPhotos.add(BitmapFactory.decodeResource(resources,R.drawable.logo_reversi))
+            boardGame.setUsername(i,userNames[i])
+            if(photosBase64[i] != "\"null\""){
+                val aux = convertString64ToImage(photosBase64[i])
+                userPhotos.add(aux)
+                boardGame.setPhoto(i,aux)
+            }
+            else{
+                val aux = BitmapFactory.decodeResource(resources,R.drawable.logo_reversi)
+                userPhotos.add(aux)
+                boardGame.setPhoto(i,aux)
+            }
         }
     }
 }

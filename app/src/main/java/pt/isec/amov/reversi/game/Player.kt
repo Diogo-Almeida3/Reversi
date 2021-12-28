@@ -1,5 +1,7 @@
 package pt.isec.amov.reversi.game
 
+import android.graphics.Bitmap
+
 class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String = "Diogo Almeida",nrBombs: Int=1,nrexchangePieces: Int=1) {
 
     private var pieces = initialPieces
@@ -8,7 +10,7 @@ class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String
     private var username = user
     private var bombPiece =nrBombs
     private var exchangePieces = nrexchangePieces
-
+    private var photo : Bitmap? = null
     fun getColor() : Int = color
 
     fun getPieceType() : Int = pieceType
@@ -20,6 +22,10 @@ class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String
     fun getBombPiece() : Int = bombPiece
 
     fun getExchangePieces():Int = exchangePieces
+
+    fun setPhoto(photo: Bitmap) {
+        this.photo = photo
+    }
 
     fun setBombPiece(){
         bombPiece--
@@ -36,4 +42,8 @@ class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String
     fun setUsername(username : String){
         this.username = username
     }
+
+    fun getPhoto(): Bitmap? = photo
+
+
 }

@@ -1,6 +1,7 @@
 package pt.isec.amov.reversi.game
 
 
+import android.graphics.Bitmap
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -23,18 +24,15 @@ class BoardGame(
     private var currentPlayer = 0
     private var validPlays = ArrayList<PieceMoves>()
     private val players = arrayListOf<Player>()
-    private var initial = 1
+    private var nClients = 0
     init {
         newGame()
     }
 
 
-    fun getInitial() :Int = initial
 
-    fun setInitial(number: Int) {
-        initial = number
-    }
     private fun newGame() {
+        nClients = 0
         for (i in 0 until boardSIZE)
             for (j in 0 until boardSIZE)
                 pieces[i][j] = EMPTY_CELL
@@ -407,7 +405,18 @@ class BoardGame(
         gamemode = number
     }
 
+    fun setPhoto(i: Int, aux: Bitmap) {
+        players[i].setPhoto(aux)
+    }
 
+    fun getPhoto(i: Int) = players[i].getPhoto()
+
+
+    fun getNClients(): Int  = nClients
+
+    fun setNClients(nClients : Int) {
+        this.nClients = nClients
+    }
 
 
 }

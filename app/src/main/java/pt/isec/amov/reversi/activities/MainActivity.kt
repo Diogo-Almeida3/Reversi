@@ -220,6 +220,7 @@ class MainActivity : AppCompatActivity() {
         toggle.onConfigurationChanged(newConfig)
     }
 
+
     private fun showAlert(buttonID: Int) {
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(this)
