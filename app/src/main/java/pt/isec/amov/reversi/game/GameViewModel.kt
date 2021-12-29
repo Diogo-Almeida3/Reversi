@@ -34,7 +34,7 @@ import kotlin.concurrent.thread
 class GameViewModel : ViewModel() {
 
     enum class State {
-        STARTING, SETTING_PROFILE_DATA, PLAYING_SERVER, PLAYING_CLIENT, PLAYING_SECOND_CLIENT, GAME_OVER, LEFT_GAME
+        STARTING, PLAYING_SERVER, PLAYING_CLIENT, PLAYING_SECOND_CLIENT, GAME_OVER, LEFT_GAME
     }
 
     enum class ConnectionState {
@@ -105,10 +105,10 @@ class GameViewModel : ViewModel() {
                     val uri =
                         File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
 
-                    if (uri.exists()) {
-                        profileData = ProfileData(name, convertToBase64(uri))
+                    profileData = if (uri.exists()) {
+                        ProfileData(name, convertToBase64(uri))
                     } else {
-                        profileData = ProfileData(name, "null")
+                        ProfileData(name, "null")
                     }
                     val gson = Gson()
                     val jsonSend: String = gson.toJson(profileData)
@@ -1283,7 +1283,7 @@ class GameViewModel : ViewModel() {
                     when (state.value) {
                         State.PLAYING_SERVER -> {
                             //Vai mandar o alerta para o jogador 1
-                            socketArrayServer!![0].getOutputStream().run {
+                            socketArrayServer[0].getOutputStream().run {
                                 thread {
                                     val alertPlays = AlertNoValidPlayData()
 
@@ -1298,7 +1298,7 @@ class GameViewModel : ViewModel() {
                         }
                         State.PLAYING_CLIENT -> {
                             //Vai mandar o alerta para o jogador 2
-                            socketArrayServer!![1].getOutputStream().run {
+                            socketArrayServer[1].getOutputStream().run {
                                 thread {
                                     val alertPlays = AlertNoValidPlayData()
 
@@ -1367,8 +1367,8 @@ class GameViewModel : ViewModel() {
                         }
                         2 -> {
                             //Como ninguem tem jogadas manda o alerta de final de jogo
-                            for (j in 0 until socketArrayServer!!.size) {
-                                socketArrayServer!![j].getOutputStream().run {
+                            for (j in 0 until socketArrayServer.size) {
+                                socketArrayServer[j].getOutputStream().run {
                                     thread {
                                         val passPlayData = PassPlayData()
 
