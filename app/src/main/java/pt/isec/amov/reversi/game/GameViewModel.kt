@@ -155,7 +155,20 @@ class GameViewModel : ViewModel() {
                                 val posY = (jsonObject.get("move") as JsonObject).get("posY").asInt
                                 val currentPiece = jsonObject.get("currentPiece").asInt
 
-                                movePiece(posX,posY,currentPiece)
+                                when(boardGame.getCurrentPlayer() - 1){
+                                    1 -> {
+                                        if(socketArrayServer!![0].getInputStream() == socketInput)
+                                            movePiece(posX,posY,currentPiece)
+                                        else
+                                            validPlay = false
+                                    }
+                                    2 -> {
+                                        if(socketArrayServer!![1].getInputStream() == socketInput)
+                                            movePiece(posX,posY,currentPiece)
+                                        else
+                                            validPlay = false
+                                    }
+                                }
 
                                 if(validPlay){
                                     val move = PieceMoves(posX,posY)
