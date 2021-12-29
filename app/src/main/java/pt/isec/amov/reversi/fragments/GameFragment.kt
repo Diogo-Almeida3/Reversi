@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.text.InputFilter
@@ -65,11 +64,7 @@ class GameFragment : Fragment() {
     private val colorsBoard = ArrayList<Int>(2)
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_game, container, false)
         auth = Firebase.auth
 
@@ -80,6 +75,7 @@ class GameFragment : Fragment() {
 
         startGame(savedInstanceState, view)
         model.setData(boardGame, this)
+
         when (gamemode) {
             0 -> {
                 boardGame.setUsername(0, getName())
@@ -93,21 +89,24 @@ class GameFragment : Fragment() {
                     if (state == GameViewModel.State.GAME_OVER && model.connectionState.value == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
                         updateUI()
                         when (model.getIsServer()) {
-                            true -> UploadTopScore2Players(
+                            true -> UploadTopScorePlayers(
                                 getName(),
                                 boardGame.getUsername(1),
+                                "",
                                 boardGame.getTotalPieces(0),
-                                boardGame.getTotalPieces(1)
+                                boardGame.getTotalPieces(1),
+                                0,
                             )
-                            false -> UploadTopScore2Players(
+                            false -> UploadTopScorePlayers(
                                 getName(),
                                 boardGame.getUsername(0),
+                                "",
                                 boardGame.getTotalPieces(1),
-                                boardGame.getTotalPieces(0)
+                                boardGame.getTotalPieces(0),
+                                0
                             )
                         }
                     } else if (state == GameViewModel.State.LEFT_GAME && model.connectionState.value != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
-
                         moveToOff(savedInstanceState, view)
                     }
                 }
@@ -130,7 +129,7 @@ class GameFragment : Fragment() {
                     }
 
                 }
-                if (model.getConnectionState() != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
+                if (model.connectionState.value != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
                     when (webMode) {
                         SERVER_MODE -> startAsServer()
                         CLIENT_MODE -> startAsClient()
@@ -144,7 +143,7 @@ class GameFragment : Fragment() {
                         updateUI()
                     if (state == GameViewModel.State.GAME_OVER && model.connectionState.value == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
                         when (model.getIsServer()) {
-                            true -> UploadTopScore3Players(
+                            true -> UploadTopScorePlayers(
                                 getName(),
                                 boardGame.getUsername(1),
                                 boardGame.getUsername(2),
@@ -164,7 +163,7 @@ class GameFragment : Fragment() {
 
                                 when(aux){
                                     1 -> {
-                                        UploadTopScore3Players(
+                                        UploadTopScorePlayers(
                                             name,
                                             boardGame.getUsername(0),
                                             boardGame.getUsername(2),
@@ -174,7 +173,7 @@ class GameFragment : Fragment() {
                                         )
                                     }
                                     2 -> {
-                                        UploadTopScore3Players(
+                                        UploadTopScorePlayers(
                                             name,
                                             boardGame.getUsername(0),
                                             boardGame.getUsername(1),
@@ -227,7 +226,91 @@ class GameFragment : Fragment() {
         setButtons(view)
     }
 
-    fun moveToOff(savedInstanceState: Bundle?, view: View) {
+    private fun getColors() {
+        for (i in 0..2)
+            colorsPlayers.add(resources.getIntArray(R.array.array_of_colors)[i])
+
+        for (i in 0..2)
+            colorsBoard.add(resources.getIntArray(R.array.array_of_board_colors)[i])
+    }
+
+    private fun restoreData(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null)
+            boardGame = BoardGame(gamemode, colorsPlayers, colorsBoard)
+        else {
+            val threadCom = thread {
+                val json = savedInstanceState.getString("CUSTOM_CLASS")
+                if (!json!!.isEmpty()) {
+                    val gson = Gson()
+                    boardGame = gson.fromJson(json, BoardGame::class.java)
+                    gamemode = boardGame.getGameMode()
+                }
+            }
+            threadCom.join()
+        }
+    }
+
+    private fun writeData(view: View) {
+        boardView = view.findViewById(R.id.boardView)
+        gamePerfilView = view.findViewById(R.id.gamePerfilView)
+        boardView.setData(this)
+        gamePerfilView.setData(this)
+    }
+
+    private fun setButtons(view: View) {
+        btnAnimation = AlphaAnimation(1F, 0.8F).apply {
+            duration = 450
+            interpolator = AccelerateInterpolator(0.05F)
+        }
+        val buttonBomb = view.findViewById<Button>(R.id.btnBombPiece)
+        val buttonExchange = view.findViewById<Button>(R.id.btnTradePiece)
+
+        buttonBomb.setOnClickListener {
+
+            buttonBomb.startAnimation(btnAnimation)
+            if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.connectionState.value)
+                bombFunc()
+            else {
+                when (model.getIsServer()) {
+                    true -> {
+                        if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
+                            bombFunc()
+                    } //Server
+                    false -> {
+                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT)
+                            model.switchBombPiece()
+                    } //Cliente
+                }
+            }
+
+        }
+
+
+        buttonExchange.setOnClickListener {
+            buttonExchange.startAnimation(btnAnimation)
+            if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.connectionState.value)
+                ExchangeFunc()
+            else
+                when (model.getIsServer()) {
+                    true -> {
+                        if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
+                            ExchangeFunc()
+                    } //Server
+                    false -> {
+                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT) {
+                            model.switchExchangePiece()
+                        }
+                    } //Cliente
+                }
+        }
+    }
+
+    fun updateUI() {
+        boardView.invalidate()
+        gamePerfilView.invalidate()
+    }
+
+    private fun moveToOff(savedInstanceState: Bundle?, view: View) {
         gamemode = 0
         colorsBoard.clear()
         colorsPlayers.clear()
@@ -238,9 +321,188 @@ class GameFragment : Fragment() {
         updateUI()
     }
 
-    fun UploadTopScore3Players(user: String, opponent: String, opponent2: String,myScore: Int, opponentScore: Int,opponent2Score : Int){
+
+    private fun bombFunc() {
+        if (boardGame.getBombPiece() > 0)
+            boardGame.setPieceType(1)
+        else
+            showAlertPieces(boardGame.getName() + " has no available bomb pieces!")
+    }
+
+    private fun ExchangeFunc() {
+        when {
+            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> showAlertPieces(
+                boardGame.getName() + resources.getString(
+                    R.string.exchangeNoBoardPieces
+                )
+            )
+            boardGame.getExchangePiece() > 0 -> boardGame.setPieceType(2)
+            else -> showAlertPieces(boardGame.getName() + resources.getString(R.string.exchangeNoAvailablePieces))
+        }
+    }
+
+    fun resetCounter() {
+        model.resetCounter()
+    }
+
+    fun movePiece(x: Int, y: Int, currentPiece: Int) {
+        model.movePiece(x, y, currentPiece)
+    }
+
+    fun checkOnlineMove(x: Int?, y: Int?) {
+        model.checkOnlineMove(x, y)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val gson = Gson()
+        val json = gson.toJson(boardGame)
+        outState.putString("CUSTOM_CLASS", json)
+
+    }
+
+
+    private fun showAlertPieces(phrase: String) {
+
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder1.setMessage(phrase)
+        builder1.setCancelable(false)
+
+        builder1.setPositiveButton("Ok") { dialog, id ->
+            run {
+                dialog.cancel()
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+
+    }
+
+    fun showAlertEndGame(player: Player?) {
+
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+
+        if (player != null)
+            builder1.setMessage(player.getUsername() + resources.getString(R.string.winner))
+        else
+            builder1.setMessage(resources.getString(R.string.draw))
+        builder1.setCancelable(false)
+
+        builder1.setPositiveButton(resources.getString(R.string.checkBoard)) { dialog, id ->
+            run {
+                dialog.cancel()
+
+                if (model.connectionState.value == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED)
+                    model.connectionState.postValue(GameViewModel.ConnectionState.CONNECTION_ENDED)
+            }
+        }
+
+        builder1.setNegativeButton(resources.getString(R.string.backToMenu)) { dialog, id ->
+            run {
+                dialog.cancel()
+                if (model.connectionState.value == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED)
+                    model.connectionState.postValue(GameViewModel.ConnectionState.CONNECTION_ERROR)
+                else
+                    findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+
+    }
+
+    fun showAlertGeneral(phrase: String) {
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder1.setMessage(phrase)
+        builder1.setCancelable(false)
+
+        builder1.setPositiveButton(resources.getString(R.string.pass)) { dialog, id ->
+            run {
+                dialog.cancel()
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+    }
+
+    fun showAlertPassPlay(name: String) {
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+        if (name.equals(""))
+            builder1.setMessage(resources.getString(R.string.noAvailablePlays))
+        else
+            builder1.setMessage(name + resources.getString(R.string.noAvailablePlaysName))
+        builder1.setCancelable(false)
+
+        builder1.setPositiveButton(resources.getString(R.string.pass)) { dialog, id ->
+            run {
+                dialog.cancel()
+                model.passPlayAux()
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+    }
+
+
+    fun setUsersProfileData(name: String, convertToBase64: String) {
+        gamePerfilView.setUsersProfileData(name, convertToBase64)
+    }
+
+
+    private fun getName(): String {
+        //val navigationView = requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+        //return navigationView.findViewById<TextView>(R.id.userName).text as String
+        val aux = db.collection("Users").document(auth.currentUser!!.uid).get()
+
+        val threadCom = thread {
+            Tasks.await(aux)
+        }
+        threadCom.join()
+
+        return aux.result.data!!["username"].toString()
+    }
+
+    fun getBitmaps(): ArrayList<String> {
+        val auxBase64 = ArrayList<String>()
+        for (i in 0 until getnClients()) {
+            val baos = ByteArrayOutputStream()
+            boardGame.getPhoto(i)?.compress(Bitmap.CompressFormat.JPEG, 40, baos)
+            auxBase64.add(Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT))
+            baos.close()
+        }
+
+        return auxBase64
+    }
+
+    fun getnClients(): Int = boardGame.getNClients()
+
+    fun getUsernames(): ArrayList<String> {
+        val auxNames = ArrayList<String>()
+        for (i in 0 until getnClients())
+            auxNames.add(boardGame.getUsername(i))
+
+        return auxNames
+    }
+
+    fun getExchangeWrongPiece(): String = resources.getString(R.string.exchangeWrongPiece)
+
+    fun getExchangeBoardError(): String = resources.getString(R.string.exchangeBoardError)
+
+    fun getExchangeSelectTwice(): String = resources.getString(R.string.exchangeSelectTwice)
+
+    fun getBombPieceSelect(): String = resources.getString(R.string.bombPieceSelect)
+
+    fun getExchangeNoAvailablePieces(): String = resources.getString(R.string.exchangeNoAvailablePieces)
+
+    fun getExchangeNoBoardPieces(): String = resources.getString(R.string.exchangeNoBoardPieces)
+
+    fun getEndgame(): Boolean = model.getEndgame()
+
+
+    private fun UploadTopScorePlayers(user: String, opponent: String, opponent2: String,myScore: Int, opponentScore: Int,opponent2Score : Int){
         val db = Firebase.firestore
         val game = hashMapOf(
+            "gamemode" to gamemode,
             "user" to user,
             "opponent" to opponent,
             "opponent2" to opponent2,
@@ -298,6 +560,7 @@ class GameFragment : Fragment() {
                 .collection("TopScores").document(id.toString())
 
             db.runTransaction { transition ->
+                transition.update(pathTopScore, "gamemode", gamemode)
                 transition.update(pathTopScore, "user", user)
                 transition.update(pathTopScore, "opponent", opponent)
                 transition.update(pathTopScore, "myScore", myScore)
@@ -308,83 +571,6 @@ class GameFragment : Fragment() {
             }
         }
     }
-
-    fun UploadTopScore2Players(user: String, opponent: String, myScore: Int, opponentScore: Int) {
-        val db = Firebase.firestore
-        val game = hashMapOf(
-            "user" to user,
-            "opponent" to opponent,
-            "myScore" to myScore,
-            "opponentScore" to opponentScore,
-        )
-
-        val path = db.collection("Users").document(auth.currentUser!!.uid)
-        var numberGames = 0
-        //Update que quantos jogos já realizou
-        db.runTransaction { transition ->
-            val doc = transition.get(path)
-            numberGames = doc.getLong("nrgames")!!.toInt()
-            numberGames++
-            transition.update(path, "nrgames", numberGames)
-            null
-        }
-
-        var min = -1L
-        var id = 1
-        var aux = -1L
-        var count = 0
-        for (i in 5 downTo 1) {
-            val query = db.collection("Users")
-                .document(auth.currentUser!!.uid)
-                .collection("TopScores")
-                .document(i.toString()).get(Source.SERVER)
-            val threadAux = thread {
-                Tasks.await(query)
-            }
-            threadAux.join()
-
-            if (query.result.data != null) {
-                count++
-                aux = query.result.data!!["myScore"] as Long
-                if (min == -1L) min = aux
-
-                if (min > aux) {
-                    id = i
-                    min = aux
-                }
-            }
-        }
-
-
-
-        if (count < 5) {
-            count++
-            path.collection("TopScores")
-                .document(count.toString())
-                .set(game)
-        } else if (min < myScore) {
-            val pathTopScore = db.collection("Users").document(auth.currentUser!!.uid)
-                .collection("TopScores").document(id.toString())
-
-            db.runTransaction { transition ->
-                transition.update(pathTopScore, "user", user)
-                transition.update(pathTopScore, "opponent", opponent)
-                transition.update(pathTopScore, "myScore", myScore)
-                transition.update(pathTopScore, "opponentScore", opponentScore)
-                null
-            }
-        }
-
-
-    }
-
-    private fun writeData(view: View) {
-        boardView = view.findViewById(R.id.boardView)
-        gamePerfilView = view.findViewById(R.id.gamePerfilView)
-        boardView.setData(this)
-        gamePerfilView.setData(this)
-    }
-
 
     private fun startAsClient() {
 
@@ -503,264 +689,4 @@ class GameFragment : Fragment() {
         dlg?.show()
 
     }
-
-    private fun getName(): String {
-        //val navigationView = requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
-        //return navigationView.findViewById<TextView>(R.id.userName).text as String
-        val aux = db.collection("Users").document(auth.currentUser!!.uid).get()
-
-        val threadCom = thread {
-            Tasks.await(aux)
-        }
-        threadCom.join()
-
-        return aux.result.data!!["username"].toString()
-    }
-
-    fun updateUI() {
-        boardView.invalidate()
-        gamePerfilView.invalidate()
-    }
-
-    private fun bombFunc() {
-        if (boardGame.getBombPiece() > 0)
-            boardGame.setPieceType(1)
-        else
-            showAlert(boardGame.getName() + " has no available bomb pieces!")
-    }
-
-    private fun ExchangeFunc() {
-        when {
-            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> showAlert(
-                boardGame.getName() + resources.getString(
-                    R.string.exchangeNoBoardPieces
-                )
-            )
-            boardGame.getExchangePiece() > 0 -> boardGame.setPieceType(2)
-            else -> showAlert(boardGame.getName() + resources.getString(R.string.exchangeNoAvailablePieces))
-        }
-    }
-
-    private fun restoreData(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null)
-            boardGame = BoardGame(gamemode, colorsPlayers, colorsBoard)
-        else {
-            val threadCom = thread {
-                val json = savedInstanceState.getString("CUSTOM_CLASS")
-                if (!json!!.isEmpty()) {
-                    val gson = Gson()
-                    boardGame = gson.fromJson(json, BoardGame::class.java)
-                    gamemode = boardGame.getGameMode()
-                }
-            }
-
-            threadCom.join()
-        }
-    }
-
-    private fun setButtons(view: View) {
-        btnAnimation = AlphaAnimation(1F, 0.8F).apply {
-            duration = 450
-            interpolator = AccelerateInterpolator(0.05F)
-        }
-        val buttonBomb = view.findViewById<Button>(R.id.btnBombPiece)
-        val buttonExchange = view.findViewById<Button>(R.id.btnTradePiece)
-
-        buttonBomb.setOnClickListener {
-
-            buttonBomb.startAnimation(btnAnimation)
-            if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.getConnectionState())
-                bombFunc()
-            else {
-                when (model.getIsServer()) {
-                    true -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
-                            bombFunc()
-                    } //Server
-                    false -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT)
-                            model.switchBombPiece()
-                    } //Cliente
-                }
-            }
-
-        }
-
-
-        buttonExchange.setOnClickListener {
-            buttonExchange.startAnimation(btnAnimation)
-            if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.getConnectionState())
-                ExchangeFunc()
-            else
-                when (model.getIsServer()) {
-                    true -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
-                            ExchangeFunc()
-                    } //Server
-                    false -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT) {
-                            model.switchExchangePiece()
-                        }
-                    } //Cliente
-                }
-        }
-    }
-
-    private fun getColors() {
-        for (i in 0..2)
-            colorsPlayers.add(resources.getIntArray(R.array.array_of_colors)[i])
-
-        for (i in 0..2)
-            colorsBoard.add(resources.getIntArray(R.array.array_of_board_colors)[i])
-    }
-
-    private fun showAlert(phrase: String) {
-
-        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder1.setMessage(phrase)
-        builder1.setCancelable(false)
-
-        builder1.setPositiveButton("Ok") { dialog, id ->
-            run {
-                dialog.cancel()
-            }
-        }
-        val alert11: AlertDialog = builder1.create()
-        alert11.show()
-
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        val gson = Gson()
-        val json = gson.toJson(boardGame)
-        outState.putString("CUSTOM_CLASS", json)
-
-    }
-
-    fun showAlertEndGame(player: Player?) {
-
-        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-
-        if (player != null)
-            builder1.setMessage(player.getUsername() + resources.getString(R.string.winner))
-        else
-            builder1.setMessage(resources.getString(R.string.draw))
-        builder1.setCancelable(false)
-
-        builder1.setPositiveButton(resources.getString(R.string.checkBoard)) { dialog, id ->
-            run {
-                dialog.cancel()
-
-                if (model.getConnectionState() == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED)
-                    model.connectionState.postValue(GameViewModel.ConnectionState.CONNECTION_ENDED)
-            }
-        }
-
-        builder1.setNegativeButton(resources.getString(R.string.backToMenu)) { dialog, id ->
-            run {
-                dialog.cancel()
-                if (model.getConnectionState() == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED)
-                    model.connectionState.postValue(GameViewModel.ConnectionState.CONNECTION_ERROR)
-                else
-                    findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
-            }
-        }
-        val alert11: AlertDialog = builder1.create()
-        alert11.show()
-
-    }
-
-    fun showAlertGeneral(phrase: String) {
-
-        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder1.setMessage(phrase)
-        builder1.setCancelable(false)
-
-        builder1.setPositiveButton(resources.getString(R.string.pass)) { dialog, id ->
-            run {
-                dialog.cancel()
-            }
-        }
-        val alert11: AlertDialog = builder1.create()
-        alert11.show()
-
-    }
-
-    fun showAlertPassPlay(name: String) {
-
-        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-        if (name.equals(""))
-            builder1.setMessage(resources.getString(R.string.noAvailablePlays))
-        else
-            builder1.setMessage(name + resources.getString(R.string.noAvailablePlaysName))
-        builder1.setCancelable(false)
-
-        builder1.setPositiveButton(resources.getString(R.string.pass)) { dialog, id ->
-            run {
-                dialog.cancel()
-                model.passPlayAux()
-            }
-        }
-        val alert11: AlertDialog = builder1.create()
-        alert11.show()
-
-    }
-
-    fun getExchangeWrongPiece(): String = resources.getString(R.string.exchangeWrongPiece)
-
-    fun getExchangeBoardError(): String = resources.getString(R.string.exchangeBoardError)
-
-    fun getExchangeSelectTwice(): String = resources.getString(R.string.exchangeSelectTwice)
-
-    fun getBombPieceSelect(): String = resources.getString(R.string.bombPieceSelect)
-
-    fun getExchangeNoAvailablePieces(): String =
-        resources.getString(R.string.exchangeNoAvailablePieces)
-
-    fun getExchangeNoBoardPieces(): String = resources.getString(R.string.exchangeNoBoardPieces)
-
-    fun getEndgame(): Boolean = model.getEndgame()
-
-    fun resetCounter() {
-        model.resetCounter()
-    }
-
-    fun movePiece(x: Int, y: Int, currentPiece: Int) {
-        model.movePiece(x, y, currentPiece)
-    }
-
-    fun checkOnlineMove(x: Int?, y: Int?) {
-        model.checkOnlineMove(x, y)
-    }
-
-
-    fun setUsersProfileData(name: String, convertToBase64: String) {
-        gamePerfilView.setUsersProfileData(name, convertToBase64)
-    }
-
-
-    fun getBitmaps(): ArrayList<String> {
-        val auxBase64 = ArrayList<String>()
-        for (i in 0 until getnClients()) {
-            val baos = ByteArrayOutputStream()
-            boardGame.getPhoto(i)?.compress(Bitmap.CompressFormat.JPEG, 40, baos)
-            auxBase64.add(Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT))
-            baos.close()
-        }
-
-        return auxBase64
-    }
-
-    fun getnClients(): Int = boardGame.getNClients()
-
-    fun getUsernames(): ArrayList<String> {
-        val auxNames = ArrayList<String>()
-        for (i in 0 until getnClients())
-            auxNames.add(boardGame.getUsername(i))
-
-        return auxNames
-    }
-
-
 }

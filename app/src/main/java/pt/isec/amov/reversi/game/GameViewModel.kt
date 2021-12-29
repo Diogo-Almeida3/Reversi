@@ -78,20 +78,97 @@ class GameViewModel : ViewModel() {
     private lateinit var boardGame: BoardGame
     private lateinit var gameFragment: GameFragment
 
-    fun setData(boardGame: BoardGame, gameFragment: GameFragment) {
-        this.boardGame = boardGame
-        this.gameFragment = gameFragment
-        auth = Firebase.auth
+
+    fun startClient(name: String, serverIP: String, serverPort: Int = SERVER_PORT) {
+
+        if (socket != null || connectionState.value != ConnectionState.SETTING_PARAMETERS)
+            return
+
+        connectionState.postValue(ConnectionState.CLIENT_CONNECTING)
+
+        thread {
+            try {
+                val clientSocket = Socket()
+                when (boardGame.getGameMode()) {
+                    1 -> {
+                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 5)
+                    }
+                    2 -> {
+                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 20)
+                    }
+                }
+                startComs(clientSocket)
+                Log.v("COMMS", "A thread cooms foi iniciada para o cliente")
+                socketO?.run {
+
+                    val profileData: ProfileData
+                    val uri =
+                        File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
+
+                    if (uri.exists()) {
+                        profileData = ProfileData(name, convertToBase64(uri))
+                    } else {
+                        profileData = ProfileData(name, "null")
+                    }
+                    val gson = Gson()
+                    val jsonSend: String = gson.toJson(profileData)
+
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+
+                }
+            } catch (_: Exception) {
+                connectionState.postValue(ConnectionState.CONNECTION_ERROR)
+                stopGame()
+            }
+        }
     }
 
+    fun startServer(name: String) {
+        if (serverSocket != null || socket != null || connectionState.value != ConnectionState.SETTING_PARAMETERS)
+            return
 
-    fun getIsServer(): Boolean = isServer
+        connectionState.postValue(ConnectionState.SERVER_CONNECTING)
 
-    fun getEndgame(): Boolean = endGame
+        isServer = true
+        val uri =
+            File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
+        if (uri.exists())
+            gameFragment.setUsersProfileData(name, convertToBase64(uri))
+        else
+            gameFragment.setUsersProfileData(name, "null")
 
-    fun getConnectionState(): ConnectionState? = connectionState.value
+        thread {
+            serverSocket = ServerSocket(SERVER_PORT)
+            serverSocket?.run {
+                try {
+                    when (boardGame.getGameMode()) {
+                        1 -> {
+                            val newServerSocket = serverSocket!!.accept()
+                            startComs(newServerSocket)
+                        }
+                        2 -> {
+                            var nConnections = 0
+                            while (nConnections != 2) {
+                                startComsServer3(serverSocket!!.accept())
+                                nConnections++
+                            }
+                        }
+                    }
+                    Log.v("COMMS", "A thread cooms foi iniciada para o $isServer")
 
-    fun getGameState(): State? = state.value
+                } catch (_: Exception) {
+                    connectionState.postValue(ConnectionState.CONNECTION_ERROR)
+                } finally {
+                    connectionState.postValue(ConnectionState.CONNECTION_ESTABLISHED)
+                    serverSocket?.close()
+                    serverSocket = null
+                }
+            }
+        }
+    }
 
     private fun startComsServer3(socket: Socket) {
 
@@ -356,118 +433,6 @@ class GameViewModel : ViewModel() {
         }
 
         threadCommServer3.add(threadAux)
-    }
-
-    private fun exchangeCheck3Players(number: Int){
-        when {
-            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> {
-                socketArrayServer[number].getOutputStream().run {
-                    thread {
-                        val requestExchange = RequestExchange(0)
-
-                        val gson = Gson()
-                        val jsonSend: String = gson.toJson(requestExchange)
-
-
-                        val printStream = PrintStream(this)
-                        printStream.println(jsonSend)
-                        printStream.flush()
-                    }
-                }
-            }
-            boardGame.getExchangePiece() > 0 -> {
-                socketArrayServer[number].getOutputStream().run {
-                    thread {
-                        val requestExchange = RequestExchange(1)
-
-                        val gson = Gson()
-                        val jsonSend: String = gson.toJson(requestExchange)
-
-
-                        val printStream = PrintStream(this)
-                        printStream.println(jsonSend)
-                        printStream.flush()
-                    }
-                }
-            }
-            else -> {
-                socketArrayServer[number].getOutputStream().run {
-                    thread {
-                        val requestExchange = RequestExchange(2)
-
-                        val gson = Gson()
-                        val jsonSend: String = gson.toJson(requestExchange)
-
-
-                        val printStream = PrintStream(this)
-                        printStream.println(jsonSend)
-                        printStream.flush()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun exchangeBomb3Players(number : Int,currentPiece : Int){
-        when (currentPiece) {
-            BOMB_PIECE -> {
-                socketArrayServer[number].getOutputStream().run {
-                    val alertInvalidBomb = AlertInvalidBomb()
-
-                    val gson = Gson()
-                    val jsonSend = gson.toJson(alertInvalidBomb)
-
-                    val printStream = PrintStream(this)
-                    printStream.println(jsonSend)
-                    printStream.flush()
-                }
-            }
-            EXCHANGE_PIECE -> {
-                socketArrayServer[number].getOutputStream().run {
-                    val alertInvalidExchange =
-                        AlertInvalidExchange(exchangeError)
-
-                    val gson = Gson()
-                    val jsonSend = gson.toJson(alertInvalidExchange)
-
-                    val printStream = PrintStream(this)
-                    printStream.println(jsonSend)
-                    printStream.flush()
-                }
-            }
-        }
-    }
-
-    private fun bombCheck3Players(number : Int){
-        if (boardGame.getBombPiece() > 0) {
-            socketArrayServer[number].getOutputStream().run  {
-                thread {
-                    val requestBomb = RequestBomb(true)
-
-                    val gson = Gson()
-                    val jsonSend: String = gson.toJson(requestBomb)
-
-
-                    val printStream = PrintStream(this)
-                    printStream.println(jsonSend)
-                    printStream.flush()
-                }
-            }
-        } else {
-            socketArrayServer[number].getOutputStream().run {
-                thread {
-                    val requestBomb = RequestBomb(false)
-
-                    val gson = Gson()
-                    val jsonSend: String = gson.toJson(requestBomb)
-
-
-                    val printStream = PrintStream(this)
-                    printStream.println(jsonSend)
-                    printStream.flush()
-                }
-            }
-        }
     }
 
     private fun startComs(newSocket: Socket?) {
@@ -899,92 +864,6 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun cleanUp3PlayersServer(){
-        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
-        state.postValue(State.LEFT_GAME)
-
-
-        val threadSendClose = thread {
-            for(j in 0 until socketArrayServer.size){
-                socketArrayServer[j].getOutputStream().run {
-                    val closeConnection = CloseConnection()
-                    val gson = Gson()
-                    val jsonSend = gson.toJson(closeConnection)
-
-                    val printStream = PrintStream(this)
-                    printStream.println(jsonSend)
-                    printStream.flush()
-                    state.postValue(State.GAME_OVER)
-                }
-            }
-        }
-        threadSendClose.join()
-
-        endGame = false
-        isServer = false
-
-        socket?.close()
-        socket = null
-        threadComm?.interrupt()
-        threadComm = null
-    }
-
-    fun cleanUp() {
-        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
-        state.postValue(State.LEFT_GAME)
-
-
-        val threadSendClose = thread {
-            socketO?.run {
-
-                val closeConnection = CloseConnection()
-                val gson = Gson()
-                val jsonSend = gson.toJson(closeConnection)
-
-                val printStream = PrintStream(this)
-                printStream.println(jsonSend)
-                printStream.flush()
-            }
-        }
-        threadSendClose.join()
-
-        endGame = false
-        isServer = false
-
-        socket?.close()
-        socket = null
-        threadComm?.interrupt()
-        threadComm = null
-    }
-
-    private fun cleanOnExit3Players(){
-        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
-        state.postValue(State.LEFT_GAME)
-
-        val nSockets = socketArrayServer.size
-        for(j in 0 until nSockets)
-            socketArrayServer[j].close()
-        socketArrayServer.clear()
-        socket?.close()
-        socket = null
-
-        val nThreads = threadCommServer3.size
-        for(j in 0 until nThreads)
-            threadCommServer3[j].interrupt()
-
-        threadCommServer3.clear()
-    }
-
-    private fun cleanOnExit() {
-        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
-        state.postValue(State.LEFT_GAME)
-
-        socket?.close()
-        socket = null
-        threadComm?.interrupt()
-        threadComm = null
-    }
-
     private fun sendSingleOkTrue(){
         socketO?.run {
             thread {
@@ -999,7 +878,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    fun switchStatePlay() {
+    private fun switchStatePlay() {
         //Quando é o cliente não à problema de estar assim
         val gamemode = boardGame.getGameMode()
         if(isServer){
@@ -1048,259 +927,6 @@ class GameViewModel : ViewModel() {
 
 
     }
-
-    fun stopGame() {
-        try {
-            state.postValue(State.GAME_OVER)
-
-            socket?.close()
-            socket = null
-            threadComm?.interrupt()
-            threadComm = null
-        } catch (_: Exception) {
-        }
-    }
-
-    fun stopServer() {
-        serverSocket?.close()
-        connectionState.postValue(ConnectionState.CONNECTION_ERROR)
-        serverSocket = null
-    }
-
-    fun startClient(name: String, serverIP: String, serverPort: Int = SERVER_PORT) {
-
-        if (socket != null || connectionState.value != ConnectionState.SETTING_PARAMETERS)
-            return
-
-        connectionState.postValue(ConnectionState.CLIENT_CONNECTING)
-
-        thread {
-            try {
-                val clientSocket = Socket()
-                when (boardGame.getGameMode()) {
-                    1 -> {
-                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 5)
-                    }
-                    2 -> {
-                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 20)
-                    }
-                }
-                startComs(clientSocket)
-                Log.v("COMMS", "A thread cooms foi iniciada para o cliente")
-                socketO?.run {
-
-                    val profileData: ProfileData
-                    val uri =
-                        File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
-
-                    if (uri.exists()) {
-                        profileData = ProfileData(name, convertToBase64(uri))
-                    } else {
-                        profileData = ProfileData(name, "null")
-                    }
-                    val gson = Gson()
-                    val jsonSend: String = gson.toJson(profileData)
-
-
-                    val printStream = PrintStream(this)
-                    printStream.println(jsonSend)
-                    printStream.flush()
-
-                }
-            } catch (_: Exception) {
-                connectionState.postValue(ConnectionState.CONNECTION_ERROR)
-                stopGame()
-            }
-        }
-    }
-
-    fun startServer(name: String) {
-        if (serverSocket != null || socket != null || connectionState.value != ConnectionState.SETTING_PARAMETERS)
-            return
-
-        connectionState.postValue(ConnectionState.SERVER_CONNECTING)
-
-        isServer = true
-        val uri =
-            File("/storage/emulated/0/Android/media/pt.isec.amov.reversi/ReversiAmovTP/${auth.currentUser!!.uid}.jpg")
-        if (uri.exists())
-            gameFragment.setUsersProfileData(name, convertToBase64(uri))
-        else
-            gameFragment.setUsersProfileData(name, "null")
-
-        thread {
-            serverSocket = ServerSocket(SERVER_PORT)
-            serverSocket?.run {
-                try {
-                    when (boardGame.getGameMode()) {
-                        1 -> {
-                            val newServerSocket = serverSocket!!.accept()
-                            startComs(newServerSocket)
-                        }
-                        2 -> {
-                            var nConnections = 0
-                            while (nConnections != 2) {
-                                startComsServer3(serverSocket!!.accept())
-                                nConnections++
-                            }
-                        }
-                    }
-                    Log.v("COMMS", "A thread cooms foi iniciada para o $isServer")
-
-                } catch (_: Exception) {
-                    connectionState.postValue(ConnectionState.CONNECTION_ERROR)
-                } finally {
-                    connectionState.postValue(ConnectionState.CONNECTION_ESTABLISHED)
-                    serverSocket?.close()
-                    serverSocket = null
-                }
-            }
-        }
-    }
-
-    fun convertToBase64(attachment: File): String {
-        return Base64.encodeToString(attachment.readBytes(), Base64.NO_WRAP)
-    }
-
-
-    fun switchBombPiece() {
-        socketO?.run {
-            thread {
-                val requestBomb = RequestBomb()
-
-                val gson = Gson()
-                val jsonSend = gson.toJson(requestBomb)
-
-                val printStream = PrintStream(this)
-                printStream.println(jsonSend)
-                printStream.flush()
-            }
-        }
-    }
-
-    fun switchExchangePiece() {
-        socketO?.run {
-            thread {
-                val requestExchange = RequestExchange()
-
-                val gson = Gson()
-                val jsonSend = gson.toJson(requestExchange)
-
-                val printStream = PrintStream(this)
-                printStream.println(jsonSend)
-                printStream.flush()
-            }
-        }
-    }
-
-
-    fun alertEndGame() {
-        val aux = boardGame.checkWinner()
-        if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
-            Handler(Looper.getMainLooper()).post {
-                gameFragment.showAlertEndGame(aux)
-            }
-        else
-            gameFragment.showAlertEndGame(aux)
-        gameFragment.updateUI()
-        endGame = true
-    }
-
-    fun checkAlertNoPlays(): Boolean {
-        //Muda o jogador a jogar
-        boardGame.switchPlayer()
-
-        //Verifica se ele tem jogadas disponiveis se sim saimos daqui e continuamos
-        if (boardGame.checkNoValidPlays()) {
-            gameFragment.updateUI()
-            return true
-        }
-        if (counter == 0)
-            gameFragment.updateUI()
-
-        if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED) //No modo offline
-            gameFragment.showAlertPassPlay(boardGame.getName())
-        else {
-            when (boardGame.getGameMode()) {
-                1 -> {
-                    //Se era o cliente a jogar significa que eu nao tenho jogadas validas
-                    if (state.value == State.PLAYING_CLIENT) {
-                        Handler(Looper.getMainLooper()).post {
-                            gameFragment.showAlertPassPlay("")
-                        }
-                    } else {
-                        socketO?.run {
-                            thread {
-                                val alertPlays = AlertNoValidPlayData()
-
-                                val gson = Gson()
-                                val jsonSend = gson.toJson(alertPlays)
-
-                                val printStream = PrintStream(this)
-                                printStream.println(jsonSend)
-                                printStream.flush()
-                            }
-                        }
-                    }
-                }
-                2 -> {
-                    when (state.value) {
-                        State.PLAYING_SERVER -> {
-                            //Vai mandar o alerta para o jogador 1
-                            socketArrayServer!![0].getOutputStream().run {
-                                thread {
-                                    val alertPlays = AlertNoValidPlayData()
-
-                                    val gson = Gson()
-                                    val jsonSend = gson.toJson(alertPlays)
-
-                                    val printStream = PrintStream(this)
-                                    printStream.println(jsonSend)
-                                    printStream.flush()
-                                }
-                            }
-                        }
-                        State.PLAYING_CLIENT -> {
-                            //Vai mandar o alerta para o jogador 2
-                            socketArrayServer!![1].getOutputStream().run {
-                                thread {
-                                    val alertPlays = AlertNoValidPlayData()
-
-                                    val gson = Gson()
-                                    val jsonSend = gson.toJson(alertPlays)
-
-                                    val printStream = PrintStream(this)
-                                    printStream.println(jsonSend)
-                                    printStream.flush()
-                                }
-                            }
-                        }
-                        State.PLAYING_SECOND_CLIENT -> {
-                            //Vai apresentar a mensagem no ecra do servidor
-                            Handler(Looper.getMainLooper()).post {
-                                gameFragment.showAlertPassPlay("")
-                            }
-                        }
-                        else -> {}
-                    }
-                }
-            }
-
-        }
-
-
-        //Servidor pode apresentar aqui
-        //Se for cliente a jogar abre o socket e diz lhe
-
-        return false
-
-    }
-
-
-    fun resetCounter() {
-        counter = 0
-    }
-
 
     fun movePiece(x: Int, y: Int, piece: Int) {
         when (piece) {
@@ -1368,79 +994,6 @@ class GameViewModel : ViewModel() {
                 }
             }
         }
-    }
-
-
-    fun passPlayAux() {
-        if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED) {
-            //Se for modo offline
-            ++counter
-            if (counter < boardGame.getPlayers()) //Quando for igual já sabemos que percorreu os jogadores todos portanto não vale apena fazer o igual
-                checkAlertNoPlays()
-            else
-                alertEndGame()
-        } else {
-
-            if (isServer) {
-                //se for o sv a receber o alerta faz a verificação
-                ++counter
-                if (counter < boardGame.getPlayers()) {
-                    switchStatePlay() //servidor manda ok data true
-                    checkAlertNoPlays() //Se for preciso manda o alerta para outro gajo
-                } else {
-                    alertEndGame()
-                    when (boardGame.getGameMode()) {
-                        1 -> {
-                            socketO?.run {
-                                thread {
-                                    val passPlayData = PassPlayData()
-
-                                    val gson = Gson()
-                                    val jsonSend = gson.toJson(passPlayData)
-
-                                    val printStream = PrintStream(this)
-                                    printStream.println(jsonSend)
-                                    printStream.flush()
-                                }
-                            }
-                        }
-                        2 -> {
-                            //Como ninguem tem jogadas manda o alerta de final de jogo
-                            for (j in 0 until socketArrayServer!!.size) {
-                                socketArrayServer!![j].getOutputStream().run {
-                                    thread {
-                                        val passPlayData = PassPlayData()
-
-                                        val gson = Gson()
-                                        val jsonSend = gson.toJson(passPlayData)
-
-                                        val printStream = PrintStream(this)
-                                        printStream.println(jsonSend)
-                                        printStream.flush()
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-            } else {
-                //Informa que passou a jogada
-                socketO?.run {
-                    thread {
-                        val passPlayData = PassPlayData()
-
-                        val gson = Gson()
-                        val jsonSend = gson.toJson(passPlayData)
-
-                        val printStream = PrintStream(this)
-                        printStream.println(jsonSend)
-                        printStream.flush()
-                    }
-                }
-            }
-        }
-
     }
 
     fun checkOnlineMove(x: Int?, y: Int?) {
@@ -1535,5 +1088,443 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    private fun exchangeCheck3Players(number: Int){
+        when {
+            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> {
+                socketArrayServer[number].getOutputStream().run {
+                    thread {
+                        val requestExchange = RequestExchange(0)
 
+                        val gson = Gson()
+                        val jsonSend: String = gson.toJson(requestExchange)
+
+
+                        val printStream = PrintStream(this)
+                        printStream.println(jsonSend)
+                        printStream.flush()
+                    }
+                }
+            }
+            boardGame.getExchangePiece() > 0 -> {
+                socketArrayServer[number].getOutputStream().run {
+                    thread {
+                        val requestExchange = RequestExchange(1)
+
+                        val gson = Gson()
+                        val jsonSend: String = gson.toJson(requestExchange)
+
+
+                        val printStream = PrintStream(this)
+                        printStream.println(jsonSend)
+                        printStream.flush()
+                    }
+                }
+            }
+            else -> {
+                socketArrayServer[number].getOutputStream().run {
+                    thread {
+                        val requestExchange = RequestExchange(2)
+
+                        val gson = Gson()
+                        val jsonSend: String = gson.toJson(requestExchange)
+
+
+                        val printStream = PrintStream(this)
+                        printStream.println(jsonSend)
+                        printStream.flush()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun exchangeBomb3Players(number : Int,currentPiece : Int){
+        when (currentPiece) {
+            BOMB_PIECE -> {
+                socketArrayServer[number].getOutputStream().run {
+                    val alertInvalidBomb = AlertInvalidBomb()
+
+                    val gson = Gson()
+                    val jsonSend = gson.toJson(alertInvalidBomb)
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+            EXCHANGE_PIECE -> {
+                socketArrayServer[number].getOutputStream().run {
+                    val alertInvalidExchange =
+                        AlertInvalidExchange(exchangeError)
+
+                    val gson = Gson()
+                    val jsonSend = gson.toJson(alertInvalidExchange)
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+        }
+    }
+
+    private fun bombCheck3Players(number : Int){
+        if (boardGame.getBombPiece() > 0) {
+            socketArrayServer[number].getOutputStream().run  {
+                thread {
+                    val requestBomb = RequestBomb(true)
+
+                    val gson = Gson()
+                    val jsonSend: String = gson.toJson(requestBomb)
+
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+        } else {
+            socketArrayServer[number].getOutputStream().run {
+                thread {
+                    val requestBomb = RequestBomb(false)
+
+                    val gson = Gson()
+                    val jsonSend: String = gson.toJson(requestBomb)
+
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+        }
+    }
+
+    fun switchBombPiece() {
+        socketO?.run {
+            thread {
+                val requestBomb = RequestBomb()
+
+                val gson = Gson()
+                val jsonSend = gson.toJson(requestBomb)
+
+                val printStream = PrintStream(this)
+                printStream.println(jsonSend)
+                printStream.flush()
+            }
+        }
+    }
+
+    fun switchExchangePiece() {
+        socketO?.run {
+            thread {
+                val requestExchange = RequestExchange()
+
+                val gson = Gson()
+                val jsonSend = gson.toJson(requestExchange)
+
+                val printStream = PrintStream(this)
+                printStream.println(jsonSend)
+                printStream.flush()
+            }
+        }
+    }
+
+    private fun alertEndGame() {
+        val aux = boardGame.checkWinner()
+        if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
+            Handler(Looper.getMainLooper()).post {
+                gameFragment.showAlertEndGame(aux)
+            }
+        else
+            gameFragment.showAlertEndGame(aux)
+        gameFragment.updateUI()
+        endGame = true
+    }
+
+    private fun checkAlertNoPlays(): Boolean {
+        //Muda o jogador a jogar
+        boardGame.switchPlayer()
+
+        //Verifica se ele tem jogadas disponiveis se sim saimos daqui e continuamos
+        if (boardGame.checkNoValidPlays()) {
+            gameFragment.updateUI()
+            return true
+        }
+        if (counter == 0)
+            gameFragment.updateUI()
+
+        if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED) //No modo offline
+            gameFragment.showAlertPassPlay(boardGame.getName())
+        else {
+            when (boardGame.getGameMode()) {
+                1 -> {
+                    //Se era o cliente a jogar significa que eu nao tenho jogadas validas
+                    if (state.value == State.PLAYING_CLIENT) {
+                        Handler(Looper.getMainLooper()).post {
+                            gameFragment.showAlertPassPlay("")
+                        }
+                    } else {
+                        socketO?.run {
+                            thread {
+                                val alertPlays = AlertNoValidPlayData()
+
+                                val gson = Gson()
+                                val jsonSend = gson.toJson(alertPlays)
+
+                                val printStream = PrintStream(this)
+                                printStream.println(jsonSend)
+                                printStream.flush()
+                            }
+                        }
+                    }
+                }
+                2 -> {
+                    when (state.value) {
+                        State.PLAYING_SERVER -> {
+                            //Vai mandar o alerta para o jogador 1
+                            socketArrayServer!![0].getOutputStream().run {
+                                thread {
+                                    val alertPlays = AlertNoValidPlayData()
+
+                                    val gson = Gson()
+                                    val jsonSend = gson.toJson(alertPlays)
+
+                                    val printStream = PrintStream(this)
+                                    printStream.println(jsonSend)
+                                    printStream.flush()
+                                }
+                            }
+                        }
+                        State.PLAYING_CLIENT -> {
+                            //Vai mandar o alerta para o jogador 2
+                            socketArrayServer!![1].getOutputStream().run {
+                                thread {
+                                    val alertPlays = AlertNoValidPlayData()
+
+                                    val gson = Gson()
+                                    val jsonSend = gson.toJson(alertPlays)
+
+                                    val printStream = PrintStream(this)
+                                    printStream.println(jsonSend)
+                                    printStream.flush()
+                                }
+                            }
+                        }
+                        State.PLAYING_SECOND_CLIENT -> {
+                            //Vai apresentar a mensagem no ecra do servidor
+                            Handler(Looper.getMainLooper()).post {
+                                gameFragment.showAlertPassPlay("")
+                            }
+                        }
+                        else -> {}
+                    }
+                }
+            }
+
+        }
+
+
+        //Servidor pode apresentar aqui
+        //Se for cliente a jogar abre o socket e diz lhe
+
+        return false
+
+    }
+
+    fun passPlayAux() {
+        if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED) {
+            //Se for modo offline
+            ++counter
+            if (counter < boardGame.getPlayers()) //Quando for igual já sabemos que percorreu os jogadores todos portanto não vale apena fazer o igual
+                checkAlertNoPlays()
+            else
+                alertEndGame()
+        } else {
+
+            if (isServer) {
+                //se for o sv a receber o alerta faz a verificação
+                ++counter
+                if (counter < boardGame.getPlayers()) {
+                    switchStatePlay() //servidor manda ok data true
+                    checkAlertNoPlays() //Se for preciso manda o alerta para outro gajo
+                } else {
+                    alertEndGame()
+                    when (boardGame.getGameMode()) {
+                        1 -> {
+                            socketO?.run {
+                                thread {
+                                    val passPlayData = PassPlayData()
+
+                                    val gson = Gson()
+                                    val jsonSend = gson.toJson(passPlayData)
+
+                                    val printStream = PrintStream(this)
+                                    printStream.println(jsonSend)
+                                    printStream.flush()
+                                }
+                            }
+                        }
+                        2 -> {
+                            //Como ninguem tem jogadas manda o alerta de final de jogo
+                            for (j in 0 until socketArrayServer!!.size) {
+                                socketArrayServer!![j].getOutputStream().run {
+                                    thread {
+                                        val passPlayData = PassPlayData()
+
+                                        val gson = Gson()
+                                        val jsonSend = gson.toJson(passPlayData)
+
+                                        val printStream = PrintStream(this)
+                                        printStream.println(jsonSend)
+                                        printStream.flush()
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            } else {
+                //Informa que passou a jogada
+                socketO?.run {
+                    thread {
+                        val passPlayData = PassPlayData()
+
+                        val gson = Gson()
+                        val jsonSend = gson.toJson(passPlayData)
+
+                        val printStream = PrintStream(this)
+                        printStream.println(jsonSend)
+                        printStream.flush()
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun stopGame() {
+        try {
+            state.postValue(State.GAME_OVER)
+
+            socket?.close()
+            socket = null
+            threadComm?.interrupt()
+            threadComm = null
+        } catch (_: Exception) {
+        }
+    }
+
+    fun stopServer() {
+        serverSocket?.close()
+        connectionState.postValue(ConnectionState.CONNECTION_ERROR)
+        serverSocket = null
+    }
+
+    private fun cleanUp3PlayersServer(){
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+
+        val threadSendClose = thread {
+            for(j in 0 until socketArrayServer.size){
+                socketArrayServer[j].getOutputStream().run {
+                    val closeConnection = CloseConnection()
+                    val gson = Gson()
+                    val jsonSend = gson.toJson(closeConnection)
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                    state.postValue(State.GAME_OVER)
+                }
+            }
+        }
+        threadSendClose.join()
+
+        endGame = false
+        isServer = false
+
+        socket?.close()
+        socket = null
+        threadComm?.interrupt()
+        threadComm = null
+    }
+
+    private fun cleanUp() {
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+
+        val threadSendClose = thread {
+            socketO?.run {
+
+                val closeConnection = CloseConnection()
+                val gson = Gson()
+                val jsonSend = gson.toJson(closeConnection)
+
+                val printStream = PrintStream(this)
+                printStream.println(jsonSend)
+                printStream.flush()
+            }
+        }
+        threadSendClose.join()
+
+        endGame = false
+        isServer = false
+
+        socket?.close()
+        socket = null
+        threadComm?.interrupt()
+        threadComm = null
+    }
+
+    private fun cleanOnExit3Players(){
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+        val nSockets = socketArrayServer.size
+        for(j in 0 until nSockets)
+            socketArrayServer[j].close()
+        socketArrayServer.clear()
+        socket?.close()
+        socket = null
+
+        val nThreads = threadCommServer3.size
+        for(j in 0 until nThreads)
+            threadCommServer3[j].interrupt()
+
+        threadCommServer3.clear()
+    }
+
+    private fun cleanOnExit() {
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+        socket?.close()
+        socket = null
+        threadComm?.interrupt()
+        threadComm = null
+    }
+
+    fun setData(boardGame: BoardGame, gameFragment: GameFragment) {
+        this.boardGame = boardGame
+        this.gameFragment = gameFragment
+        auth = Firebase.auth
+    }
+
+    fun getIsServer(): Boolean = isServer
+
+    fun getEndgame(): Boolean = endGame
+
+    fun getGameState(): State? = state.value
+
+    fun resetCounter() {
+        counter = 0
+    }
+
+    fun convertToBase64(attachment: File): String {
+        return Base64.encodeToString(attachment.readBytes(), Base64.NO_WRAP)
+    }
 }
