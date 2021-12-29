@@ -601,9 +601,11 @@ class GameFragment : Fragment() {
         model.movePiece(x, y, currentPiece)
     }
 
-    fun check2OnlineMove(x: Int?, y: Int?) {
-        model.check2OnlineMove(x, y)
+    fun checkOnlineMove(x: Int?, y: Int?) {
+        model.checkOnlineMove(x, y)
     }
+
+
 
     fun setUsersProfileData(name: String, convertToBase64: String) {
         gamePerfilView.setUsersProfileData(name, convertToBase64)

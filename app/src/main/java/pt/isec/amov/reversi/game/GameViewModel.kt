@@ -150,6 +150,43 @@ class GameViewModel : ViewModel() {
                                 }
 
                             }
+                            type.toString().equals("\"CLIENT_MOVE\"") -> {
+                                val posX = (jsonObject.get("move") as JsonObject).get("posX").asInt
+                                val posY = (jsonObject.get("move") as JsonObject).get("posY").asInt
+                                val currentPiece = jsonObject.get("currentPiece").asInt
+
+                                movePiece(posX,posY,currentPiece)
+
+                                if(validPlay){
+                                    val move = PieceMoves(posX,posY)
+                                    for(j in 0 until socketArrayServer!!.size) {
+                                        socketArrayServer!![j].getOutputStream().run {
+                                            val moveData: ServerMoveData
+                                            when (currentPiece) {
+                                                EXCHANGE_PIECE -> {
+                                                    moveData = ServerMoveData(move, currentPiece, exchangeArrayList)
+                                                    exchangeArrayList.clear()
+                                                }
+                                                else -> moveData = ServerMoveData(move, currentPiece)
+                                            }
+
+
+                                            val gson = Gson()
+                                            val jsonSend = gson.toJson(moveData)
+
+                                            val printStream = PrintStream(this)
+                                            printStream.println(jsonSend)
+                                            printStream.flush()
+                                        }
+                                    }
+                                    when(boardGame.getCurrentPlayer() - 1){
+                                        0 -> state.postValue(State.PLAYING_SERVER)
+                                        1 -> state.postValue(State.PLAYING_CLIENT)
+                                        2 -> state.postValue(State.PLAYING_SECOND_CLIENT)
+                                    }
+                                    validPlay = false
+                                }
+                            }
                         }
 
                     }
@@ -406,7 +443,8 @@ class GameViewModel : ViewModel() {
                         else if(type.toString().equals("\"CLOSE_CONNECTION\"")){
                             cleanOnExit()
                         }
-                    } else{
+                    }
+                    else {
                         when {
                             type.toString().equals("\"PROFILE_VIEW\"") -> {
                                 val currentPlayer = jsonObject.get("currentPlayer").asInt
@@ -431,9 +469,11 @@ class GameViewModel : ViewModel() {
 
 
                                 gameFragment.gamePerfilView.updateUsers(nClients,usernames,userPhotos)
+
                                 when(currentPlayer - 1){
                                     0 -> state.postValue(State.PLAYING_SERVER)
                                     1 -> state.postValue(State.PLAYING_CLIENT)
+                                    2 -> state.postValue(State.PLAYING_SECOND_CLIENT)
                                 }
 
                             }
@@ -622,12 +662,25 @@ class GameViewModel : ViewModel() {
                 printStream.flush()
             }
         }
-        when(state.value){
-            State.PLAYING_CLIENT -> state.postValue(State.PLAYING_SERVER)
-            State.PLAYING_SERVER -> state.postValue(State.PLAYING_CLIENT)
-
-            else -> {}
+        when(boardGame.getGameMode()){
+            1 -> {
+                when(state.value){
+                    State.PLAYING_CLIENT -> state.postValue(State.PLAYING_SERVER)
+                    State.PLAYING_SERVER -> state.postValue(State.PLAYING_CLIENT)
+                    else -> {}
+                }
+            }
+            2 -> {
+                //Aqui como ja foi feita a jogada vao ver quem é a jogar e atualiza o estado
+                when(boardGame.getCurrentPlayer() - 1){
+                    0 -> state.postValue(State.PLAYING_SERVER)
+                    1 -> state.postValue(State.PLAYING_CLIENT)
+                    2 -> state.postValue(State.PLAYING_SECOND_CLIENT)
+                    else -> {}
+                }
+            }
         }
+
 
 
     }
@@ -840,70 +893,6 @@ class GameViewModel : ViewModel() {
         counter = 0
     }
 
-    fun check2OnlineMove(x: Int?, y: Int?) {
-        if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED || state.value  != State.PLAYING_SERVER && state.value  != State.PLAYING_CLIENT){
-            return
-        }
-
-        if(state.value  == State.GAME_OVER)
-            return
-
-        if (!isServer && state.value  == State.PLAYING_CLIENT) {
-
-            val move = PieceMoves(x!!, y!!)
-
-            socketO?.run {
-                thread {
-
-                    val moveData = ClientMoveData(move,boardGame.getCurrentPiece())
-
-                    val gson = Gson()
-                    val jsonSend = gson.toJson(moveData)
-
-                    val printStream = PrintStream(this)
-                    printStream.println(jsonSend)
-                    printStream.flush()
-
-                }
-
-            }
-        }
-        else if(isServer && state.value  == State.PLAYING_SERVER){
-
-            val auxPiece = boardGame.getCurrentPiece()
-
-            movePiece(x!!,y!!,auxPiece)
-
-            if(validPlay){
-                state.postValue(State.PLAYING_CLIENT)
-                val move = PieceMoves(x,y)
-
-                socketO?.run {
-
-                    thread{
-                        val moveData : ServerMoveData
-                        when(auxPiece){
-                            EXCHANGE_PIECE -> {
-                                moveData = ServerMoveData(move,auxPiece,exchangeArrayList)
-                                exchangeArrayList.clear()
-                            }
-                            else -> moveData = ServerMoveData(move,auxPiece)
-                        }
-
-                        val gson = Gson()
-                        val jsonSend = gson.toJson(moveData)
-
-                        val printStream = PrintStream(this)
-                        printStream.println(jsonSend)
-                        printStream.flush()
-
-                    }
-                }
-
-
-            }
-        }
-    }
 
     fun movePiece(x: Int, y:Int,piece: Int){
         when (piece) {
@@ -1028,6 +1017,96 @@ class GameViewModel : ViewModel() {
 
     }
 
+    fun checkOnlineMove(x: Int?, y: Int?) {
+        if (connectionState.value != ConnectionState.CONNECTION_ESTABLISHED ||
+            state.value  != State.PLAYING_SERVER && state.value  != State.PLAYING_CLIENT && state.value != State.PLAYING_SECOND_CLIENT){
+            return
+        }
+
+        if(state.value  == State.GAME_OVER)
+            return
+
+        if (!isServer && (state.value  == State.PLAYING_CLIENT || state.value == State.PLAYING_SECOND_CLIENT)) {
+
+            val move = PieceMoves(x!!, y!!)
+
+            socketO?.run {
+                thread {
+
+                    val moveData = ClientMoveData(move,boardGame.getCurrentPiece())
+
+                    val gson = Gson()
+                    val jsonSend = gson.toJson(moveData)
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+
+                }
+
+            }
+        }
+        else if(isServer && state.value  == State.PLAYING_SERVER){
+
+            val auxPiece = boardGame.getCurrentPiece()
+
+            movePiece(x!!,y!!,auxPiece)
+
+            if(validPlay) {
+
+                state.postValue(State.PLAYING_CLIENT)
+                val move = PieceMoves(x,y)
+
+                when(boardGame.getGameMode()){
+                    1 -> {
+                        socketO?.run {
+                            thread{
+                                val moveData : ServerMoveData
+                                when(auxPiece){
+                                    EXCHANGE_PIECE -> {
+                                        moveData = ServerMoveData(move,auxPiece,exchangeArrayList)
+                                        exchangeArrayList.clear()
+                                    }
+                                    else -> moveData = ServerMoveData(move,auxPiece)
+                                }
+
+                                val gson = Gson()
+                                val jsonSend = gson.toJson(moveData)
+
+                                val printStream = PrintStream(this)
+                                printStream.println(jsonSend)
+                                printStream.flush()
+
+                            }
+                        }
+                    }
+                    2 -> {
+                        for(j in 0 until socketArrayServer!!.size){
+                            socketArrayServer!![j].getOutputStream().run{
+                                thread {
+                                    val moveData : ServerMoveData
+                                    when(auxPiece){
+                                        EXCHANGE_PIECE -> {
+                                            moveData = ServerMoveData(move,auxPiece,exchangeArrayList)
+                                            exchangeArrayList.clear()
+                                        }
+                                        else -> moveData = ServerMoveData(move,auxPiece)
+                                    }
+
+                                    val gson = Gson()
+                                    val jsonSend = gson.toJson(moveData)
+
+                                    val printStream = PrintStream(this)
+                                    printStream.println(jsonSend)
+                                    printStream.flush()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
 }

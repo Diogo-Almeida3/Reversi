@@ -1,15 +1,12 @@
 package pt.isec.amov.reversi.game
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.google.firebase.ktx.Firebase
-import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.fragments.GameFragment
 
 
@@ -45,8 +42,8 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                     gameFragment.movePiece(x!!,y!!,gameFragment.boardGame.getCurrentPiece())
                 }
             }
-            1 -> {
-                gameFragment.check2OnlineMove(x,y)
+            1, 2 -> {
+                gameFragment.checkOnlineMove(x,y)
             }
         }
 
