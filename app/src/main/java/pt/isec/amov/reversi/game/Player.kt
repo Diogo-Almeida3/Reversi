@@ -2,7 +2,7 @@ package pt.isec.amov.reversi.game
 
 import android.graphics.Bitmap
 
-class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String = "Diogo Almeida",nrBombs: Int=1,nrexchangePieces: Int=1) {
+class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String = "Player",nrBombs: Int=1,nrexchangePieces: Int=1) {
 
     private var pieces = initialPieces
     private var pieceType = playerNumber

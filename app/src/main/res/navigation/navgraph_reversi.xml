@@ -14,13 +14,13 @@
             android:id="@+id/action_menuFragment_to_gameFragment"
             app:destination="@id/gameFragment"
 
-            app:popUpTo="@layout/fragment_menu"
+            app:popUpTo="@id/menuFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_menuFragment_to_profileFragment"
             app:destination="@id/profileFragment"
 
-            app:popUpTo="@layout/fragment_menu"
+            app:popUpTo="@id/menuFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_menuFragment_self"
@@ -28,12 +28,12 @@
         <action
             android:id="@+id/action_menuFragment_to_creditsFragment"
             app:destination="@id/creditsFragment"
-            app:popUpTo="@layout/fragment_menu"
+            app:popUpTo="@id/menuFragment"
             app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_menuFragment_to_rulesFragment"
             app:destination="@id/rulesFragment"
-            app:popUpTo="@layout/fragment_menu"
+            app:popUpTo="@id/menuFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -46,7 +46,7 @@
             android:id="@+id/action_rulesFragment_to_menuFragment"
             app:destination="@id/menuFragment"
 
-            app:popUpTo="@layout/fragment_rules"
+            app:popUpTo="@id/rulesFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_rulesFragment_self"
@@ -55,18 +55,18 @@
             android:id="@+id/action_rulesFragment_to_profileFragment"
             app:destination="@id/profileFragment"
 
-            app:popUpTo="@layout/fragment_rules"
+            app:popUpTo="@id/rulesFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_rulesFragment_to_gameFragment"
             app:destination="@id/gameFragment"
 
-            app:popUpTo="@layout/fragment_rules"
+            app:popUpTo="@id/rulesFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_rulesFragment_to_creditsFragment"
             app:destination="@id/creditsFragment"
-            app:popUpTo="@layout/fragment_rules"
+            app:popUpTo="@id/rulesFragment"
             app:popUpToInclusive="true"/>
     </fragment>
     <fragment
@@ -78,14 +78,14 @@
             android:id="@+id/action_profileFragment_to_menuFragment2"
             app:destination="@id/menuFragment"
 
-            app:popUpTo="@layout/fragment_profile"
+            app:popUpTo="@id/profileFragment"
             app:popUpToInclusive="true"
             />
         <action
             android:id="@+id/action_profileFragment_to_rulesFragment"
             app:destination="@id/rulesFragment"
 
-            app:popUpTo="@layout/fragment_profile"
+            app:popUpTo="@id/profileFragment"
             app:popUpToInclusive="true"
             />
         <action
@@ -95,20 +95,20 @@
             android:id="@+id/action_profileFragment_to_gameFragment"
             app:destination="@id/gameFragment"
 
-            app:popUpTo="@layout/fragment_profile"
+            app:popUpTo="@id/profileFragment"
             app:popUpToInclusive="true"
             />
         <action
             android:id="@+id/action_profileFragment_to_cameraFragment"
             app:destination="@id/cameraFragment"
 
-            app:popUpTo="@layout/fragment_profile"
+            app:popUpTo="@id/profileFragment"
             app:popUpToInclusive="true"
             />
         <action
             android:id="@+id/action_profileFragment_to_creditsFragment"
             app:destination="@id/creditsFragment"
-            app:popUpTo="@layout/fragment_profile"
+            app:popUpTo="@id/profileFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
@@ -127,7 +127,7 @@
             android:id="@+id/action_gameFragment_to_menuFragment"
             app:destination="@id/menuFragment"
 
-            app:popUpTo="@layout/fragment_game"
+            app:popUpTo="@id/gameFragment"
             app:popUpToInclusive="true"
             />
 

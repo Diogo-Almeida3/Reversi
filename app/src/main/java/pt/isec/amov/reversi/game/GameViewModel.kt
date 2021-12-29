@@ -1527,4 +1527,17 @@ class GameViewModel : ViewModel() {
     fun convertToBase64(attachment: File): String {
         return Base64.encodeToString(attachment.readBytes(), Base64.NO_WRAP)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        when(boardGame.getGameMode()){
+            1 -> {
+                cleanUp()
+            }
+            2 -> {
+
+            }
+        }
+        Log.d("ACABOU","FUI APAGADO")
+    }
 }
