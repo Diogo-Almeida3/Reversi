@@ -448,17 +448,19 @@ class GameFragment : Fragment() {
             buttonBomb.startAnimation(btnAnimation)
             if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.getConnectionState())
                 bombFunc()
-            else
+            else{
                 when (model.getIsServer()) {
                     true -> {
                         if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
                             bombFunc()
                     } //Server
                     false -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT)
+                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT)
                             model.switchBombPiece()
                     } //Cliente
                 }
+            }
+
         }
 
 

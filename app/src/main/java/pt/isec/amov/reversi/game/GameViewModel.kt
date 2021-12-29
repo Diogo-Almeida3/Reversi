@@ -158,18 +158,23 @@ class GameViewModel : ViewModel() {
                             val currentPiece = jsonObject.get("currentPiece").asInt
 
                             var checkPlayerMessage = true
+                            var number = -1
                             when (boardGame.getCurrentPlayer() - 1) {
                                 1 -> {
-                                    if (socketArrayServer!![0].getInputStream() == socketInput)
+                                    if (socketArrayServer[0].getInputStream() == socketInput){
                                         movePiece(posX, posY, currentPiece)
+                                        number = 0
+                                    }
                                     else {
                                         validPlay = false
                                         checkPlayerMessage = false
                                     }
                                 }
                                 2 -> {
-                                    if (socketArrayServer!![1].getInputStream() == socketInput)
+                                    if (socketArrayServer[1].getInputStream() == socketInput){
                                         movePiece(posX, posY, currentPiece)
+                                        number = 1
+                                    }
                                     else {
                                         validPlay = false
                                         checkPlayerMessage = false
@@ -179,17 +184,14 @@ class GameViewModel : ViewModel() {
 
                             if (validPlay) {
                                 val move = PieceMoves(posX, posY)
-                                for (j in 0 until socketArrayServer!!.size) {
-                                    socketArrayServer!![j].getOutputStream().run {
+                                for (j in 0 until socketArrayServer.size) {
+                                    socketArrayServer[j].getOutputStream().run {
                                         val moveData: ServerMoveData
                                         when (currentPiece) {
                                             EXCHANGE_PIECE -> {
-                                                moveData = ServerMoveData(
-                                                    move,
-                                                    currentPiece,
-                                                    exchangeArrayList
-                                                )
-                                                exchangeArrayList.clear()
+                                                moveData = ServerMoveData(move, currentPiece, exchangeArrayList)
+                                                    if(j >= socketArrayServer.size - 1)
+                                                        exchangeArrayList.clear()
                                             }
                                             else -> moveData = ServerMoveData(move, currentPiece)
                                         }
@@ -209,35 +211,10 @@ class GameViewModel : ViewModel() {
                                     2 -> state.postValue(State.PLAYING_SECOND_CLIENT)
                                 }
                                 validPlay = false
-                            } else if (checkPlayerMessage) {
-                                //todo isto
-                                when (currentPiece) {
-                                    BOMB_PIECE -> {
-                                        socketO?.run {
-                                            val alertInvalidBomb = AlertInvalidBomb()
+                            }
+                            else if (checkPlayerMessage) {
+                                exchangeBomb3Players(number, currentPiece)
 
-                                            val gson = Gson()
-                                            val jsonSend = gson.toJson(alertInvalidBomb)
-
-                                            val printStream = PrintStream(this)
-                                            printStream.println(jsonSend)
-                                            printStream.flush()
-                                        }
-                                    }
-                                    EXCHANGE_PIECE -> {
-                                        socketO?.run {
-                                            val alertInvalidExchange =
-                                                AlertInvalidExchange(exchangeError)
-
-                                            val gson = Gson()
-                                            val jsonSend = gson.toJson(alertInvalidExchange)
-
-                                            val printStream = PrintStream(this)
-                                            printStream.println(jsonSend)
-                                            printStream.flush()
-                                        }
-                                    }
-                                }
                             }
                         }
                         type.toString().equals("\"OK\"") -> {
@@ -263,8 +240,8 @@ class GameViewModel : ViewModel() {
                                 //aqui no if ve se nao tiver jogadas informa o jogador
                                 if (checkAlertNoPlays()) {
                                     //Senao Manda aos utilizadores para se atualizarem
-                                    for (j in 0 until socketArrayServer!!.size) {
-                                        socketArrayServer!![j].getOutputStream().run {
+                                    for (j in 0 until socketArrayServer.size) {
+                                        socketArrayServer[j].getOutputStream().run {
                                             val okData = OkData(false)
 
                                             val gson = Gson()
@@ -281,8 +258,8 @@ class GameViewModel : ViewModel() {
                             } else {
                                 //acaba o jogo manda para todos os clientes
                                 alertEndGame()
-                                for (j in 0 until socketArrayServer!!.size) {
-                                    socketArrayServer!![j].getOutputStream().run {
+                                for (j in 0 until socketArrayServer.size) {
+                                    socketArrayServer[j].getOutputStream().run {
                                         val passPlayData = PassPlayData()
 
                                         val gson = Gson()
@@ -294,6 +271,40 @@ class GameViewModel : ViewModel() {
                                     }
                                 }
                             }
+                        }
+                        type.toString().equals("\"REQUEST_BOMB\"") -> {
+                            when (boardGame.getCurrentPlayer() - 1) {
+                                1 -> {
+                                    if (socketArrayServer[0].getInputStream() == socketInput)
+                                        bombCheck3Players(0)
+                                    else
+                                        validPlay = false
+                                }
+                                2 -> {
+                                    if (socketArrayServer[1].getInputStream() == socketInput)
+                                        bombCheck3Players(1)
+                                    else
+                                        validPlay = false
+                                }
+                            }
+
+                        }
+                        type.toString().equals("\"REQUEST_EXCHANGE\"") -> {
+                            when (boardGame.getCurrentPlayer() - 1) {
+                                1 -> {
+                                    if (socketArrayServer[0].getInputStream() == socketInput)
+                                        exchangeCheck3Players(0)
+                                    else
+                                        validPlay = false
+                                }
+                                2 -> {
+                                    if (socketArrayServer[1].getInputStream() == socketInput)
+                                        exchangeCheck3Players(1)
+                                    else
+                                        validPlay = false
+                                }
+                            }
+
                         }
                     }
 
@@ -309,6 +320,117 @@ class GameViewModel : ViewModel() {
         threadCommServer3.add(threadAux)
     }
 
+    private fun exchangeCheck3Players(number: Int){
+        when {
+            boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> {
+                socketArrayServer[number].getOutputStream().run {
+                    thread {
+                        val requestExchange = RequestExchange(0)
+
+                        val gson = Gson()
+                        val jsonSend: String = gson.toJson(requestExchange)
+
+
+                        val printStream = PrintStream(this)
+                        printStream.println(jsonSend)
+                        printStream.flush()
+                    }
+                }
+            }
+            boardGame.getExchangePiece() > 0 -> {
+                socketArrayServer[number].getOutputStream().run {
+                    thread {
+                        val requestExchange = RequestExchange(1)
+
+                        val gson = Gson()
+                        val jsonSend: String = gson.toJson(requestExchange)
+
+
+                        val printStream = PrintStream(this)
+                        printStream.println(jsonSend)
+                        printStream.flush()
+                    }
+                }
+            }
+            else -> {
+                socketArrayServer[number].getOutputStream().run {
+                    thread {
+                        val requestExchange = RequestExchange(2)
+
+                        val gson = Gson()
+                        val jsonSend: String = gson.toJson(requestExchange)
+
+
+                        val printStream = PrintStream(this)
+                        printStream.println(jsonSend)
+                        printStream.flush()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun exchangeBomb3Players(number : Int,currentPiece : Int){
+        when (currentPiece) {
+            BOMB_PIECE -> {
+                socketArrayServer[number].getOutputStream().run {
+                    val alertInvalidBomb = AlertInvalidBomb()
+
+                    val gson = Gson()
+                    val jsonSend = gson.toJson(alertInvalidBomb)
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+            EXCHANGE_PIECE -> {
+                socketArrayServer[number].getOutputStream().run {
+                    val alertInvalidExchange =
+                        AlertInvalidExchange(exchangeError)
+
+                    val gson = Gson()
+                    val jsonSend = gson.toJson(alertInvalidExchange)
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+        }
+    }
+
+    private fun bombCheck3Players(number : Int){
+        if (boardGame.getBombPiece() > 0) {
+            socketArrayServer[number].getOutputStream().run  {
+                thread {
+                    val requestBomb = RequestBomb(true)
+
+                    val gson = Gson()
+                    val jsonSend: String = gson.toJson(requestBomb)
+
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+        } else {
+            socketArrayServer[number].getOutputStream().run {
+                thread {
+                    val requestBomb = RequestBomb(false)
+
+                    val gson = Gson()
+                    val jsonSend: String = gson.toJson(requestBomb)
+
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                }
+            }
+        }
+    }
 
     private fun startComs(newSocket: Socket?) {
         //Aqui vamos receber um socket que será usado para toda a comunicação e atribuiremo lo à propriedade socket
@@ -365,7 +487,8 @@ class GameViewModel : ViewModel() {
                                 0 -> state.postValue(State.PLAYING_SERVER)
                                 1 -> state.postValue(State.PLAYING_CLIENT)
                             }
-                        } else if (type.toString().equals("\"CLIENT_MOVE\"")) {
+                        }
+                        else if (type.toString().equals("\"CLIENT_MOVE\"")) {
                             val posX = (jsonObject.get("move") as JsonObject).get("posX").asInt
                             val posY = (jsonObject.get("move") as JsonObject).get("posY").asInt
                             val currentPiece = jsonObject.get("currentPiece").asInt
@@ -428,7 +551,8 @@ class GameViewModel : ViewModel() {
                                     }
                                 }
                             }
-                        } else if (type.toString().equals("\"OK\"")) {
+                        }
+                        else if (type.toString().equals("\"OK\"")) {
                             if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED && endGame) {
 
                                 socketO?.run {
@@ -442,7 +566,8 @@ class GameViewModel : ViewModel() {
                                     state.postValue(State.GAME_OVER)
                                 }
                             }
-                        } else if (type.toString().equals("\"ALERT_PASS\"")) {
+                        }
+                        else if (type.toString().equals("\"ALERT_PASS\"")) {
                             ++counter
                             if (counter < boardGame.getPlayers()) {
 
@@ -474,7 +599,8 @@ class GameViewModel : ViewModel() {
 
                                 }
                             }
-                        } else if (type.toString().equals("\"REQUEST_BOMB\"")) {
+                        }
+                        else if (type.toString().equals("\"REQUEST_BOMB\"")) {
                             if (boardGame.getBombPiece() > 0) {
                                 socketO?.run {
                                     thread {
@@ -504,7 +630,8 @@ class GameViewModel : ViewModel() {
                                     }
                                 }
                             }
-                        } else if (type.toString().equals("\"REQUEST_EXCHANGE\"")) {
+                        }
+                        else if (type.toString().equals("\"REQUEST_EXCHANGE\"")) {
                             when {
                                 boardGame.getTotalPieces(boardGame.getCurrentPlayer() - 1) <= 1 -> {
                                     socketO?.run {
@@ -552,7 +679,8 @@ class GameViewModel : ViewModel() {
                                     }
                                 }
                             }
-                        } else if (type.toString().equals("\"CLOSE_CONNECTION\"")) {
+                        }
+                        else if (type.toString().equals("\"CLOSE_CONNECTION\"")) {
                             cleanOnExit()
                         }
                     } else {
@@ -1292,15 +1420,15 @@ class GameViewModel : ViewModel() {
                         }
                     }
                     2 -> {
-                        for (j in 0 until socketArrayServer!!.size) {
-                            socketArrayServer!![j].getOutputStream().run {
+                        for (j in 0 until socketArrayServer.size) {
+                            socketArrayServer[j].getOutputStream().run {
                                 thread {
                                     val moveData: ServerMoveData
                                     when (auxPiece) {
                                         EXCHANGE_PIECE -> {
-                                            moveData =
-                                                ServerMoveData(move, auxPiece, exchangeArrayList)
-                                            exchangeArrayList.clear()
+                                            moveData = ServerMoveData(move, auxPiece, exchangeArrayList)
+                                            if(j >= socketArrayServer.size - 1)
+                                                exchangeArrayList.clear()
                                         }
                                         else -> moveData = ServerMoveData(move, auxPiece)
                                     }
