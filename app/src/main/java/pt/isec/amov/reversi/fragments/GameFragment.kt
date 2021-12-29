@@ -73,7 +73,7 @@ class GameFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_game, container, false)
         auth = Firebase.auth
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             gamemode = GameFragmentArgs.fromBundle(requireArguments()).game
             webMode = GameFragmentArgs.fromBundle(requireArguments()).online
         }
@@ -125,7 +125,8 @@ class GameFragment : Fragment() {
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
                     if (state == GameViewModel.ConnectionState.CONNECTION_ENDED) {
-                        Toast.makeText(context, "Perdi connection com o outro", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Perdi connection com o outro", Toast.LENGTH_LONG)
+                            .show()
                     }
 
                 }
@@ -141,6 +142,53 @@ class GameFragment : Fragment() {
                 model.state.observe(viewLifecycleOwner) { state ->
                     if (state == GameViewModel.State.PLAYING_SERVER || state == GameViewModel.State.PLAYING_CLIENT || state == GameViewModel.State.PLAYING_SECOND_CLIENT)
                         updateUI()
+                    if (state == GameViewModel.State.GAME_OVER && model.connectionState.value == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
+                        when (model.getIsServer()) {
+                            true -> UploadTopScore3Players(
+                                getName(),
+                                boardGame.getUsername(1),
+                                boardGame.getUsername(2),
+                                boardGame.getTotalPieces(0),
+                                boardGame.getTotalPieces(1),
+                                boardGame.getTotalPieces(2)
+                            )
+                            false -> {
+                                val name = getName()
+                                var aux = 0
+                                for (i in 1..2){
+                                    if (name.equals(boardGame.getUsername(i))){
+                                        aux = i
+                                        break
+                                    }
+                                }
+
+                                when(aux){
+                                    1 -> {
+                                        UploadTopScore3Players(
+                                            name,
+                                            boardGame.getUsername(0),
+                                            boardGame.getUsername(2),
+                                            boardGame.getTotalPieces(1),
+                                            boardGame.getTotalPieces(0),
+                                            boardGame.getTotalPieces(2)
+                                        )
+                                    }
+                                    2 -> {
+                                        UploadTopScore3Players(
+                                            name,
+                                            boardGame.getUsername(0),
+                                            boardGame.getUsername(1),
+                                            boardGame.getTotalPieces(2),
+                                            boardGame.getTotalPieces(0),
+                                            boardGame.getTotalPieces(1)
+                                        )
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
                 }
 
                 model.connectionState.observe(viewLifecycleOwner) { state ->
@@ -155,10 +203,14 @@ class GameFragment : Fragment() {
 
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
+                    if (state == GameViewModel.ConnectionState.CONNECTION_ENDED) {
+                        Toast.makeText(context, "Perdi connection com o outro", Toast.LENGTH_LONG)
+                            .show()
+                    }
                 }
 
-                if(model.connectionState.value != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED){
-                    when(webMode){
+                if (model.connectionState.value != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
+                    when (webMode) {
                         CLIENT_MODE -> startAsClient()
                         SERVER_MODE -> startAsServer()
                     }
@@ -179,11 +231,82 @@ class GameFragment : Fragment() {
         gamemode = 0
         colorsBoard.clear()
         colorsPlayers.clear()
-        startGame(savedInstanceState,view)
+        startGame(savedInstanceState, view)
         boardGame.setUsername(0, getName())
 
         model.setData(boardGame, this)
         updateUI()
+    }
+
+    fun UploadTopScore3Players(user: String, opponent: String, opponent2: String,myScore: Int, opponentScore: Int,opponent2Score : Int){
+        val db = Firebase.firestore
+        val game = hashMapOf(
+            "user" to user,
+            "opponent" to opponent,
+            "opponent2" to opponent2,
+            "myScore" to myScore,
+            "opponentScore" to opponentScore,
+            "opponent2Score" to opponent2Score,
+        )
+
+        val path = db.collection("Users").document(auth.currentUser!!.uid)
+        var numberGames = 0
+        //Update que quantos jogos já realizou
+        db.runTransaction { transition ->
+            val doc = transition.get(path)
+            numberGames = doc.getLong("nrgames")!!.toInt()
+            numberGames++
+            transition.update(path, "nrgames", numberGames)
+            null
+        }
+
+        var min = -1L
+        var id = 1
+        var aux = -1L
+        var count = 0
+        for (i in 5 downTo 1) {
+            val query = db.collection("Users")
+                .document(auth.currentUser!!.uid)
+                .collection("TopScores")
+                .document(i.toString()).get(Source.SERVER)
+            val threadAux = thread {
+                Tasks.await(query)
+            }
+            threadAux.join()
+
+            if (query.result.data != null) {
+                count++
+                aux = query.result.data!!["myScore"] as Long
+                if (min == -1L) min = aux
+
+                if (min > aux) {
+                    id = i
+                    min = aux
+                }
+            }
+        }
+
+
+
+        if (count < 5) {
+            count++
+            path.collection("TopScores")
+                .document(count.toString())
+                .set(game)
+        } else if (min < myScore) {
+            val pathTopScore = db.collection("Users").document(auth.currentUser!!.uid)
+                .collection("TopScores").document(id.toString())
+
+            db.runTransaction { transition ->
+                transition.update(pathTopScore, "user", user)
+                transition.update(pathTopScore, "opponent", opponent)
+                transition.update(pathTopScore, "myScore", myScore)
+                transition.update(pathTopScore, "opponentScore", opponentScore)
+                transition.update(pathTopScore, "opponent2", opponent2)
+                transition.update(pathTopScore, "opponent2Score", opponent2Score)
+                null
+            }
+        }
     }
 
     fun UploadTopScore2Players(user: String, opponent: String, myScore: Int, opponentScore: Int) {
@@ -210,7 +333,7 @@ class GameFragment : Fragment() {
         var id = 1
         var aux = -1L
         var count = 0
-        for(i in 5 downTo 1){
+        for (i in 5 downTo 1) {
             val query = db.collection("Users")
                 .document(auth.currentUser!!.uid)
                 .collection("TopScores")
@@ -220,7 +343,7 @@ class GameFragment : Fragment() {
             }
             threadAux.join()
 
-            if(query.result.data != null){
+            if (query.result.data != null) {
                 count++
                 aux = query.result.data!!["myScore"] as Long
                 if (min == -1L) min = aux
@@ -239,7 +362,7 @@ class GameFragment : Fragment() {
             path.collection("TopScores")
                 .document(count.toString())
                 .set(game)
-        } else if(min < myScore){
+        } else if (min < myScore) {
             val pathTopScore = db.collection("Users").document(auth.currentUser!!.uid)
                 .collection("TopScores").document(id.toString())
 
@@ -448,7 +571,7 @@ class GameFragment : Fragment() {
             buttonBomb.startAnimation(btnAnimation)
             if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.getConnectionState())
                 bombFunc()
-            else{
+            else {
                 when (model.getIsServer()) {
                     true -> {
                         if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
@@ -592,7 +715,8 @@ class GameFragment : Fragment() {
 
     fun getBombPieceSelect(): String = resources.getString(R.string.bombPieceSelect)
 
-    fun getExchangeNoAvailablePieces(): String = resources.getString(R.string.exchangeNoAvailablePieces)
+    fun getExchangeNoAvailablePieces(): String =
+        resources.getString(R.string.exchangeNoAvailablePieces)
 
     fun getExchangeNoBoardPieces(): String = resources.getString(R.string.exchangeNoBoardPieces)
 
@@ -611,7 +735,6 @@ class GameFragment : Fragment() {
     }
 
 
-
     fun setUsersProfileData(name: String, convertToBase64: String) {
         gamePerfilView.setUsersProfileData(name, convertToBase64)
     }
@@ -619,7 +742,7 @@ class GameFragment : Fragment() {
 
     fun getBitmaps(): ArrayList<String> {
         val auxBase64 = ArrayList<String>()
-        for(i in 0 until getnClients()){
+        for (i in 0 until getnClients()) {
             val baos = ByteArrayOutputStream()
             boardGame.getPhoto(i)?.compress(Bitmap.CompressFormat.JPEG, 40, baos)
             auxBase64.add(Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT))
@@ -629,11 +752,11 @@ class GameFragment : Fragment() {
         return auxBase64
     }
 
-    fun getnClients(): Int  = boardGame.getNClients()
+    fun getnClients(): Int = boardGame.getNClients()
 
     fun getUsernames(): ArrayList<String> {
         val auxNames = ArrayList<String>()
-        for(i in 0 until getnClients())
+        for (i in 0 until getnClients())
             auxNames.add(boardGame.getUsername(i))
 
         return auxNames
