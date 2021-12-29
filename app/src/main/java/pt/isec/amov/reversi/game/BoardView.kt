@@ -24,7 +24,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var pieceWidth = 0
     private var boardSIZE = 0
 
-
     private lateinit var gameFragment: GameFragment
 
     fun setData(gameFragment: GameFragment) {
@@ -50,9 +49,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         return super.onTouchEvent(event)
     }
-
-
-
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         /* Tamanho da janela */
@@ -132,10 +128,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     }
 
-    private fun drawHighlightValidPlays(
-        canvas: Canvas?,
-        highlightValidPlays: ArrayList<PieceMoves>
-    ) {
+    private fun drawHighlightValidPlays(canvas: Canvas?, highlightValidPlays: ArrayList<PieceMoves>) {
         for (i in 0 until highlightValidPlays.size) {
             val centerX = (pieceWidth * highlightValidPlays[i].getX()) + pieceWidth / 2
             val centerY = (pieceHeight * highlightValidPlays[i].getY()) + pieceHeight / 2
@@ -152,30 +145,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 radius.toFloat(),
                 getHighlightPlayStrokePaint()
             )
-        }
-    }
-
-    private fun getGridPaint(): Paint {
-        return Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG).apply {
-            color = gameFragment.boardGame.getBoardColor(1)
-        }
-    }
-
-    private fun getCellPaint(): Paint {
-        return Paint().apply { color = gameFragment.boardGame.getBoardColor(0) }
-    }
-
-    private fun getHighlightPlayStrokePaint(): Paint {
-        return Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
-            color = Color.WHITE
-            style = Paint.Style.STROKE
-            strokeWidth = 6.0f
-        }
-    }
-
-    private fun getHighlightPlayPaint(): Paint {
-        return Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = gameFragment.boardGame.getBoardColor(2)
         }
     }
 
@@ -206,8 +175,27 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         )
     }
 
+    private fun getGridPaint(): Paint {
+        return Paint(Paint.DITHER_FLAG and Paint.ANTI_ALIAS_FLAG).apply {
+            color = gameFragment.boardGame.getBoardColor(1)
+        }
+    }
 
+    private fun getCellPaint(): Paint {
+        return Paint().apply { color = gameFragment.boardGame.getBoardColor(0) }
+    }
 
+    private fun getHighlightPlayStrokePaint(): Paint {
+        return Paint(Paint.ANTI_ALIAS_FLAG and Paint.DITHER_FLAG).apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            strokeWidth = 6.0f
+        }
+    }
 
-
+    private fun getHighlightPlayPaint(): Paint {
+        return Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = gameFragment.boardGame.getBoardColor(2)
+        }
+    }
 }

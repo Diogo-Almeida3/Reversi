@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream
 
 private const val MARGIN = 24
 private const val LINE_SIZE = 5
-private const val MARGIN_PIECE = 8
 private const val ROUND_RADIUS = 20F
 
 class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -40,12 +39,10 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private lateinit var auth: FirebaseAuth
 
 
-
     fun setData(gameFragment: GameFragment) {
         this.gameFragment = gameFragment
         auth = Firebase.auth
     }
-
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         /* Tamanho da janela */
@@ -279,6 +276,49 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         }
     }
 
+
+    fun setUsersProfileData(name: String, photoFile: String) {
+        var auxNClients = gameFragment.boardGame.getNClients()
+        val auxName = name.replace("\"", "")
+
+        gameFragment.boardGame.setUsername(auxNClients,auxName)
+        if (photoFile != "\"null\"") {
+            val aux = convertString64ToImage(photoFile)
+            gameFragment.boardGame.setPhoto(auxNClients,aux)
+        } else {
+            val aux = BitmapFactory.decodeResource(resources, R.drawable.logo_reversi)
+            gameFragment.boardGame.setPhoto(auxNClients,aux)
+        }
+        gameFragment.boardGame.setUsername(auxNClients,auxName)
+        auxNClients++
+
+        gameFragment.boardGame.setNClients(auxNClients)
+    }
+
+    fun updateUsers(nClients: Int, userNames: ArrayList<String>, photosBase64: ArrayList<String>) {
+        gameFragment.boardGame.setNClients(nClients)
+
+        for(i in 0 until nClients){
+            gameFragment.boardGame.setUsername(i,userNames[i])
+            if(photosBase64[i] != "\"null\""){
+                val aux = convertString64ToImage(photosBase64[i])
+
+                gameFragment.boardGame.setPhoto(i,aux)
+            }
+            else{
+                val aux = BitmapFactory.decodeResource(resources,R.drawable.logo_reversi)
+
+                gameFragment.boardGame.setPhoto(i,aux)
+            }
+        }
+    }
+
+
+    private fun convertString64ToImage(base64String: String): Bitmap {
+        val decodedString = Base64.decode(base64String, Base64.DEFAULT)
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+    }
+
     private fun getBackgroundPaint(): Paint {
         return Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
     }
@@ -327,49 +367,5 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
         if (gameFragment.boardGame.getGameMode() != 2)
             return 82F
         return 56F
-    }
-
-    fun setUsersProfileData(name: String, photoFile: String) {
-        var auxNClients = gameFragment.boardGame.getNClients()
-        val auxName = name.replace("\"", "")
-
-        gameFragment.boardGame.setUsername(auxNClients,auxName)
-        if (photoFile != "\"null\"") {
-            val aux = convertString64ToImage(photoFile)
-            gameFragment.boardGame.setPhoto(auxNClients,aux)
-        } else {
-            val aux = BitmapFactory.decodeResource(resources, R.drawable.logo_reversi)
-            gameFragment.boardGame.setPhoto(auxNClients,aux)
-        }
-        gameFragment.boardGame.setUsername(auxNClients,auxName)
-        auxNClients++
-
-        gameFragment.boardGame.setNClients(auxNClients)
-    }
-
-    private fun convertString64ToImage(base64String: String): Bitmap {
-        val decodedString = Base64.decode(base64String, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-    }
-
-
-
-
-    fun updateUsers(nClients: Int, userNames: ArrayList<String>, photosBase64: ArrayList<String>) {
-        gameFragment.boardGame.setNClients(nClients)
-
-        for(i in 0 until nClients){
-            gameFragment.boardGame.setUsername(i,userNames[i])
-            if(photosBase64[i] != "\"null\""){
-                val aux = convertString64ToImage(photosBase64[i])
-
-                gameFragment.boardGame.setPhoto(i,aux)
-            }
-            else{
-                val aux = BitmapFactory.decodeResource(resources,R.drawable.logo_reversi)
-
-                gameFragment.boardGame.setPhoto(i,aux)
-            }
-        }
     }
 }

@@ -11,17 +11,6 @@ class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String
     private var bombPiece =nrBombs
     private var exchangePieces = nrexchangePieces
     private var photo : Bitmap? = null
-    fun getColor() : Int = color
-
-    fun getPieceType() : Int = pieceType
-
-    fun getPieces(): Int  = pieces
-
-    fun getUsername() : String = username
-
-    fun getBombPiece() : Int = bombPiece
-
-    fun getExchangePieces():Int = exchangePieces
 
     fun setPhoto(photo: Bitmap) {
         this.photo = photo
@@ -45,5 +34,15 @@ class Player(playerNumber: Int, initialPieces: Int, playerColor: Int,user:String
 
     fun getPhoto(): Bitmap? = photo
 
+    fun getColor() : Int = color
 
+    fun getPieceType() : Int = pieceType
+
+    fun getPieces(): Int  = pieces
+
+    fun getUsername() : String = username
+
+    fun getBombPiece() : Int = bombPiece
+
+    fun getExchangePieces():Int = exchangePieces
 }
