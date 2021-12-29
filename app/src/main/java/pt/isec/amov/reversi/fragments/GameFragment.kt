@@ -3,12 +3,14 @@ package pt.isec.amov.reversi.fragments
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.Spanned
+import android.util.Base64
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -32,6 +34,7 @@ import kotlin.concurrent.thread
 
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.Source
+import java.io.ByteArrayOutputStream
 
 
 class GameFragment : Fragment() {
@@ -611,11 +614,28 @@ class GameFragment : Fragment() {
         gamePerfilView.setUsersProfileData(name, convertToBase64)
     }
 
-    fun getnClients(): Int = gamePerfilView.getnClients()
 
-    fun getUsernames(): ArrayList<String> = gamePerfilView.getUsernames()
+    fun getBitmaps(): ArrayList<String> {
+        val auxBase64 = ArrayList<String>()
+        for(i in 0 until getnClients()){
+            val baos = ByteArrayOutputStream()
+            boardGame.getPhoto(i)?.compress(Bitmap.CompressFormat.JPEG, 40, baos)
+            auxBase64.add(Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT))
+            baos.close()
+        }
 
-    fun getBitmaps(): ArrayList<String> = gamePerfilView.getBitmaps()
+        return auxBase64
+    }
+
+    fun getnClients(): Int  = boardGame.getNClients()
+
+    fun getUsernames(): ArrayList<String> {
+        val auxNames = ArrayList<String>()
+        for(i in 0 until getnClients())
+            auxNames.add(boardGame.getUsername(i))
+
+        return auxNames
+    }
 
 
 }

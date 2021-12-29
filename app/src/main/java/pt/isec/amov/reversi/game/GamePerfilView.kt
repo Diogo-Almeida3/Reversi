@@ -38,16 +38,12 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var endgame = false
     private lateinit var gameFragment: GameFragment
     private lateinit var auth: FirebaseAuth
-    private var userNames = ArrayList<String>()
-    private var userPhotos = ArrayList<Bitmap>()
 
-    private var nClients = 0
 
 
     fun setData(gameFragment: GameFragment) {
         this.gameFragment = gameFragment
         auth = Firebase.auth
-        nClients = 0
     }
 
 
@@ -334,22 +330,21 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     fun setUsersProfileData(name: String, photoFile: String) {
+        var auxNClients = gameFragment.boardGame.getNClients()
         val auxName = name.replace("\"", "")
-        userNames.add(auxName)
-        gameFragment.boardGame.setUsername(nClients,auxName)
+
+        gameFragment.boardGame.setUsername(auxNClients,auxName)
         if (photoFile != "\"null\"") {
             val aux = convertString64ToImage(photoFile)
-            userPhotos.add(aux)
-            gameFragment.boardGame.setPhoto(nClients,aux)
+            gameFragment.boardGame.setPhoto(auxNClients,aux)
         } else {
             val aux = BitmapFactory.decodeResource(resources, R.drawable.logo_reversi)
-            userPhotos.add(aux)
-            gameFragment.boardGame.setPhoto(nClients,aux)
+            gameFragment.boardGame.setPhoto(auxNClients,aux)
         }
-        gameFragment.boardGame.setUsername(nClients,auxName)
-        nClients++
+        gameFragment.boardGame.setUsername(auxNClients,auxName)
+        auxNClients++
 
-        gameFragment.boardGame.setNClients(nClients)
+        gameFragment.boardGame.setNClients(auxNClients)
     }
 
     private fun convertString64ToImage(base64String: String): Bitmap {
@@ -359,43 +354,20 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
 
 
 
-    fun getUsernames(): ArrayList<String> {
-        return userNames
-    }
-
-    fun getBitmaps(): ArrayList<String> {
-        val auxBase64 = ArrayList<String>()
-        for(i in 0 until nClients){
-            val baos = ByteArrayOutputStream()
-            userPhotos[i].compress(Bitmap.CompressFormat.JPEG, 40, baos)
-            auxBase64.add(Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT))
-            baos.close()
-        }
-
-        return auxBase64
-    }
-
-    fun getnClients(): Int {
-        return nClients
-    }
-
 
     fun updateUsers(nClients: Int, userNames: ArrayList<String>, photosBase64: ArrayList<String>) {
-        this.nClients = nClients
         gameFragment.boardGame.setNClients(nClients)
-        this.userNames = userNames
 
-        userPhotos.clear()
         for(i in 0 until nClients){
             gameFragment.boardGame.setUsername(i,userNames[i])
             if(photosBase64[i] != "\"null\""){
                 val aux = convertString64ToImage(photosBase64[i])
-                userPhotos.add(aux)
+
                 gameFragment.boardGame.setPhoto(i,aux)
             }
             else{
                 val aux = BitmapFactory.decodeResource(resources,R.drawable.logo_reversi)
-                userPhotos.add(aux)
+
                 gameFragment.boardGame.setPhoto(i,aux)
             }
         }
