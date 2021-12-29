@@ -1535,7 +1535,14 @@ class GameViewModel : ViewModel() {
                 cleanUp()
             }
             2 -> {
-
+                when(isServer){
+                    true -> {
+                        cleanUp3PlayersServer()
+                    }
+                    false -> {
+                        //todo acabar
+                    }
+                }
             }
         }
         Log.d("ACABOU","FUI APAGADO")

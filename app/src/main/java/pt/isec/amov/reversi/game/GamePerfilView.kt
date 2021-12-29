@@ -232,8 +232,9 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
                             canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.logo_reversi).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
                         canvas?.drawText(gameFragment.boardGame.getUsername(i), 0, nChars, (middle - nChars * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     } else {
+                        val anonymousName = context.resources.getString(R.string.anonymous)
                         canvas?.drawBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher).scale(imageSize, imageSize, false), imagePos.toFloat(), 50f, null)
-                        canvas?.drawText(context.resources.getString(R.string.anonymous), 0, 7, (middle - 7 * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
+                        canvas?.drawText(anonymousName, 0, anonymousName.length, (middle - 7 * 15).toFloat(), (imageSize + 120).toFloat(), paintName)
                     }
                     canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), 65f, paintPiece)
                     if (i == gameFragment.boardGame.getCurrentPlayer() - 1 && !endgame)
