@@ -29,10 +29,6 @@ class MenuFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        /*
-        *   Dois botoes ele abre aquele alerta
-        */
-
 
         binding = FragmentMenuBinding.inflate(inflater)
 
