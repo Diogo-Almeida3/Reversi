@@ -475,7 +475,7 @@ class GameFragment : Fragment() {
                             ExchangeFunc()
                     } //Server
                     false -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT) {
+                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT) {
                             model.switchExchangePiece()
                         }
                     } //Cliente
