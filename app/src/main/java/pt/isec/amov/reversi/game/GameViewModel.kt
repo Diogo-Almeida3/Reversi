@@ -95,10 +95,10 @@ class GameViewModel : ViewModel() {
 
     private fun startComsServer3(socket: Socket) {
 
-        socketArrayServer!!.add(socket)
+        socketArrayServer.add(socket)
 
         val threadAux = thread {
-            val socketInput = socketArrayServer!![socketArrayServer!!.size - 1].getInputStream()
+            val socketInput = socketArrayServer[socketArrayServer.size - 1].getInputStream()
 
             //todo se um deles for null podemos acabar logo com o Jogo
             if (socketInput == null)
@@ -137,8 +137,8 @@ class GameViewModel : ViewModel() {
                                     1 -> state.postValue(State.PLAYING_CLIENT)
                                     2 -> state.postValue(State.PLAYING_SECOND_CLIENT)
                                 }
-                                for (j in 0 until socketArrayServer!!.size) {
-                                    socketArrayServer!![j].getOutputStream().run {
+                                for (j in 0 until socketArrayServer.size) {
+                                    socketArrayServer[j].getOutputStream().run {
 
                                         val gson = Gson()
                                         val jsonSend = gson.toJson(gamePerfilData)
@@ -219,8 +219,8 @@ class GameViewModel : ViewModel() {
                         }
                         type.toString().equals("\"OK\"") -> {
                             if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED && endGame) {
-                                for (j in 0 until socketArrayServer!!.size) {
-                                    socketArrayServer!![j].getOutputStream().run {
+                                for (j in 0 until socketArrayServer.size) {
+                                    socketArrayServer[j].getOutputStream().run {
                                         val alertData = AlertEndgameData()
                                         val gson = Gson()
                                         val jsonSend = gson.toJson(alertData)
@@ -306,14 +306,52 @@ class GameViewModel : ViewModel() {
                             }
 
                         }
+                        type.toString().equals("\"CLOSE_CONNECTION\"") -> {
+                            if (socketArrayServer[0].getInputStream() == socketInput){
+                                socketArrayServer[1].getOutputStream().run {
+                                    val closeConnection = CloseConnection()
+                                    val gson = Gson()
+                                    val jsonSend = gson.toJson(closeConnection)
+
+                                    val printStream = PrintStream(this)
+                                    printStream.println(jsonSend)
+                                    printStream.flush()
+                                    state.postValue(State.GAME_OVER)
+                                }
+                            } else if (socketArrayServer[1].getInputStream() == socketInput){
+                                socketArrayServer[0].getOutputStream().run {
+                                    val closeConnection = CloseConnection()
+                                    val gson = Gson()
+                                    val jsonSend = gson.toJson(closeConnection)
+
+                                    val printStream = PrintStream(this)
+                                    printStream.println(jsonSend)
+                                    printStream.flush()
+                                    state.postValue(State.GAME_OVER)
+                                }
+                            }
+                            cleanOnExit3Players()
+                        }
                     }
 
                 }
-            } catch (e: Exception) {
-                Log.d("Thread Server 3", e.toString())
+            }  catch (socketE: SocketTimeoutException) {
+                Log.d("BUG", socketE.toString())
+                cleanUp3PlayersServer()
+            } catch (nullEx: NullPointerException) {
+                //Quando dá uma exceção e ja nao existe o outro socket
+                Log.d("BUG", nullEx.toString())
+                cleanOnExit3Players()
+            } catch (softwareE: SocketException) {
+                //Quando desligo a net e perco a conexao vai para o modo 1
+                Log.d("BUG", softwareE.toString())
+                cleanOnExit3Players()
+            } catch (exc: Exception) {
+                Log.d("BUG", exc.toString())
             }
             finally {
-
+                if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
+                    stopGame()
             }
         }
 
@@ -861,9 +899,40 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    private fun cleanUp3PlayersServer(){
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+
+        val threadSendClose = thread {
+            for(j in 0 until socketArrayServer.size){
+                socketArrayServer[j].getOutputStream().run {
+                    val closeConnection = CloseConnection()
+                    val gson = Gson()
+                    val jsonSend = gson.toJson(closeConnection)
+
+                    val printStream = PrintStream(this)
+                    printStream.println(jsonSend)
+                    printStream.flush()
+                    state.postValue(State.GAME_OVER)
+                }
+            }
+        }
+        threadSendClose.join()
+
+        endGame = false
+        isServer = false
+
+        socket?.close()
+        socket = null
+        threadComm?.interrupt()
+        threadComm = null
+    }
+
     fun cleanUp() {
         connectionState.postValue(ConnectionState.CONNECTION_ENDED)
         state.postValue(State.LEFT_GAME)
+
 
         val threadSendClose = thread {
             socketO?.run {
@@ -888,7 +957,25 @@ class GameViewModel : ViewModel() {
         threadComm = null
     }
 
-    fun cleanOnExit() {
+    private fun cleanOnExit3Players(){
+        connectionState.postValue(ConnectionState.CONNECTION_ENDED)
+        state.postValue(State.LEFT_GAME)
+
+        val nSockets = socketArrayServer.size
+        for(j in 0 until nSockets)
+            socketArrayServer[j].close()
+        socketArrayServer.clear()
+        socket?.close()
+        socket = null
+
+        val nThreads = threadCommServer3.size
+        for(j in 0 until nThreads)
+            threadCommServer3[j].interrupt()
+
+        threadCommServer3.clear()
+    }
+
+    private fun cleanOnExit() {
         connectionState.postValue(ConnectionState.CONNECTION_ENDED)
         state.postValue(State.LEFT_GAME)
 
