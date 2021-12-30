@@ -809,10 +809,13 @@ class GameViewModel : ViewModel() {
                             }
                             type.toString().equals("\"REQUEST_BOMB\"") -> {
                                 when (jsonObject.get("switchToBomb").asBoolean) {
-                                    true -> boardGame.setPieceType(BOMB_PIECE)
+                                    true -> {
+                                        boardGame.setPieceType(BOMB_PIECE)
+                                        gameFragment.showAlertPieces(gameFragment.getActivatedBombPiece())
+                                    }
                                     false -> {
                                         Handler(Looper.getMainLooper()).post {
-                                            gameFragment.showAlertGeneral(boardGame.getName() + " has no available bomb pieces!")
+                                            gameFragment.showAlertGeneral(boardGame.getName() + gameFragment.getBombNoAvailablePieces())
                                         }
                                     }
                                 }
@@ -825,7 +828,10 @@ class GameViewModel : ViewModel() {
                                             gameFragment.showAlertGeneral(boardGame.getName() + gameFragment.getExchangeNoBoardPieces())
                                         }
                                     }
-                                    1 -> boardGame.setPieceType(EXCHANGE_PIECE)
+                                    1 -> {
+                                        boardGame.setPieceType(EXCHANGE_PIECE)
+                                        gameFragment.showAlertPieces(gameFragment.getActivatedExchangePiece())
+                                    }
                                     2 -> {
                                         Handler(Looper.getMainLooper()).post {
                                             gameFragment.showAlertGeneral(boardGame.getName() + gameFragment.getExchangeNoAvailablePieces())

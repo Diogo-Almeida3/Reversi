@@ -313,8 +313,11 @@ class GameFragment : Fragment() {
 
 
     private fun bombFunc() {
-        if (boardGame.getBombPiece() > 0)
+        if (boardGame.getBombPiece() > 0){
             boardGame.setPieceType(1)
+            showAlertPieces("Ativou peça bomba")
+        }
+
         else
             showAlertPieces(boardGame.getName() + " has no available bomb pieces!")
     }
@@ -326,7 +329,10 @@ class GameFragment : Fragment() {
                     R.string.exchangeNoBoardPieces
                 )
             )
-            boardGame.getExchangePiece() > 0 -> boardGame.setPieceType(2)
+            boardGame.getExchangePiece() > 0 -> {
+                boardGame.setPieceType(2)
+                showAlertPieces("Ativou troca peças")
+            }
             else -> showAlertPieces(boardGame.getName() + resources.getString(R.string.exchangeNoAvailablePieces))
         }
     }
@@ -352,7 +358,7 @@ class GameFragment : Fragment() {
     }
 
 
-    private fun showAlertPieces(phrase: String) {
+    fun showAlertPieces(phrase: String) {
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
         builder1.setMessage(phrase)
@@ -482,9 +488,16 @@ class GameFragment : Fragment() {
 
     fun getBombPieceSelect(): String = resources.getString(R.string.bombPieceSelect)
 
+    fun getBombNoAvailablePieces() : String = resources.getString(R.string.bombPieceNoAvailablePieces)
+
     fun getExchangeNoAvailablePieces(): String = resources.getString(R.string.exchangeNoAvailablePieces)
 
     fun getExchangeNoBoardPieces(): String = resources.getString(R.string.exchangeNoBoardPieces)
+
+    fun getActivatedBombPiece() : String = resources.getString(R.string.activateBombPiece)
+
+    fun getActivatedExchangePiece() : String = resources.getString(R.string.activateExchangePiece)
+
 
     fun getEndgame(): Boolean = model.getEndgame()
 

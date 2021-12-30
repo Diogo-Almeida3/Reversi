@@ -96,5 +96,8 @@
     <string name="jogadores">Jogadores</string>
     <string name="resultado">Resultados</string>
     <string name="topscores">TopScores</string>
+    <string name="activateBombPiece">Peça bomba ativada</string>
+    <string name="activateExchangePiece">Troca de peças ativada</string>
+    <string name="bombPieceNoAvailablePieces">não tem peças bomba disponíveis!</string>
 
 </resources>
