@@ -811,7 +811,9 @@ class GameViewModel : ViewModel() {
                                 when (jsonObject.get("switchToBomb").asBoolean) {
                                     true -> {
                                         boardGame.setPieceType(BOMB_PIECE)
-                                        gameFragment.showAlertPieces(gameFragment.getActivatedBombPiece())
+                                        Handler(Looper.getMainLooper()).post {
+                                            gameFragment.showAlertSpecialPieces(gameFragment.getActivatedBombPiece())
+                                        }
                                     }
                                     false -> {
                                         Handler(Looper.getMainLooper()).post {
@@ -830,7 +832,9 @@ class GameViewModel : ViewModel() {
                                     }
                                     1 -> {
                                         boardGame.setPieceType(EXCHANGE_PIECE)
-                                        gameFragment.showAlertPieces(gameFragment.getActivatedExchangePiece())
+                                        Handler(Looper.getMainLooper()).post {
+                                            gameFragment.showAlertSpecialPieces(gameFragment.getActivatedExchangePiece())
+                                        }
                                     }
                                     2 -> {
                                         Handler(Looper.getMainLooper()).post {

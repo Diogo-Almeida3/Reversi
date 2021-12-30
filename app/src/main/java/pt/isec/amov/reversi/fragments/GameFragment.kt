@@ -315,11 +315,11 @@ class GameFragment : Fragment() {
     private fun bombFunc() {
         if (boardGame.getBombPiece() > 0){
             boardGame.setPieceType(1)
-            showAlertPieces("Ativou peça bomba")
+            showAlertSpecialPieces(resources.getString(R.string.activateBombPiece))
         }
 
         else
-            showAlertPieces(boardGame.getName() + " has no available bomb pieces!")
+            showAlertPieces(boardGame.getName() + resources.getString(R.string.bombPieceNoAvailablePieces))
     }
 
     private fun ExchangeFunc() {
@@ -331,7 +331,7 @@ class GameFragment : Fragment() {
             )
             boardGame.getExchangePiece() > 0 -> {
                 boardGame.setPieceType(2)
-                showAlertPieces("Ativou troca peças")
+                showAlertSpecialPieces(resources.getString(R.string.activateExchangePiece))
             }
             else -> showAlertPieces(boardGame.getName() + resources.getString(R.string.exchangeNoAvailablePieces))
         }
@@ -357,6 +357,27 @@ class GameFragment : Fragment() {
 
     }
 
+    fun showAlertSpecialPieces(phrase: String) {
+
+        val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder1.setMessage(phrase)
+        builder1.setCancelable(false)
+
+        builder1.setPositiveButton("Ok") { dialog, id ->
+            run {
+                dialog.cancel()
+            }
+        }
+        builder1.setNegativeButton("Cancel") { dialog, id ->
+            run {
+                dialog.cancel()
+                boardGame.setPieceType(GameViewModel.NORMAL_PIECE)
+            }
+        }
+        val alert11: AlertDialog = builder1.create()
+        alert11.show()
+
+    }
 
     fun showAlertPieces(phrase: String) {
 
