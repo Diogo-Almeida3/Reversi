@@ -64,13 +64,14 @@ class ProfileFragment : Fragment() {
                     return@addOnSuccessListener // There are no top score
 
 
-                binding.layotTopScores?.visibility = View.VISIBLE
+                binding.layoutTopScores?.visibility = View.VISIBLE
                 binding.tvTopScores?.visibility = View.VISIBLE
                 val tb = binding.tableTopScores
 
                 data.forEachIndexed { _, element ->
                     val tr = LinearLayout(context)
                     tr.setPadding(5)
+
 
 
                     val param = TableLayout.LayoutParams(
@@ -93,7 +94,6 @@ class ProfileFragment : Fragment() {
                     val c1 = TextView(context)
                     val gamemode = element.getLong("gamemode")?.plus(1L)
                     c1.text = gamemode.toString()
-                    c1.maxLines = 1
                     c1.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     c1.layoutParams = param
 
@@ -105,7 +105,6 @@ class ProfileFragment : Fragment() {
                     if(!element.getString("opponent2").equals(""))
                         users += " vs " + element.getString("opponent2")
                     c2.text = users
-                    c2.maxLines = 1
                     c2.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     c2.layoutParams = param1
 
@@ -117,14 +116,13 @@ class ProfileFragment : Fragment() {
                     if(element.getLong("opponent2Score") != -1L)
                         scores += " - " + element.getLong("opponent2Score").toString()
                     c3.text = scores
-                    c3.maxLines = 1
                     c3.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     c3.layoutParams = param2
 
                     tr.addView(c1)
                     tr.addView(c2)
                     tr.addView(c3)
-                    tb?.addView(tr)
+                    tb.addView(tr)
                 }
         }
     }
