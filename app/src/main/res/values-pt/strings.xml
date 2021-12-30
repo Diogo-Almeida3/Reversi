@@ -27,8 +27,8 @@
     <string name="piece_exchange">Trocar Peças</string>
     <string name="rulesText">\tReversi é um jogo de tabuleiro entre dois jogadores, em que o objetivo consiste em ter o maior número de peças no tabuleiro. Desse modo, cada jogador deve colocar uma peça numa célula para que, pelo menos num dos sentidos( horizontal, vertical ou diagonal), exista uma sequência que inclua uma ou mais peças do adversário e, do lado oposto uma peça do próprio jogador.</string>
     <string name="mode_2_Offline_text">Este modo de jogo é jogado por dois jogadores num único dispositivo num tabuleiro 8 x 8 e incluindo as peças especiais.</string>
-    <string name="mode_2_Online_text">Este modo de jogo é jogado por dois jogadores em dois dispositivos diferentes num tabuleiro 8 x 8 e incluindo as peças especiais. Cada jogador tem 60 segundos para fazer uma jogada.</string>
-    <string name="mode_3_Online_text">Este modo de jogo é jogado por três jogadores em três dispositivos diferentes, num tabuleiro 10 x 10 e incluindo as peças especiais. Cada jogador tem 60 segundos para fazer uma jogada.</string>
+    <string name="mode_2_Online_text">Este modo de jogo é jogado por dois jogadores em dois dispositivos diferentes num tabuleiro 8 x 8 e incluindo as peças especiais.</string>
+    <string name="mode_3_Online_text">Este modo de jogo é jogado por três jogadores em três dispositivos diferentes, num tabuleiro 10 x 10 e incluindo as peças especiais.</string>
     <string name="modes_text">No início do jogo, o jogador pode escolher o modo de jogo que pretende jogar. Assim, terá como possíveis escolhas os seguintes modos de jogo:</string>
     <string name="special_pieces_text">Este jogo, para além das regras já descritas, conta também com algumas jogadas especiais, de modo a tornar o jogo mais competitivo.</string>
     <string name="bomb_piece_text">A inserção de um peça bomba apenas pode ser realizada uma vez por cada jogador durante a partida e é obrigatório que seja colocada numa peça do jogador. Ao aplicar esta peça, todas as outras num raio de 1 quadrado são eliminadas.</string>
