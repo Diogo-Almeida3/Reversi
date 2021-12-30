@@ -95,4 +95,5 @@
     <string name="modo">Mode</string>
     <string name="jogadores">Players</string>
     <string name="resultado">Scores</string>
+    <string name="topscores">TopScores</string>
 </resources>

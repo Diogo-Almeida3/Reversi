@@ -3,27 +3,19 @@ package pt.isec.amov.reversi.fragments
 import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.core.view.marginEnd
-import androidx.core.view.marginRight
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import pt.isec.amov.reversi.R
 import pt.isec.amov.reversi.databinding.FragmentProfileBinding
 import java.io.File
-import kotlin.concurrent.thread
 import android.widget.LinearLayout
-
-
+import androidx.core.view.*
 
 
 class ProfileFragment : Fragment() {
@@ -59,13 +51,13 @@ class ProfileFragment : Fragment() {
         }
 
 
-        refreshTopScores();
+        refreshTopScores()
 
         return binding.root
     }
 
     private fun refreshTopScores() {
-        val query = db.collection("Users")
+        db.collection("Users")
             .document(auth.currentUser!!.uid)
             .collection("TopScores").get().addOnSuccessListener { data ->
                 if(data.size() < 1)
@@ -76,45 +68,58 @@ class ProfileFragment : Fragment() {
                 binding.tvTopScores?.visibility = View.VISIBLE
                 val tb = binding.tableTopScores
 
-                data.forEachIndexed { index, element ->
-                    val tr = LinearLayout(this.context)
-                    tr.setPadding(10);
+                data.forEachIndexed { _, element ->
+                    val tr = LinearLayout(context)
+                    tr.setPadding(5)
 
 
                     val param = TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.MATCH_PARENT,
                         TableLayout.LayoutParams.WRAP_CONTENT,
-                        TableLayout.LayoutParams.WRAP_CONTENT,
-                        1.0f
                     )
+                    param.weight = 2.35F
+                    val param1 = TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.WRAP_CONTENT,
 
-                    val c1 = TextView(this.context)
+                    )
+                    param1.weight = 1F
+                    val param2 = TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.WRAP_CONTENT,
+                    )
+                    param2.weight = 2F
+
+                    val c1 = TextView(context)
                     val gamemode = element.getLong("gamemode")?.plus(1L)
-                    c1.setText(gamemode.toString())
+                    c1.text = gamemode.toString()
                     c1.maxLines = 1
                     c1.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     c1.layoutParams = param
 
 
 
-                    val c2 = TextView(this.context)
+
+                    val c2 = TextView(context)
                     var users = element.getString("user") + " vs " + element.getString("opponent")
                     if(!element.getString("opponent2").equals(""))
                         users += " vs " + element.getString("opponent2")
-                    c2.setText(users)
+                    c2.text = users
                     c2.maxLines = 1
                     c2.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    c2.layoutParams = param
+                    c2.layoutParams = param1
 
 
 
-                    val c3 = TextView(this.context)
+
+                    val c3 = TextView(context)
                     var scores = element.getLong("myScore").toString() + " - " + element.getLong("opponentScore")
                     if(element.getLong("opponent2Score") != -1L)
                         scores += " - " + element.getLong("opponent2Score").toString()
-                    c3.setText(scores)
+                    c3.text = scores
                     c3.maxLines = 1
                     c3.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    c3.layoutParams = param
+                    c3.layoutParams = param2
 
                     tr.addView(c1)
                     tr.addView(c2)

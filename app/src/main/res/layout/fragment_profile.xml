@@ -82,8 +82,8 @@
 
 
         <TextView
-            android:layout_marginTop="30dp"
             style="@style/profileText"
+            android:layout_marginTop="30dp"
             android:text="@string/change_password" />
 
         <LinearLayout
@@ -95,14 +95,14 @@
 
             <TextView
                 style="@style/profileItems"
-                android:text="************"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:text="************" />
 
             <Button
                 android:id="@+id/btnEditPassword"
                 style="@style/profileButtonPortrait"
-                android:text="@string/edit_password"
-                android:layout_weight="1.5"/>
+                android:layout_weight="1.5"
+                android:text="@string/edit_password" />
 
         </LinearLayout>
     </LinearLayout>
@@ -113,61 +113,70 @@
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingTop="32dp"
+        android:text="@string/topscores"
         android:textSize="30sp"
-        android:visibility="invisible"
-        android:text="TopScores" />
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/layotTopScores"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="18dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/rounded_corners_profile"
         android:backgroundTint="@color/ar_puro"
         android:orientation="vertical"
-        android:paddingStart="18dp"
+        android:paddingStart="10dp"
         android:paddingTop="22dp"
-        android:paddingEnd="18dp"
-        android:visibility="invisible"
-        android:paddingBottom="22dp">
+        android:paddingEnd="10dp"
+        android:paddingBottom="22dp"
+        android:visibility="invisible">
 
-        <TableLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/tableTopScores"
-            android:orientation="vertical" >
+            android:layout_height="match_parent">
 
-            <TableRow android:background="@color/azul_marinho" android:padding="10dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/ar_puro"
-                    android:textAlignment="center"
-                    android:maxLines="1"
-                    android:layout_weight="1"
-                    android:text="@string/modo" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:layout_weight="2"
-                    android:maxLines="1"
-                    android:textColor="@color/ar_puro"
-                    android:text="@string/jogadores" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textAlignment="center"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/ar_puro"
-                    android:maxLines="1"
-                    android:layout_weight="2"
-                    android:text="@string/resultado" />
-            </TableRow>
+            <TableLayout
+                android:id="@+id/tableTopScores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </TableLayout>
 
+                <TableRow
+                    android:background="@color/azul_marinho"
+                    android:padding="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.1"
+                        android:maxLines="1"
+                        android:text="@string/modo"
+                        android:textAlignment="center"
+                        android:textColor="@color/ar_puro" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:maxLines="1"
+                        android:text="@string/jogadores"
+                        android:textAlignment="center"
+                        android:textColor="@color/ar_puro" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:maxLines="1"
+                        android:text="@string/resultado"
+                        android:textAlignment="center"
+                        android:textColor="@color/ar_puro" />
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>
