@@ -253,40 +253,43 @@ class GameFragment : Fragment() {
         buttonBomb.setOnClickListener {
 
             buttonBomb.startAnimation(btnAnimation)
-            if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.connectionState.value)
-                bombFunc()
-            else {
-                when (model.getIsServer()) {
-                    true -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
-                            bombFunc()
-                    } //Server
-                    false -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT)
-                            model.switchBombPiece()
-                    } //Cliente
+            if(boardGame.getCurrentPiece() == GameViewModel.NORMAL_PIECE){
+                if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.connectionState.value)
+                    bombFunc()
+                else {
+                    when (model.getIsServer()) {
+                        true -> {
+                            if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
+                                bombFunc()
+                        } //Server
+                        false -> {
+                            if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT)
+                                model.switchBombPiece()
+                        } //Cliente
+                    }
                 }
             }
-
         }
 
 
         buttonExchange.setOnClickListener {
             buttonExchange.startAnimation(btnAnimation)
-            if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.connectionState.value)
-                ExchangeFunc()
-            else
-                when (model.getIsServer()) {
-                    true -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
-                            ExchangeFunc()
-                    } //Server
-                    false -> {
-                        if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT) {
-                            model.switchExchangePiece()
-                        }
-                    } //Cliente
-                }
+            if(boardGame.getCurrentPiece() == GameViewModel.NORMAL_PIECE){
+                if (GameViewModel.ConnectionState.CONNECTION_ESTABLISHED != model.connectionState.value)
+                    ExchangeFunc()
+                else
+                    when (model.getIsServer()) {
+                        true -> {
+                            if (model.getGameState() == GameViewModel.State.PLAYING_SERVER)
+                                ExchangeFunc()
+                        } //Server
+                        false -> {
+                            if (model.getGameState() == GameViewModel.State.PLAYING_CLIENT || model.getGameState() == GameViewModel.State.PLAYING_SECOND_CLIENT) {
+                                model.switchExchangePiece()
+                            }
+                        } //Cliente
+                    }
+            }
         }
     }
 
