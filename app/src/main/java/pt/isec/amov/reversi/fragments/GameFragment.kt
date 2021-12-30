@@ -89,22 +89,10 @@ class GameFragment : Fragment() {
                     if (state == GameViewModel.State.GAME_OVER && model.connectionState.value == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
                         updateUI()
                         when (model.getIsServer()) {
-                            true -> UploadTopScorePlayers(
-                                getName(),
-                                boardGame.getUsername(1),
-                                "",
-                                boardGame.getTotalPieces(0),
-                                boardGame.getTotalPieces(1),
-                                0,
-                            )
-                            false -> UploadTopScorePlayers(
-                                getName(),
-                                boardGame.getUsername(0),
-                                "",
-                                boardGame.getTotalPieces(1),
-                                boardGame.getTotalPieces(0),
-                                0
-                            )
+                            true -> UploadTopScorePlayers(getName(), boardGame.getUsername(1), "",
+                                boardGame.getTotalPieces(0), boardGame.getTotalPieces(1), -1)
+                            false -> UploadTopScorePlayers(getName(), boardGame.getUsername(0), "",
+                                boardGame.getTotalPieces(1), boardGame.getTotalPieces(0), -1)
                         }
                     } else if (state == GameViewModel.State.LEFT_GAME && model.connectionState.value != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
                         moveToOff(savedInstanceState, view)
@@ -124,7 +112,7 @@ class GameFragment : Fragment() {
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
                     if (state == GameViewModel.ConnectionState.CONNECTION_ENDED) {
-                        Toast.makeText(context, "Perdi connection com o outro", Toast.LENGTH_LONG)
+                        Toast.makeText(context, resources.getString(R.string.lostConnection), Toast.LENGTH_LONG)
                             .show()
                     }
 
@@ -142,50 +130,48 @@ class GameFragment : Fragment() {
                     if (state == GameViewModel.State.PLAYING_SERVER || state == GameViewModel.State.PLAYING_CLIENT || state == GameViewModel.State.PLAYING_SECOND_CLIENT)
                         updateUI()
                     if (state == GameViewModel.State.GAME_OVER && model.connectionState.value == GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
-                        when (model.getIsServer()) {
-                            true -> UploadTopScorePlayers(
-                                getName(),
-                                boardGame.getUsername(1),
-                                boardGame.getUsername(2),
-                                boardGame.getTotalPieces(0),
-                                boardGame.getTotalPieces(1),
-                                boardGame.getTotalPieces(2)
-                            )
-                            false -> {
-                                val name = getName()
-                                var aux = 0
-                                for (i in 1..2){
-                                    if (name.equals(boardGame.getUsername(i))){
-                                        aux = i
-                                        break
-                                    }
-                                }
-
-                                when(aux){
-                                    1 -> {
-                                        UploadTopScorePlayers(
-                                            name,
-                                            boardGame.getUsername(0),
-                                            boardGame.getUsername(2),
-                                            boardGame.getTotalPieces(1),
-                                            boardGame.getTotalPieces(0),
-                                            boardGame.getTotalPieces(2)
-                                        )
-                                    }
-                                    2 -> {
-                                        UploadTopScorePlayers(
-                                            name,
-                                            boardGame.getUsername(0),
-                                            boardGame.getUsername(1),
-                                            boardGame.getTotalPieces(2),
-                                            boardGame.getTotalPieces(0),
-                                            boardGame.getTotalPieces(1)
-                                        )
-                                    }
-                                }
+                        val name = getName()
+                        var aux = 0
+                        for (i in 0..2){
+                            if (name.equals(boardGame.getUsername(i))){
+                                aux = i
+                                break
                             }
-
                         }
+                        when(aux){
+                            0 ->  {
+                                UploadTopScorePlayers(
+                                    name,
+                                    boardGame.getUsername(1),
+                                    boardGame.getUsername(2),
+                                    boardGame.getTotalPieces(0),
+                                    boardGame.getTotalPieces(1),
+                                    boardGame.getTotalPieces(2)
+                                )
+                            }
+                            1 -> {
+                                UploadTopScorePlayers(
+                                    name,
+                                    boardGame.getUsername(0),
+                                    boardGame.getUsername(2),
+                                    boardGame.getTotalPieces(1),
+                                    boardGame.getTotalPieces(0),
+                                    boardGame.getTotalPieces(2)
+                                )
+                            }
+                            2 -> {
+                                UploadTopScorePlayers(
+                                    name,
+                                    boardGame.getUsername(0),
+                                    boardGame.getUsername(1),
+                                    boardGame.getTotalPieces(2),
+                                    boardGame.getTotalPieces(0),
+                                    boardGame.getTotalPieces(1)
+                                )
+                            }
+                        }
+                    } else if (state == GameViewModel.State.LEFT_GAME && model.connectionState.value != GameViewModel.ConnectionState.CONNECTION_ESTABLISHED) {
+                        moveToOff(savedInstanceState, view)
                     }
 
                 }
@@ -199,11 +185,10 @@ class GameFragment : Fragment() {
                         dlg = null
                     }
                     if (state == GameViewModel.ConnectionState.CONNECTION_ERROR) {
-
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
                     if (state == GameViewModel.ConnectionState.CONNECTION_ENDED) {
-                        Toast.makeText(context, "Perdi connection com o outro", Toast.LENGTH_LONG)
+                        Toast.makeText(context, resources.getString(R.string.lostConnection), Toast.LENGTH_LONG)
                             .show()
                     }
                 }
@@ -314,7 +299,9 @@ class GameFragment : Fragment() {
         gamemode = 0
         colorsBoard.clear()
         colorsPlayers.clear()
+
         startGame(savedInstanceState, view)
+        boardView.measure(boardView.measuredWidth,boardView.measuredHeight)
         boardGame.setUsername(0, getName())
 
         model.setData(boardGame, this)
@@ -613,9 +600,6 @@ class GameFragment : Fragment() {
                 } else {
                     model.startClient(getName(), strIp)
                 }
-            }
-            .setNeutralButton("Connect to emulator") { _: DialogInterface, _: Int ->
-                model.startClient(getName(), "10.0.2.2", SERVER_PORT - 1)
             }
             .setNegativeButton(resources.getString(R.string.cancel)) { _: DialogInterface, _: Int ->
 

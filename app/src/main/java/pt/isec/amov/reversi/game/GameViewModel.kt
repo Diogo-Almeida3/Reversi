@@ -31,6 +31,9 @@ import java.lang.NullPointerException
 import java.net.*
 import kotlin.concurrent.thread
 
+
+const val SERVER_PORT_GAMEMODE2 = 9999
+const val SERVER_PORT_GAMEMODE3 = 9998
 class GameViewModel : ViewModel() {
 
     enum class State {
@@ -79,7 +82,7 @@ class GameViewModel : ViewModel() {
     private lateinit var gameFragment: GameFragment
 
 
-    fun startClient(name: String, serverIP: String, serverPort: Int = SERVER_PORT) {
+    fun startClient(name: String, serverIP: String) {
 
         if (socket != null || connectionState.value != ConnectionState.SETTING_PARAMETERS)
             return
@@ -91,10 +94,10 @@ class GameViewModel : ViewModel() {
                 val clientSocket = Socket()
                 when (boardGame.getGameMode()) {
                     1 -> {
-                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 5)
+                        clientSocket.connect(InetSocketAddress(serverIP, SERVER_PORT_GAMEMODE2), 1000 * 5)
                     }
                     2 -> {
-                        clientSocket.connect(InetSocketAddress(serverIP, serverPort), 1000 * 20)
+                        clientSocket.connect(InetSocketAddress(serverIP, SERVER_PORT_GAMEMODE3), 1000 * 20)
                     }
                 }
                 startComs(clientSocket)
@@ -141,7 +144,14 @@ class GameViewModel : ViewModel() {
             gameFragment.setUsersProfileData(name, "null")
 
         thread {
-            serverSocket = ServerSocket(SERVER_PORT)
+            when (boardGame.getGameMode()) {
+                1 -> {
+                    serverSocket = ServerSocket(SERVER_PORT_GAMEMODE2)
+                }
+                2 ->{
+                    serverSocket = ServerSocket(SERVER_PORT_GAMEMODE3)
+                }
+            }
             serverSocket?.run {
                 try {
                     when (boardGame.getGameMode()) {
@@ -296,8 +306,10 @@ class GameViewModel : ViewModel() {
                         }
                         type.toString().equals("\"OK\"") -> {
                             if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED && endGame) {
-                                for (j in 0 until socketArrayServer.size) {
-                                    socketArrayServer[j].getOutputStream().run {
+
+
+                                if (socketArrayServer[0].getInputStream() == socketInput){
+                                    socketArrayServer[0].getOutputStream().run {
                                         val alertData = AlertEndgameData()
                                         val gson = Gson()
                                         val jsonSend = gson.toJson(alertData)
@@ -305,36 +317,50 @@ class GameViewModel : ViewModel() {
                                         val printStream = PrintStream(this)
                                         printStream.println(jsonSend)
                                         printStream.flush()
-                                        state.postValue(State.GAME_OVER)
+                                    }
+                                } else if (socketArrayServer[1].getInputStream() == socketInput){
+                                    socketArrayServer[1].getOutputStream().run {
+                                        val alertData = AlertEndgameData()
+                                        val gson = Gson()
+                                        val jsonSend = gson.toJson(alertData)
+
+                                        val printStream = PrintStream(this)
+                                        printStream.println(jsonSend)
+                                        printStream.flush()
                                     }
                                 }
                             }
                         }
                         type.toString().equals("\"ALERT_PASS\"") -> {
                             ++counter
+
                             if (counter < boardGame.getPlayers()) {
 
+                                when (state.value) {
+                                    State.PLAYING_SECOND_CLIENT -> state.postValue(State.PLAYING_SERVER)
+                                    State.PLAYING_SERVER -> state.postValue(State.PLAYING_CLIENT)
+                                    State.PLAYING_CLIENT -> state.postValue(State.PLAYING_SECOND_CLIENT)
+                                    else -> {}
+                                }
                                 //aqui no if ve se nao tiver jogadas informa o jogador
                                 if (checkAlertNoPlays()) {
                                     //Senao Manda aos utilizadores para se atualizarem
                                     for (j in 0 until socketArrayServer.size) {
                                         socketArrayServer[j].getOutputStream().run {
                                             val okData = OkData(false)
-
                                             val gson = Gson()
                                             val jsonSend = gson.toJson(okData)
 
                                             val printStream = PrintStream(this)
                                             printStream.println(jsonSend)
                                             printStream.flush()
-
                                         }
                                     }
                                 }
-                                switchStatePlay() // Manda ok a true para eles atualizarem as vistas
                             } else {
                                 //acaba o jogo manda para todos os clientes
                                 alertEndGame()
+                                state.postValue(State.GAME_OVER)
                                 for (j in 0 until socketArrayServer.size) {
                                     socketArrayServer[j].getOutputStream().run {
                                         val passPlayData = PassPlayData()
@@ -393,7 +419,6 @@ class GameViewModel : ViewModel() {
                                     val printStream = PrintStream(this)
                                     printStream.println(jsonSend)
                                     printStream.flush()
-                                    state.postValue(State.GAME_OVER)
                                 }
                             } else if (socketArrayServer[1].getInputStream() == socketInput){
                                 socketArrayServer[0].getOutputStream().run {
@@ -404,7 +429,6 @@ class GameViewModel : ViewModel() {
                                     val printStream = PrintStream(this)
                                     printStream.println(jsonSend)
                                     printStream.flush()
-                                    state.postValue(State.GAME_OVER)
                                 }
                             }
                             cleanOnExit3Players()
@@ -412,18 +436,13 @@ class GameViewModel : ViewModel() {
                     }
 
                 }
-            }  catch (socketE: SocketTimeoutException) {
-                Log.d("BUG", socketE.toString())
-                cleanUp3PlayersServer()
-            } catch (nullEx: NullPointerException) {
-                //Quando dá uma exceção e ja nao existe o outro socket
-                Log.d("BUG", nullEx.toString())
-                cleanOnExit3Players()
-            } catch (softwareE: SocketException) {
-                //Quando desligo a net e perco a conexao vai para o modo 1
-                Log.d("BUG", softwareE.toString())
-                cleanOnExit3Players()
-            } catch (exc: Exception) {
+            } catch(exc : NullPointerException){
+                cleanOnExit()
+            }
+            catch(exc : SocketException){
+                cleanOnExit()
+            }
+            catch (exc: Exception) {
                 Log.d("BUG", exc.toString())
             }
             finally {
@@ -442,8 +461,6 @@ class GameViewModel : ViewModel() {
             return
 
         socket = newSocket
-        //socket?.soTimeout = 30 * 1000
-
 
         //Esta thread vai ficar a correr permantemente ate o jogo acabar e for necessario reiniciar
         threadComm = thread {
@@ -575,6 +592,7 @@ class GameViewModel : ViewModel() {
                             if (counter < boardGame.getPlayers()) {
 
                                 if (checkAlertNoPlays()) {
+
                                     socketO?.run {
                                         val okData = OkData(false)
 
@@ -590,6 +608,7 @@ class GameViewModel : ViewModel() {
                                 switchStatePlay() // Manda ok
                             } else {
                                 alertEndGame()
+                                state.postValue(State.GAME_OVER)
                                 socketO?.run {
                                     val passPlayData = PassPlayData()
 
@@ -844,20 +863,12 @@ class GameViewModel : ViewModel() {
                         }
                     }
                 }
-            } catch (socketE: SocketTimeoutException) {
-                Log.d("BUG", socketE.toString())
-                cleanUp()
-            } catch (nullEx: NullPointerException) {
-                //Quando dá uma exceção e ja nao existe o outro socket
-                Log.d("BUG", nullEx.toString())
+            } catch(exc : NullPointerException){
                 cleanOnExit()
-            } catch (softwareE: SocketException) {
-                //Quando desligo a net e perco a conexao vai para o modo 1
-                Log.d("BUG", softwareE.toString())
+            } catch(exc : SocketException){
                 cleanOnExit()
-            } catch (exc: Exception) {
-                Log.d("BUG", exc.toString())
-            } finally {
+            }
+            finally {
                 if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
                     stopGame()
             }
@@ -1231,13 +1242,9 @@ class GameViewModel : ViewModel() {
     }
 
     private fun alertEndGame() {
-        val aux = boardGame.checkWinner()
-        if (connectionState.value == ConnectionState.CONNECTION_ESTABLISHED)
-            Handler(Looper.getMainLooper()).post {
-                gameFragment.showAlertEndGame(aux)
-            }
-        else
-            gameFragment.showAlertEndGame(aux)
+        Handler(Looper.getMainLooper()).post {
+            gameFragment.showAlertEndGame(boardGame.checkWinner())
+        }
         gameFragment.updateUI()
         endGame = true
     }
@@ -1346,9 +1353,22 @@ class GameViewModel : ViewModel() {
                 //se for o sv a receber o alerta faz a verificação
                 ++counter
                 if (counter < boardGame.getPlayers()) {
-                    switchStatePlay() //servidor manda ok data true
+                    when(boardGame.getGameMode()){
+                        1 -> {
+                            switchStatePlay() //servidor manda ok data true
+                        }
+                        2 -> {
+                            when (state.value) {
+                                State.PLAYING_SECOND_CLIENT -> state.postValue(State.PLAYING_SERVER)
+                                State.PLAYING_SERVER -> state.postValue(State.PLAYING_CLIENT)
+                                State.PLAYING_CLIENT -> state.postValue(State.PLAYING_SECOND_CLIENT)
+                                else -> {}
+                            }
+                        }
+                    }
                     checkAlertNoPlays() //Se for preciso manda o alerta para outro gajo
-                } else {
+                }
+                else {
                     alertEndGame()
                     when (boardGame.getGameMode()) {
                         1 -> {
@@ -1406,7 +1426,7 @@ class GameViewModel : ViewModel() {
 
     private fun stopGame() {
         try {
-            state.postValue(State.GAME_OVER)
+            //state.postValue(State.GAME_OVER)
 
             socket?.close()
             socket = null
@@ -1423,10 +1443,10 @@ class GameViewModel : ViewModel() {
     }
 
     private fun cleanUp3PlayersServer(){
+        //Dá exceção no server vai enviar aos clientes um notificação a dizer para sairem
+
         connectionState.postValue(ConnectionState.CONNECTION_ENDED)
         state.postValue(State.LEFT_GAME)
-
-
         val threadSendClose = thread {
             for(j in 0 until socketArrayServer.size){
                 socketArrayServer[j].getOutputStream().run {
@@ -1437,11 +1457,11 @@ class GameViewModel : ViewModel() {
                     val printStream = PrintStream(this)
                     printStream.println(jsonSend)
                     printStream.flush()
-                    state.postValue(State.GAME_OVER)
                 }
             }
         }
         threadSendClose.join()
+
 
         endGame = false
         isServer = false
@@ -1491,10 +1511,6 @@ class GameViewModel : ViewModel() {
         socket?.close()
         socket = null
 
-        val nThreads = threadCommServer3.size
-        for(j in 0 until nThreads)
-            threadCommServer3[j].interrupt()
-
         threadCommServer3.clear()
     }
 
@@ -1530,21 +1546,22 @@ class GameViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        when(boardGame.getGameMode()){
-            1 -> {
-                cleanUp()
-            }
-            2 -> {
-                when(isServer){
-                    true -> {
-                        cleanUp3PlayersServer()
-                    }
-                    false -> {
-                        //todo acabar
+        if(!endGame){
+            when(boardGame.getGameMode()){
+                1 -> {
+                    cleanUp()
+                }
+                2 -> {
+                    when(isServer){
+                        true -> {
+                            cleanUp3PlayersServer()
+                        }
+                        false -> {
+                            cleanUp()
+                        }
                     }
                 }
             }
         }
-        Log.d("ACABOU","FUI APAGADO")
     }
 }

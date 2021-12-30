@@ -14,7 +14,7 @@ private const val LINE_SIZE = 5
 private const val MARGIN_PIECE = 8
 private const val MARGIN_HIGHLIGHT = 32
 
-const val SERVER_PORT = 9999
+
 
 
 class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -45,8 +45,6 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 gameFragment.checkOnlineMove(x,y)
             }
         }
-
-
         return super.onTouchEvent(event)
     }
 
@@ -79,23 +77,11 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         for (i in -1..boardSIZE) {
             /* Horizontal */
             var low = pieceHeight * (i + 1)
-            canvas?.drawRect(
-                0f,
-                low.toFloat(),
-                width.toFloat() - MARGIN_PIECE,
-                (low + LINE_SIZE).toFloat(),
-                gridPaint
-            )
+            canvas?.drawRect(0f, low.toFloat(), width.toFloat() - MARGIN_PIECE, (low + LINE_SIZE).toFloat(), gridPaint)
 
             /* Vertical */
             low = pieceWidth * (i + 1)
-            canvas?.drawRect(
-                low.toFloat(),
-                0f,
-                ((low + LINE_SIZE).toFloat()),
-                height.toFloat() - MARGIN_PIECE,
-                gridPaint
-            )
+            canvas?.drawRect(low.toFloat(), 0f, ((low + LINE_SIZE).toFloat()), height.toFloat() - MARGIN_PIECE, gridPaint)
         }
     }
 
@@ -106,13 +92,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
                 val top = (pieceHeight * j)
                 val right = (pieceWidth * i) + pieceWidth
                 val bottom = (pieceHeight * j) + pieceHeight
-                canvas?.drawRect(
-                    left.toFloat(),
-                    top.toFloat(),
-                    right.toFloat(),
-                    bottom.toFloat(),
-                    getCellPaint()
-                )
+                canvas?.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), getCellPaint())
             }
         }
     }
@@ -121,10 +101,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         drawGrid(canvas) //Constrói o grid
         drawBoard(canvas) // Constrói as peças iniciais
-        drawHighlightValidPlays(
-            canvas,
-            gameFragment.boardGame.highlightValidPlays()
-        ) // constroi possiveis jogadas
+        drawHighlightValidPlays(canvas, gameFragment.boardGame.highlightValidPlays()) // constroi possiveis jogadas
 
     }
 

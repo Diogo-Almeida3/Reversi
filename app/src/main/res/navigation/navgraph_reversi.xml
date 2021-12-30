@@ -168,6 +168,11 @@
         <action
             android:id="@+id/action_creditsFragment_self"
             app:destination="@id/creditsFragment" />
+        <action
+            android:id="@+id/action_creditsFragment_to_gameFragment"
+            app:destination="@id/gameFragment"
+            app:popUpTo="@layout/fragment_credits"
+            app:popUpToInclusive="true"/>
     </fragment>
 
 </navigation>

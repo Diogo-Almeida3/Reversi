@@ -155,7 +155,10 @@ class MainActivity : AppCompatActivity() {
                         navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEOFF2,-1)
                         findNavController(R.id.fragment_base).navigate(navDirections)
                     }
-                    else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
+                    R.id.creditsFragment -> {
+                        navDirections = CreditsFragmentDirections.actionCreditsFragmentToGameFragment(GameFragment.GAMEOFF2,-1)
+                        findNavController(R.id.fragment_base).navigate(navDirections)
+                    }
                 }
             }
             R.id.gameOn2 -> {
@@ -169,7 +172,9 @@ class MainActivity : AppCompatActivity() {
                     R.id.profileFragment -> {
                         showAlert(0)
                     }
-                    else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
+                    R.id.creditsFragment -> {
+                        showAlert(0)
+                    }
                 }
             }
             R.id.gameOn3 -> {
@@ -183,7 +188,9 @@ class MainActivity : AppCompatActivity() {
                     R.id.profileFragment -> {
                         showAlert(1)
                     }
-                    else -> Toast.makeText(this,"Não VAIS",Toast.LENGTH_LONG).show()
+                    R.id.creditsFragment -> {
+                        showAlert(1)
+                    }
                 }
             }
 
@@ -193,11 +200,12 @@ class MainActivity : AppCompatActivity() {
                     R.id.rulesFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_rulesFragment_to_profileFragment)
                     R.id.profileFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_profileFragment_self)
                     R.id.creditsFragment -> findNavController(R.id.fragment_base).navigate(R.id.action_creditsFragment_to_profileFragment)
-
                 }
             }
             R.id.logout -> {
-                signOut()
+                when (findNavController(R.id.fragment_base).currentDestination?.id){
+                    R.id.menuFragment, R.id.rulesFragment,R.id.profileFragment, R.id.creditsFragment -> signOut()
+                }
             }
         }
         drawerLayout.closeDrawers()
