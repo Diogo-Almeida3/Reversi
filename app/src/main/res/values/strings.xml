@@ -99,4 +99,5 @@
     <string name="activateBombPiece">Bomb piece activated</string>
     <string name="activateExchangePiece">Exchange piece activated</string>
     <string name="bombPieceNoAvailablePieces">has no available bomb pieces.</string>
+    <string name="capture_photo">Capture Photo</string>
 </resources>

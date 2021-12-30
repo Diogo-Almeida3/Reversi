@@ -99,5 +99,6 @@
     <string name="activateBombPiece">Peça bomba ativada</string>
     <string name="activateExchangePiece">Troca de peças ativada</string>
     <string name="bombPieceNoAvailablePieces">não tem peças bomba disponíveis!</string>
+    <string name="capture_photo">Capturar foto</string>
 
 </resources>

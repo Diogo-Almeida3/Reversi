@@ -100,7 +100,7 @@ class CameraFragment : Fragment() {
         // modifiable image capture use case
         val imageCaptureAux = imageCapture ?: return
 
-
+        imageCapture!!.targetRotation = requireView().display.rotation
         /* Create output file to hold the with user uid image */
         val photoFile = File(
             outputDirectory,
