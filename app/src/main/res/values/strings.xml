@@ -92,4 +92,7 @@
     <string name="passwordNoMatch">Passwords don\'t match</string>
     <string name="usernameLetters">Username must have at least 3 letters</string>
     <string name="lostConnection">Another player\'s connection went down.</string>
+    <string name="modo">Mode</string>
+    <string name="jogadores">Players</string>
+    <string name="resultado">Scores</string>
 </resources>

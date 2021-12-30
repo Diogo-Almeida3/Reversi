@@ -92,5 +92,8 @@
     <string name="passwordNoMatch">As passwords não coincidem</string>
     <string name="usernameLetters">Username deve ter pelo menos 3 letras</string>
     <string name="lostConnection">A conexão de outro jogador foi abaixo.</string>
+    <string name="modo">Modo</string>
+    <string name="jogadores">Jogadores</string>
+    <string name="resultado">Resultados</string>
 
 </resources>

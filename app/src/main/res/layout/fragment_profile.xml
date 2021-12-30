@@ -24,7 +24,7 @@
         android:layout_marginTop="18dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="12dp"
-        android:background="@drawable/rounded_corners"
+        android:background="@drawable/rounded_corners_profile"
         android:backgroundTint="@color/ar_puro"
         android:orientation="vertical"
         android:paddingStart="18dp"
@@ -105,5 +105,69 @@
                 android:layout_weight="1.5"/>
 
         </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTopScores"
+        style="@style/titleReversi"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="32dp"
+        android:textSize="30sp"
+        android:visibility="invisible"
+        android:text="TopScores" />
+
+    <LinearLayout
+        android:id="@+id/layotTopScores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/rounded_corners_profile"
+        android:backgroundTint="@color/ar_puro"
+        android:orientation="vertical"
+        android:paddingStart="18dp"
+        android:paddingTop="22dp"
+        android:paddingEnd="18dp"
+        android:visibility="invisible"
+        android:paddingBottom="22dp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tableTopScores"
+            android:orientation="vertical" >
+
+            <TableRow android:background="@color/azul_marinho" android:padding="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ar_puro"
+                    android:textAlignment="center"
+                    android:maxLines="1"
+                    android:layout_weight="1"
+                    android:text="@string/modo" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_weight="2"
+                    android:maxLines="1"
+                    android:textColor="@color/ar_puro"
+                    android:text="@string/jogadores" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ar_puro"
+                    android:maxLines="1"
+                    android:layout_weight="2"
+                    android:text="@string/resultado" />
+            </TableRow>
+
+        </TableLayout>
+
     </LinearLayout>
 </LinearLayout>
