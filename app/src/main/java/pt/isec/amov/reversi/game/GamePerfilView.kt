@@ -209,9 +209,9 @@ class GamePerfilView(context: Context?, attrs: AttributeSet?) : View(context, at
             /* Score Related */
             val boxQuarter = (right - left) / 4
             val centerX = middle + boxQuarter
-            val centerY = imageSize + 240
+            val centerY = imageSize + (windowHeight / 2.25)
             val textPosX = middle - boxQuarter
-            val textPosY = imageSize + 275
+            val textPosY = imageSize + (windowHeight / 2.25) + 25
 
             val paintPiece = getPiecePaint(i)
             val paintScore = getScorePaint()
