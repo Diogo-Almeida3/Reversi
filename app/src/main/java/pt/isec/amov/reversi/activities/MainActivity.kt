@@ -8,16 +8,13 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.WindowManager
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -164,32 +161,32 @@ class MainActivity : AppCompatActivity() {
             R.id.gameOn2 -> {
                 when (findNavController(R.id.fragment_base).currentDestination?.id) {
                     R.id.menuFragment -> {
-                        showAlert(0)
+                        showAlert(0, R.id.menuFragment)
                     }
                     R.id.rulesFragment -> {
-                        showAlert(0)
+                        showAlert(0, R.id.rulesFragment)
                     }
                     R.id.profileFragment -> {
-                        showAlert(0)
+                        showAlert(0, R.id.profileFragment)
                     }
                     R.id.creditsFragment -> {
-                        showAlert(0)
+                        showAlert(0, R.id.creditsFragment)
                     }
                 }
             }
             R.id.gameOn3 -> {
                 when (findNavController(R.id.fragment_base).currentDestination?.id) {
                     R.id.menuFragment -> {
-                        showAlert(1)
+                        showAlert(1,R.id.menuFragment)
                     }
                     R.id.rulesFragment -> {
-                        showAlert(1)
+                        showAlert(1, R.id.rulesFragment)
                     }
                     R.id.profileFragment -> {
-                        showAlert(1)
+                        showAlert(1, R.id.profileFragment)
                     }
                     R.id.creditsFragment -> {
-                        showAlert(1)
+                        showAlert(1, R.id.creditsFragment)
                     }
                 }
             }
@@ -229,7 +226,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun showAlert(buttonID: Int) {
+    private fun showAlert(buttonID: Int, location: Int) {
 
         val builder1: AlertDialog.Builder = AlertDialog.Builder(this)
         builder1.setMessage(resources.getString(R.string.connectionType))
@@ -238,16 +235,38 @@ class MainActivity : AppCompatActivity() {
         builder1.setNegativeButton(resources.getString(R.string.serverMode)) { dialog, id ->
             run {
                 dialog.cancel()
-                if(buttonID == 0)
-                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
-                        GameFragment.GAMEON2,
-                        GameFragment.SERVER_MODE
-                    )
-                else
-                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
-                        GameFragment.GAMEON3,
-                        GameFragment.SERVER_MODE
-                    )
+                if(buttonID == 0){
+                    when(location){
+                        R.id.menuFragment -> {
+                            navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.SERVER_MODE)
+                        }
+                        R.id.rulesFragment -> {
+                            navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.SERVER_MODE)
+                        }
+                        R.id.profileFragment -> {
+                            navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.SERVER_MODE)
+                        }
+                        R.id.creditsFragment -> {
+                            navDirections = CreditsFragmentDirections.actionCreditsFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.SERVER_MODE)
+                        }
+                    }
+                }
+                else{
+                    when(location){
+                        R.id.menuFragment -> {
+                            navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.SERVER_MODE)
+                        }
+                        R.id.rulesFragment -> {
+                            navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.SERVER_MODE)
+                        }
+                        R.id.profileFragment -> {
+                            navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.SERVER_MODE)
+                        }
+                        R.id.creditsFragment -> {
+                            navDirections = CreditsFragmentDirections.actionCreditsFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.SERVER_MODE)
+                        }
+                    }
+                }
                 findNavController(R.id.fragment_base).navigate(navDirections)
             }
         }
@@ -261,16 +280,39 @@ class MainActivity : AppCompatActivity() {
         builder1.setPositiveButton(resources.getString(R.string.clientMode)){dialog, id ->
             run {
                 dialog.cancel()
-                if(buttonID == 0)
-                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
-                        GameFragment.GAMEON2,
-                        GameFragment.CLIENT_MODE
-                    )
-                else
-                    navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(
-                        GameFragment.GAMEON3,
-                        GameFragment.CLIENT_MODE
-                    )
+                if(buttonID == 0){
+                    when(location){
+                        R.id.menuFragment -> {
+                            navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.CLIENT_MODE)
+                        }
+                        R.id.rulesFragment -> {
+                            navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.CLIENT_MODE)
+                        }
+                        R.id.profileFragment -> {
+                            navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.CLIENT_MODE)
+                        }
+                        R.id.creditsFragment -> {
+                            navDirections = CreditsFragmentDirections.actionCreditsFragmentToGameFragment(GameFragment.GAMEON2, GameFragment.CLIENT_MODE)
+                        }
+                    }
+                }
+                else{
+                    when(location){
+                        R.id.menuFragment -> {
+                            navDirections = MenuFragmentDirections.actionMenuFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.CLIENT_MODE)
+                        }
+                        R.id.rulesFragment -> {
+                            navDirections = RulesFragmentDirections.actionRulesFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.CLIENT_MODE)
+                        }
+                        R.id.profileFragment -> {
+                            navDirections = ProfileFragmentDirections.actionProfileFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.CLIENT_MODE)
+                        }
+                        R.id.creditsFragment -> {
+                            navDirections = CreditsFragmentDirections.actionCreditsFragmentToGameFragment(GameFragment.GAMEON3, GameFragment.CLIENT_MODE)
+                        }
+                    }
+                }
+
                 findNavController(R.id.fragment_base).navigate(navDirections)
             }
         }

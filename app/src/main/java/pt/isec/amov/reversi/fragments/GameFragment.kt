@@ -708,6 +708,5 @@ class GameFragment : Fragment() {
         model.startServer(aux)
 
         dlg?.show()
-
     }
 }
