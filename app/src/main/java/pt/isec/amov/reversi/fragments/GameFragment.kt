@@ -108,7 +108,6 @@ class GameFragment : Fragment() {
                         dlg = null
                     }
                     if (state == GameViewModel.ConnectionState.CONNECTION_ERROR) {
-
                         findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                     }
                     if (state == GameViewModel.ConnectionState.CONNECTION_ENDED) {
@@ -700,6 +699,7 @@ class GameFragment : Fragment() {
             .setTitle(resources.getString(R.string.serverMode))
             .setView(ll)
             .setOnCancelListener {
+                findNavController().navigate(R.id.action_gameFragment_to_menuFragment)
                 model.stopServer()
             }
             .create()

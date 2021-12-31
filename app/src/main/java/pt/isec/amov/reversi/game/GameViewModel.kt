@@ -1448,7 +1448,6 @@ class GameViewModel : ViewModel() {
 
     fun stopServer() {
         serverSocket?.close()
-        connectionState.postValue(ConnectionState.CONNECTION_ERROR)
         serverSocket = null
     }
 
