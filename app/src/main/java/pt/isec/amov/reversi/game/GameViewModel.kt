@@ -329,6 +329,7 @@ class GameViewModel : ViewModel() {
                                         printStream.flush()
                                     }
                                 }
+                                state.postValue(State.GAME_OVER)
                             }
                         }
                         type.toString().equals("\"ALERT_PASS\"") -> {
@@ -1413,6 +1414,7 @@ class GameViewModel : ViewModel() {
                             }
                         }
                     }
+                    state.postValue(State.GAME_OVER)
 
                 }
             } else {
